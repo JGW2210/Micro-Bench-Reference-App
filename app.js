@@ -1923,6 +1923,28 @@ function renderSerologyReference(){
 
 // Build antibiotic index from fcPanels.
 // Strategy: walk every panel's abx[], normalise (strip strength/notes), accumulate panels under each normalised name.
+// ── Panel categorisation — single source of truth ───────────────────────────
+// fcPanels mixes antibacterial, mycology, antifungal and molecular panels that
+// all share the same `abx` field. Rather than scatter key-prefix regexes across
+// the codebase, classify a panel here. The key-prefix convention is:
+//   fx_   → 'mycology'      (morphology / fungal ID flowchart)
+//   af_   → 'antifungal'    (antifungal agents)
+//   afr_  → 'antifungal'    (expected antifungal resistance)
+//   viro_ → 'molecular'     (molecular / virology workflows)
+//   (anything else)         → 'antibacterial'
+// A panel may also set an explicit `kind:'…'` to override the prefix — preferred
+// for any future panel that doesn't follow the naming convention.
+const PANEL_KIND_PREFIXES = [
+  [/^fx_/,   'mycology'],
+  [/^afr?_/, 'antifungal'],
+  [/^viro_/, 'molecular'],
+];
+function panelKind(key, panel){
+  if(panel && panel.kind) return panel.kind;             // explicit override wins
+  for(const [re, kind] of PANEL_KIND_PREFIXES){ if(re.test(key)) return kind; }
+  return 'antibacterial';
+}
+
 function buildAntibioticIndex(){
   const idx={};
   // Map of canonical names — normalise variants together
@@ -1976,10 +1998,9 @@ function buildAntibioticIndex(){
   };
   Object.entries(fcPanels).forEach(([key,p])=>{
     if(!p || !p.abx || p.reagents || p.title==='') return; // skip reagent panels and sentinel
-    // Antibacterial index only: exclude mycology morphology (fx_*), antifungal
-    // agent / expected-resistance (af_*, afr_*) and molecular (viro_*) panels —
-    // their abx lists hold organisms, morphology or antifungal agents, not antibiotics.
-    if(/^(fx_|afr?_|viro_)/.test(key)) return;
+    // Antibacterial index only — mycology, antifungal and molecular panels hold
+    // organisms / morphology / antifungal agents in their abx lists, not antibiotics.
+    if(panelKind(key,p)!=='antibacterial') return;
     p.abx.forEach(a=>{
       // Some entries are like "ESP1: Ampicillin · Levofloxacin · Nitrofurantoin"
       // Split on '·' if present, else treat as one entry
@@ -2157,7 +2178,7 @@ function buildSearchIndex(){
       snippet:p.sub || '',
       hay:(p.title+' '+(p.sub||'')+' '+(p.abx||[]).join(' ')+' '+(p.notes||'')).toLowerCase(),
       action:()=>{
-        if(k.startsWith('viro_') && curView !== 'virology'){
+        if(panelKind(k,p)==='molecular' && curView !== 'virology'){
           switchView('virology');
           setTimeout(()=>showDetail(k), 360);
         } else {
@@ -2267,10 +2288,9 @@ function buildSearchIndex(){
       });
     });
   }
-  // Antifungal agents (panels live in fcPanels with af_/afr_ keys)
+  // Antifungal agents (panels classified as 'antifungal')
   if(typeof fcPanels !== 'undefined'){
-    Object.keys(fcPanels).filter(k=>k.indexOf('af_')===0||k.indexOf('afr_')===0).forEach(k=>{
-      const p=fcPanels[k];
+    Object.entries(fcPanels).filter(([k,p])=>panelKind(k,p)==='antifungal').forEach(([k,p])=>{
       out.push({
         kind:'antifungal',
         key:k,
