@@ -682,7 +682,7 @@ function positionNavMenu(menuId){
   const menu=document.getElementById(menuId);
   if(!menu)return;
   const trigger=menu.querySelector('.sens-trigger');
-  const list=menu.querySelector('.sens-menu-list');
+  const list=document.getElementById(menuId+'-list');
   if(!trigger||!list)return;
   /* The list is position:fixed so it escapes the horizontally-scrollable pill
      row instead of being clipped by it. Because .top-nav uses backdrop-filter,
@@ -711,6 +711,8 @@ function closeAllNavMenus(except){
     if(m.id===except)return;
     const menu=document.getElementById(m.id);
     if(menu)menu.classList.remove('open');
+    const list=document.getElementById(m.id+'-list');
+    if(list)list.classList.remove('is-open');
     const t=document.getElementById(m.triggerId);
     if(t)t.setAttribute('aria-expanded','false');
   });
@@ -718,13 +720,23 @@ function closeAllNavMenus(except){
 function setNavMenuOpen(menuId,open){
   const menu=document.getElementById(menuId);
   const trigger=menu&&menu.querySelector('.sens-trigger');
-  if(!menu||!trigger)return;
+  const list=document.getElementById(menuId+'-list');
+  if(!menu||!trigger||!list)return;
   if(open)closeAllNavMenus(menuId);      // only one menu open at a time
   if(open)positionNavMenu(menuId);
-  menu.classList.toggle('open',!!open);
+  menu.classList.toggle('open',!!open);  // keeps the trigger chevron state
+  list.classList.toggle('is-open',!!open);
   trigger.setAttribute('aria-expanded',open?'true':'false');
   if(open)requestAnimationFrame(()=>positionNavMenu(menuId));
 }
+// Move each dropdown out to <body> so the horizontally-scrollable pill row (and
+// .top-nav's backdrop-filter) can never clip it. Positioned via positionNavMenu.
+(function portalNavMenus(){
+  navMenus.forEach(m=>{
+    const list=document.getElementById(m.id+'-list');
+    if(list && list.parentElement!==document.body) document.body.appendChild(list);
+  });
+})();
 function toggleNavMenu(menuId,event){
   if(event){event.preventDefault();event.stopPropagation();}
   const menu=document.getElementById(menuId);
@@ -2584,7 +2596,11 @@ document.addEventListener('click',e=>{
   if(wrap && !wrap.contains(e.target)){
     document.getElementById('search-results').classList.remove('show');
   }
-  const inAnyNavMenu = navMenus.some(m=>{const el=document.getElementById(m.id);return el&&el.contains(e.target);});
+  const inAnyNavMenu = navMenus.some(m=>{
+    const el=document.getElementById(m.id);
+    const lst=document.getElementById(m.id+'-list');   // portaled to <body>
+    return (el&&el.contains(e.target))||(lst&&lst.contains(e.target));
+  });
   if(!inAnyNavMenu){
     closeAllNavMenus();
   }
