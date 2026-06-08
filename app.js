@@ -1578,7 +1578,8 @@ function abxMergeKey(name){ const g = abxAliasGroupFor(name); return g ? normAbx
 // spelling / alias-group canonical). Keyed by the alias-group merge key.
 const ABX_DISPLAY_OVERRIDE = {
   'benzylpenicillin': 'Penicillin',                            // Penicillin / Benzylpenicillin group
-  'amoxicillinclavulanicacid': 'Amoxicillin/Clavulanic acid'   // Augmentin / co-amoxiclav group
+  'amoxicillinclavulanicacid': 'Amoxicillin/Clavulanic acid',  // Augmentin / co-amoxiclav group
+  'piperacillintazobactam': 'Piperacillin/Tazobactam'          // Tazocin / pip-taz group
 };
 // Synonyms for a name, excluding the name itself (for the result "a.k.a." hint).
 function abxAliasText(name){
