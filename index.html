@@ -793,6 +793,17 @@
   <section class="notes-section" id="notes-routine">
     <h3 class="notes-section-title"><i class="ti ti-list-details" aria-hidden="true"></i> Routine antibiotic sets <span class="notes-section-tag">donker sets</span></h3>
     <p class="notes-section-sub">Full routine sensitivity sets split by urine and wound workflows. Set codes are shown under each set name where listed.</p>
+
+    <div class="abx-finder">
+      <div class="abx-finder-wrap">
+        <i class="ti ti-vaccine-bottle search-icon" aria-hidden="true"></i>
+        <input type="text" class="abx-finder-input" id="abx-finder-input" placeholder="Find an antibiotic disc — show every donker that carries it…" autocomplete="off" aria-label="Find which donker sets contain an antibiotic disc">
+        <button class="search-clear abx-finder-clear" id="abx-finder-clear" type="button" onclick="clearAbxFinder()" aria-label="Clear antibiotic filter">×</button>
+        <div class="search-results abx-finder-results" id="abx-finder-results"></div>
+      </div>
+      <div class="abx-finder-status" id="abx-finder-status" hidden></div>
+    </div>
+
     <div id="routine-sets"></div>
   </section>
 

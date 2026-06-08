@@ -1108,6 +1108,39 @@ html.cursor-custom,html.cursor-custom *{cursor:none!important}
 .notes-section-note{font-size:11px;color:var(--text-dim);margin-top:8px}
 .notes-section-note strong{color:var(--text);font-weight:600}
 
+/* Antibiotic-disc finder — filters the donker sets to those carrying a chosen
+   disc. Reuses .search-results / .search-result dropdown styling from GLOBAL
+   SEARCH; only the input shell and the active-filter status bar are bespoke. */
+#view-notes .abx-finder{margin:0 0 4px}
+#view-notes .abx-finder-wrap{position:relative;max-width:520px}
+#view-notes .abx-finder-input{
+  width:100%;font-family:var(--font-sans);font-size:13px;padding:9px 32px 9px 32px;
+  border-radius:var(--border-radius-md);border:1px solid var(--line-strong);background:var(--bg-elev-2);color:var(--text)
+}
+#view-notes .abx-finder-input:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 1px var(--accent),0 0 20px -8px var(--accent-glow)}
+#view-notes .abx-finder-wrap .search-icon{font-size:15px}
+#view-notes .abx-finder-clear{right:8px}
+#view-notes .abx-finder-results .sr-name{font-family:var(--font-mono)}
+#view-notes .abx-finder-status{
+  display:flex;align-items:center;flex-wrap:wrap;gap:8px;margin-top:9px;padding:8px 12px;
+  background:var(--accent-dim);border:1px solid var(--accent);border-radius:var(--border-radius-md);font-size:11px;color:var(--text)
+}
+#view-notes .abx-finder-status .afs-term{font-family:var(--font-mono);font-weight:600;color:var(--accent)}
+#view-notes .abx-finder-status .afs-count{font-family:var(--font-mono);font-size:10px;color:var(--text-dim)}
+#view-notes .abx-finder-status .afs-clear{
+  margin-left:auto;background:transparent;border:1px solid var(--line-strong);border-radius:var(--border-radius-sm);
+  padding:3px 9px;font-family:var(--font-mono);font-size:9px;letter-spacing:.06em;text-transform:uppercase;cursor:pointer;color:var(--text-dim)
+}
+#view-notes .abx-finder-status .afs-clear:hover{border-color:var(--accent);color:var(--accent)}
+#view-notes .abx-finder-empty{padding:14px 12px;font-size:11px;color:var(--text-faint);text-align:center}
+
+/* Matched disc line inside a filtered donker card */
+#view-notes .routine-list li.routine-abx-match{background:var(--accent-dim);border-radius:var(--border-radius-sm)}
+#view-notes .routine-list li.routine-abx-match .routine-abx{color:var(--accent);font-weight:600}
+#view-notes .routine-conc{margin-left:6px;font-family:var(--font-mono);font-size:10px;font-weight:600;padding:1px 7px;border-radius:var(--border-radius-md);background:var(--bg-elev-2);border:1px solid var(--accent);color:var(--text)}
+#view-notes .routine-card.is-filtered{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent),0 0 24px -12px var(--accent-glow)}
+#view-notes .abx-finder-noresults{padding:20px 12px;font-size:12px;color:var(--text-faint);text-align:center;border:1px dashed var(--line-strong);border-radius:var(--border-radius-md)}
+
 #view-notes .rare-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:10px}
 #view-notes .rare-card{border:1px solid var(--line);border-radius:var(--border-radius-md);background:var(--bg-elev);overflow:hidden;transition:border-color .15s,box-shadow .15s,transform .15s}
 #view-notes .rare-card:hover{border-color:var(--line-strong);transform:translateY(-1px)}

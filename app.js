@@ -1395,29 +1395,74 @@ function scrollNotesTo(targetId){
   target.scrollIntoView({behavior:'smooth',block:'start'});
 }
 
-function renderNotesView(){
+const routineNavIds = ['notes-routine-urine','notes-routine-wound','notes-routine-ear-eye'];
+
+// Split a disc entry such as 'Ampicillin 10', 'Vancomycin 5 (24 HR)' or
+// 'Clarithromycin MIC' into its drug name and concentration/method tail. The
+// concentration starts at the first numeric token (or the word "MIC").
+function parseAbxDisc(entry){
+  const m = /^(.+?)\s+(\d.*|MIC)$/i.exec(String(entry).trim());
+  if(m) return {name:m[1].trim(), conc:m[2].trim()};
+  return {name:String(entry).trim(), conc:''};
+}
+
+// Present a concentration tail for display: bare numbers gain a µg suffix,
+// 'MIC' and parenthetical notes are preserved.
+function formatDiscConc(conc){
+  if(!conc) return '';
+  if(/^\d/.test(conc)) return conc.replace(/^(\d+)/, '$1 µg');
+  return conc;
+}
+
+// Currently selected disc filter for the routine (donker) sets, or null.
+// Shape: {name, occurrences:[{section,setName,codes,conc,entry}]}
+let activeAbxFilter = null;
+
+function renderRoutineSets(){
   const routineEl = document.getElementById('routine-sets');
-  if(routineEl){
-    const routineNavIds = ['notes-routine-urine','notes-routine-wound','notes-routine-ear-eye'];
-    routineEl.innerHTML = routineSets.map((group, index) => `
+  if(!routineEl) return;
+  const filterKey = activeAbxFilter ? activeAbxFilter.name.toLowerCase() : null;
+
+  const blocks = routineSets.map((group, index) => {
+    const sets = filterKey
+      ? group.sets.filter(set => set.antibiotics.some(a => parseAbxDisc(a).name.toLowerCase() === filterKey))
+      : group.sets;
+    if(filterKey && !sets.length) return '';
+    return `
       <div class="routine-block" id="${routineNavIds[index] || `notes-routine-${index + 1}`}">
-        <h4 class="routine-block-title">${group.section}<span class="routine-count">${group.sets.length} sets</span></h4>
+        <h4 class="routine-block-title">${group.section}<span class="routine-count">${sets.length} set${sets.length === 1 ? '' : 's'}</span></h4>
         <div class="rare-grid">
-          ${group.sets.map(set => `
-            <div class="rare-card routine-card">
+          ${sets.map(set => `
+            <div class="rare-card routine-card${filterKey ? ' is-filtered' : ''}">
               <div class="rare-card-head">${set.name}</div>
               <div class="routine-code-row">
                 ${set.codes.map(code => `<span class="routine-code">${code}</span>`).join('')}
               </div>
               <ul class="rare-list routine-list">
-                ${set.antibiotics.map(abx => `<li><span class="routine-abx">${abx}</span></li>`).join('')}
+                ${set.antibiotics.map(abx => {
+                  const p = parseAbxDisc(abx);
+                  if(filterKey && p.name.toLowerCase() === filterKey){
+                    return `<li class="routine-abx-match"><span class="routine-abx">${p.name}<span class="routine-conc">${formatDiscConc(p.conc) || '—'}</span></span></li>`;
+                  }
+                  return `<li><span class="routine-abx">${abx}</span></li>`;
+                }).join('')}
               </ul>
             </div>
           `).join('')}
         </div>
       </div>
-    `).join('');
-  }
+    `;
+  }).join('');
+
+  routineEl.innerHTML = filterKey && !blocks
+    ? `<div class="abx-finder-noresults">No donker sets carry that disc.</div>`
+    : blocks;
+
+  renderAbxFinderStatus();
+}
+
+function renderNotesView(){
+  renderRoutineSets();
   const rareEl = document.getElementById('rare-grid');
   if(rareEl){
     rareEl.innerHTML = rareSets.map(([org, items]) => `
@@ -1458,6 +1503,165 @@ function toggleNotesView(){
     switchView('notes');
   }
 }
+
+// ─── Antibiotic-disc finder (bench notes → donker sets) ─────────
+// Type a disc name; the dropdown lists matching discs (like the global
+// search) and selecting one narrows the routine sets to every donker that
+// carries it, with the concentration of the disc in each.
+let abxFinderIndex = null;   // [{name, occurrences:[...]}] sorted by name
+let abxFinderResults = [];   // current dropdown results
+let abxFinderFocusIdx = -1;
+
+function buildAbxFinderIndex(){
+  const map = new Map();
+  routineSets.forEach(group => {
+    group.sets.forEach(set => {
+      set.antibiotics.forEach(entry => {
+        const {name, conc} = parseAbxDisc(entry);
+        const key = name.toLowerCase();
+        if(!map.has(key)) map.set(key, {name, occurrences:[]});
+        map.get(key).occurrences.push({section:group.section, setName:set.name, codes:set.codes, conc, entry});
+      });
+    });
+  });
+  return [...map.values()].sort((a, b) => a.name.localeCompare(b.name));
+}
+
+function abxFinderResultSnippet(item){
+  const setCount = item.occurrences.length;
+  const concs = [...new Set(item.occurrences.map(o => formatDiscConc(o.conc)).filter(Boolean))];
+  const concStr = concs.length ? ' · ' + concs.join(' / ') : '';
+  return `${setCount} donker${setCount === 1 ? '' : 's'}${concStr}`;
+}
+
+function runAbxFinderSearch(q){
+  if(!abxFinderIndex) abxFinderIndex = buildAbxFinderIndex();
+  const results = document.getElementById('abx-finder-results');
+  const clear = document.getElementById('abx-finder-clear');
+  if(!results) return;
+  const raw = q.trim();
+  const ql = raw.toLowerCase();
+  if(clear) clear.classList.toggle('show', raw.length > 0);
+
+  // Empty input while focused → browse the full alphabetical disc list.
+  let matches;
+  if(ql.length === 0){
+    matches = abxFinderIndex.slice();
+  } else {
+    matches = abxFinderIndex
+      .map(it => {
+        const idx = it.name.toLowerCase().indexOf(ql);
+        return idx === -1 ? null : {it, score:idx};
+      })
+      .filter(Boolean)
+      .sort((a, b) => a.score - b.score || a.it.name.localeCompare(b.it.name))
+      .map(x => x.it);
+  }
+
+  abxFinderResults = matches.slice(0, 60);
+  abxFinderFocusIdx = -1;
+
+  if(!abxFinderResults.length){
+    const safe = raw.replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+    results.innerHTML = `<div class="abx-finder-empty">No disc matches &ldquo;${safe}&rdquo;. Try a drug name or abbreviation used on the bench.</div>`;
+    results.classList.add('show');
+    return;
+  }
+
+  results.innerHTML = abxFinderResults.map((m, i) =>
+    `<div class="search-result" data-idx="${i}" onclick="selectAbxFinder(${i})">`
+    + `<div class="sr-kind">Antibiotic disc</div>`
+    + `<div class="sr-name">${highlightMatch(m.name, ql)}</div>`
+    + `<div class="sr-snip">${abxFinderResultSnippet(m)}</div>`
+    + `</div>`
+  ).join('');
+  results.classList.add('show');
+}
+
+function updateAbxFinderFocus(){
+  const rows = document.querySelectorAll('#abx-finder-results .search-result');
+  rows.forEach((r, i) => r.classList.toggle('focus', i === abxFinderFocusIdx));
+  const active = rows[abxFinderFocusIdx];
+  if(active) active.scrollIntoView({block:'nearest'});
+}
+
+function closeAbxFinderDropdown(){
+  const results = document.getElementById('abx-finder-results');
+  if(results) results.classList.remove('show');
+  abxFinderResults = [];
+  abxFinderFocusIdx = -1;
+}
+
+function selectAbxFinder(i){
+  const m = abxFinderResults[i];
+  if(!m) return;
+  activeAbxFilter = m;
+  const input = document.getElementById('abx-finder-input');
+  if(input) input.value = m.name;
+  const clear = document.getElementById('abx-finder-clear');
+  if(clear) clear.classList.add('show');
+  closeAbxFinderDropdown();
+  renderRoutineSets();
+}
+
+function clearAbxFinder(){
+  const input = document.getElementById('abx-finder-input');
+  if(input) input.value = '';
+  const clear = document.getElementById('abx-finder-clear');
+  if(clear) clear.classList.remove('show');
+  activeAbxFilter = null;
+  closeAbxFinderDropdown();
+  renderRoutineSets();
+}
+
+function renderAbxFinderStatus(){
+  const statusEl = document.getElementById('abx-finder-status');
+  if(!statusEl) return;
+  if(!activeAbxFilter){
+    statusEl.hidden = true;
+    statusEl.innerHTML = '';
+    return;
+  }
+  const setCount = activeAbxFilter.occurrences.length;
+  const concs = [...new Set(activeAbxFilter.occurrences.map(o => formatDiscConc(o.conc)).filter(Boolean))];
+  const concStr = concs.length ? ` (${concs.join(' / ')})` : '';
+  statusEl.hidden = false;
+  statusEl.innerHTML =
+    `<i class="ti ti-filter" aria-hidden="true"></i>`
+    + `<span>Showing donker sets carrying <span class="afs-term">${activeAbxFilter.name}</span>${concStr}</span>`
+    + `<span class="afs-count">${setCount} set${setCount === 1 ? '' : 's'}</span>`
+    + `<button class="afs-clear" type="button" onclick="clearAbxFinder()">Clear filter</button>`;
+}
+
+(function initAbxFinder(){
+  const input = document.getElementById('abx-finder-input');
+  if(!input) return;
+  input.addEventListener('input', e => runAbxFinderSearch(e.target.value));
+  input.addEventListener('focus', e => runAbxFinderSearch(e.target.value));
+  input.addEventListener('keydown', e => {
+    const open = abxFinderResults.length > 0;
+    if(e.key === 'ArrowDown' && open){
+      e.preventDefault();
+      abxFinderFocusIdx = Math.min(abxFinderFocusIdx + 1, abxFinderResults.length - 1);
+      updateAbxFinderFocus();
+    } else if(e.key === 'ArrowUp' && open){
+      e.preventDefault();
+      abxFinderFocusIdx = Math.max(abxFinderFocusIdx - 1, 0);
+      updateAbxFinderFocus();
+    } else if(e.key === 'Enter'){
+      e.preventDefault();
+      if(abxFinderFocusIdx >= 0) selectAbxFinder(abxFinderFocusIdx);
+      else if(abxFinderResults.length === 1) selectAbxFinder(0);
+    } else if(e.key === 'Escape'){
+      if(abxFinderResults.length){ e.stopPropagation(); closeAbxFinderDropdown(); }
+    }
+  });
+  // Close the dropdown when clicking outside the finder.
+  document.addEventListener('click', e => {
+    const wrap = input.closest('.abx-finder-wrap');
+    if(wrap && !wrap.contains(e.target)) closeAbxFinderDropdown();
+  });
+})();
 
 // ─── Barcode label generator ───────────────────
 // Converts ISO date (YYYY-MM-DD from <input type=date>) to DDMMYY for labels.
