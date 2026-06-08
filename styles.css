@@ -374,9 +374,12 @@ html.cursor-custom,html.cursor-custom *{cursor:none!important}
   border:1px solid var(--line-strong);border-radius:var(--border-radius-lg);
   background:var(--solid-pop);
   box-shadow:var(--shadow),0 0 30px -12px var(--accent-glow);
-  z-index:1301
+  z-index:2650
 }
-.sens-menu.open .sens-menu-list{display:flex}
+/* The list is portaled to <body> when open (so the scrollable pill row can
+   never clip it); visibility is driven by a class on the list itself rather
+   than a .sens-menu descendant selector. */
+.sens-menu-list.is-open{display:flex}
 .sens-menu-item{
   width:100%;display:flex;align-items:center;gap:8px;padding:9px 11px;border:0;
   border-radius:var(--border-radius-md);background:transparent;color:var(--text-dim);
@@ -1227,8 +1230,10 @@ html[data-theme="light"] .barcode-date-input{color-scheme:light}
 .sero-toggle input{accent-color:var(--accent);cursor:pointer}
 .sero-count{margin-left:auto;font-family:var(--font-mono);font-size:10px;color:var(--text-faint)}
 
-.sero-table-wrap{border:1px solid var(--line);border-radius:var(--border-radius-md);overflow:hidden;background:var(--bg-elev)}
-.sero-table{width:100%;border-collapse:collapse;font-size:11px;table-layout:auto}
+.sero-table-wrap{border:1px solid var(--line);border-radius:var(--border-radius-md);overflow-x:auto;overflow-y:hidden;-webkit-overflow-scrolling:touch;background:var(--bg-elev);scrollbar-width:thin;scrollbar-color:var(--line-strong) transparent}
+.sero-table-wrap::-webkit-scrollbar{height:5px}
+.sero-table-wrap::-webkit-scrollbar-thumb{background:var(--line-strong);border-radius:5px}
+.sero-table{width:100%;border-collapse:collapse;font-size:11px;table-layout:auto;min-width:560px}
 .sero-table th{
   padding:9px 11px;text-align:left;font-family:var(--font-mono);font-weight:500;font-size:10px;letter-spacing:.08em;
   text-transform:uppercase;color:var(--accent);background:var(--bg-elev-2);border-bottom:1px solid var(--line-strong);position:sticky;top:0
