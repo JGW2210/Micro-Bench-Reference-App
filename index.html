@@ -1,0 +1,941 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Microbiology bench reference — HUD/0S</title>
+<meta name="theme-color" content="#f3f6f8" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#05070a" media="(prefers-color-scheme: dark)">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@3.17.0/dist/tabler-icons.min.css">
+<!-- HUD/0S favicon: teal reticle + central plate on dark, inline so there is no extra file dependency -->
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='10' fill='%2305070a'/%3E%3Cg fill='none' stroke='%2338e8d0' stroke-width='2.4'%3E%3Ccircle cx='32' cy='32' r='17'/%3E%3Cpath d='M32 6v9M32 49v9M6 32h9M49 32h9' stroke-linecap='round'/%3E%3C/g%3E%3Ccircle cx='32' cy='32' r='6' fill='%2338e8d0'/%3E%3Cg stroke='%2338e8d0' stroke-width='2' opacity='.5'%3E%3Cpath d='M11 11h7v2M53 11h-7v2M11 53h7v-2M53 53h-7v-2' fill='none' stroke-linecap='round'/%3E%3C/g%3E%3C/svg%3E">
+<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' fill='%2305070a'/%3E%3Cg fill='none' stroke='%2338e8d0' stroke-width='2.4'%3E%3Ccircle cx='32' cy='32' r='17'/%3E%3Cpath d='M32 6v9M32 49v9M6 32h9M49 32h9' stroke-linecap='round'/%3E%3C/g%3E%3Ccircle cx='32' cy='32' r='6' fill='%2338e8d0'/%3E%3C/svg%3E">
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<div class="fx-particles" aria-hidden="true"></div>
+<div class="fx-grid" aria-hidden="true"></div>
+
+<!-- Top-anchored primary navigation: view switcher + keyboard guide -->
+<nav class="top-nav" aria-label="Primary navigation">
+    <!-- Global search lives in the top area (not in any page's content) so it
+         stays pinned with the nav and is shared across every view. It sits
+         above the switcher so the sensitivities dropdown opens into clear space. -->
+    <div class="top-search-row">
+      <div class="search-wrap">
+        <i class="ti ti-search search-icon" aria-hidden="true"></i>
+        <input type="text" class="search-input" id="global-search" placeholder="Search panels, antibiotics, organisms, abbreviations…" autocomplete="off" aria-label="Global search">
+        <button class="search-clear" id="search-clear" onclick="clearSearch()" aria-label="Clear search">×</button>
+        <div class="search-results" id="search-results"></div>
+      </div>
+    </div>
+    <div class="switcher">
+      <div class="switcher-pills">
+        <div class="sens-menu" id="sens-menu">
+          <button class="sw-btn sens-trigger active" id="sw-sens" type="button" onclick="toggleNavMenu('sens-menu', event)" aria-haspopup="true" aria-expanded="false">
+            <i class="ti ti-activity-heartbeat" aria-hidden="true"></i>
+            <span id="sens-label">Sensitivities: Urine</span>
+            <i class="ti ti-chevron-down sens-chevron" aria-hidden="true"></i>
+          </button>
+          <div class="sens-menu-list" id="sens-menu-list" role="menu" aria-label="Sensitivity sections">
+            <button class="sens-menu-item active" id="sw-flow" type="button" role="menuitem" onclick="selectNavView('flow')"><i class="ti ti-droplet" aria-hidden="true"></i><span>Urine sensitivities</span></button>
+            <button class="sens-menu-item" id="sw-wound" type="button" role="menuitem" onclick="selectNavView('wound')"><i class="ti ti-bandage" aria-hidden="true"></i><span>Wound sensitivities</span></button>
+            <button class="sens-menu-item" id="sw-interp" type="button" role="menuitem" onclick="selectNavView('interp')"><i class="ti ti-flask" aria-hidden="true"></i><span>D-set interpreter</span></button>
+            <button class="sens-menu-item" id="sw-rules" type="button" role="menuitem" onclick="selectNavView('rules')"><i class="ti ti-shield-half" aria-hidden="true"></i><span>Intrinsic resistance</span></button>
+            <button class="sens-menu-item" id="sw-checker" type="button" role="menuitem" onclick="selectNavView('checker')"><i class="ti ti-ruler-measure" aria-hidden="true"></i><span>Zone S/I/R checker</span></button>
+          </div>
+        </div>
+        <button class="sw-btn" id="sw-abx" onclick="switchView('abx')"><i class="ti ti-pill" aria-hidden="true"></i> Antibiotic classes</button>
+        <div class="sens-menu" id="class-menu">
+          <button class="sw-btn sens-trigger" id="sw-class" type="button" onclick="toggleNavMenu('class-menu', event)" aria-haspopup="true" aria-expanded="false">
+            <i class="ti ti-microscope" aria-hidden="true"></i>
+            <span id="class-label">Classification</span>
+            <i class="ti ti-chevron-down sens-chevron" aria-hidden="true"></i>
+          </button>
+          <div class="sens-menu-list" id="class-menu-list" role="menu" aria-label="Classification sections">
+            <button class="sens-menu-item" id="sw-plate" type="button" role="menuitem" onclick="selectNavView('plate')"><i class="ti ti-microscope" aria-hidden="true"></i><span>Colony &amp; Gram</span></button>
+            <button class="sens-menu-item" id="sw-bactid" type="button" role="menuitem" onclick="selectNavView('bactid')"><i class="ti ti-bacteria" aria-hidden="true"></i><span>Bacterial ID</span></button>
+          </div>
+        </div>
+        <div class="sens-menu" id="disc-menu">
+          <button class="sw-btn sens-trigger" id="sw-disc" type="button" onclick="toggleNavMenu('disc-menu', event)" aria-haspopup="true" aria-expanded="false">
+            <i class="ti ti-stethoscope" aria-hidden="true"></i>
+            <span id="disc-label">Disciplines</span>
+            <i class="ti ti-chevron-down sens-chevron" aria-hidden="true"></i>
+          </button>
+          <div class="sens-menu-list" id="disc-menu-list" role="menu" aria-label="Discipline sections">
+            <button class="sens-menu-item" id="sw-virology" type="button" role="menuitem" onclick="selectNavView('virology')"><i class="ti ti-virus" aria-hidden="true"></i><span>Molecular</span></button>
+            <button class="sens-menu-item" id="sw-blood" type="button" role="menuitem" onclick="selectNavView('blood')"><i class="ti ti-droplet-half-2" aria-hidden="true"></i><span>Blood Science</span></button>
+            <button class="sens-menu-item" id="sw-myco" type="button" role="menuitem" onclick="selectNavView('myco')"><i class="ti ti-mushroom" aria-hidden="true"></i><span>Mycology</span></button>
+          </div>
+        </div>
+        <button class="sw-btn" id="sw-index" onclick="switchView('index')" aria-label="Index & glossary" title="Index & glossary"><i class="ti ti-list-search" aria-hidden="true"></i></button>
+      </div>
+      <span class="app-hint">Click any card for detail · <span class="kbd">1</span><span class="kbd">2</span><span class="kbd">3</span><span class="kbd">4</span><span class="kbd">5</span><span class="kbd">6</span><span class="kbd">7</span><span class="kbd">8</span><span class="kbd">9</span><span class="kbd">0</span> to switch · <span class="kbd">/</span> to search · <span class="kbd">Enter</span> cycles glossary matches, even after leaving search · <span class="kbd">Esc</span> to close</span>
+    </div>
+</nav>
+
+<!-- Bench notes on its own row beneath the nav so it never overlaps it -->
+<div class="bench-notes-bar">
+  <button class="bench-notes-btn" id="bench-notes-btn" type="button" onclick="toggleNotesView()" aria-label="Bench notes — rare antibiotic sets and QC organisms" title="Bench notes (press N)">
+    <i class="ti ti-notes" aria-hidden="true"></i>
+    <span class="bn-label">Bench notes</span>
+  </button>
+</div>
+
+<div class="wrap">
+<h2 class="sr-only">EUCAST sensitivity flowcharts (urine + wound) with organism dropdown and D-set disc interpreter</h2>
+
+<div class="app-header">
+  <div class="app-title-row">
+    <div class="app-title">Microbiology bench reference<span class="app-sub">— culture · sensitivity · molecular workflows</span></div>
+    <div class="app-title-row-right">
+      <label class="theme-toggle" title="Toggle light / dark">
+        <input type="checkbox" id="themeToggle" aria-label="Toggle theme">
+        <span class="tt-track" aria-hidden="true"></span>
+        <span id="themeLabel">DARK</span>
+      </label>
+    </div>
+  </div>
+</div>
+
+<!-- Recently-viewed detail panels — slim strip, session-only, hidden until first card opened -->
+<div class="recents-bar" id="recents-bar" hidden>
+  <span class="recents-kicker"><i class="ti ti-history" aria-hidden="true"></i> Recent</span>
+  <div class="recents-chips" id="recents-chips"></div>
+  <button class="recents-clear" id="recents-clear" type="button" onclick="clearRecents()" aria-label="Clear recently viewed" title="Clear recents">×</button>
+</div>
+
+<div class="view-container" id="view-container">
+
+<!-- ═══ FLOWCHART VIEW ═══ -->
+<div class="view" id="view-flow">
+<div class="legend">
+  <span class="leg"><span class="leg-dot" style="background:#7F77DD"></span>GP pathway</span>
+  <span class="leg"><span class="leg-dot" style="background:#1D9E75"></span>Inpatient pathway</span>
+  <span class="leg"><span class="leg-dot" style="background:#378ADD"></span>Reflex/follow-up</span>
+  <span class="leg"><span class="leg-dot" style="background:#D85A30"></span>Organism-specific</span>
+  <span class="leg"><span class="leg-dot" style="background:#BA7517"></span>Resistance / ESBL</span>
+  <span class="leg"><span class="leg-dot" style="background:#639922"></span>Reagent / ID tests</span>
+  <span class="leg"><span class="leg-dot" style="background:#D4537E"></span>Standalone MICs</span>
+</div>
+
+<div class="tier-label">Specimen received → Gram stain / culture / MALDI-TOF → Confirmatory reagent tests</div>
+<div style="display:flex;gap:10px;flex-wrap:wrap;margin:4px 0">
+  <div style="flex:1;min-width:120px"><div class="card green" onclick="showDetail('reagent_proteus')"><div class="name">Proteus spp.</div><div class="desc">Indole test</div><div class="abx">P. mirabilis (−) vs P. vulgaris (+)</div></div></div>
+  <div style="flex:1;min-width:120px"><div class="card green" onclick="showDetail('reagent_pseudo')"><div class="name">Pseudomonas spp.</div><div class="desc">Oxidase test</div><div class="abx">Oxidase + → triggers Pseudo1 donker</div></div></div>
+  <div style="flex:1;min-width:120px"><div class="card green" onclick="showDetail('reagent_staph')"><div class="name">Staphylococcus spp.</div><div class="desc">Latex · Catalase · DNase · Cefoxitin</div><div class="abx">Species ID → MRSA screen (MHE)</div></div></div>
+</div>
+
+<div class="arrow-down" style="margin:6px 0">↓ organism-specific pathway (separate from GP/IN cascade)</div>
+<div class="org-selector">
+  <div class="org-selector-top">
+    <span style="font-size:12px;font-weight:500;white-space:nowrap">Organism-specific donkers</span>
+    <select id="org-select">
+      <option value="">— select organism —</option>
+      <option value="staph">Staphylococcus spp.</option>
+      <option value="strep">Streptococcus spp.</option>
+      <option value="enterococcus">Enterococcus spp.</option>
+      <option value="pseudo">Pseudomonas aeruginosa</option>
+    </select>
+    <button class="org-btn" id="org-go-btn" onclick="showOrgFlow()">Show pathway ↗</button>
+    <button class="org-btn" onclick="clearOrg()" style="font-size:11px;color:var(--color-text-secondary)">Clear</button>
+  </div>
+  <div id="org-flow" style="display:none"></div>
+</div>
+
+<div class="arrow-down" style="margin:6px 0">↓ standard Enterobacterales / GP / inpatient cascade</div>
+<div style="display:flex;gap:10px;align-items:flex-start;margin:4px 0">
+  <div style="flex:1"><div class="branch-label">Community / GP-led</div><div class="card purple" onclick="showDetail('gp')"><div class="name">GP Donker</div><div class="desc">Primary GP panel</div><div class="abx">Amp · AmoxClav · Cefpodoxime · Nitrofurantoin · Cephalexin · Trimethoprim</div></div></div>
+  <div style="flex:1"><div class="branch-label">Inpatient / hospital</div><div class="card teal" onclick="showDetail('in')"><div class="name">IN Donker</div><div class="desc">Primary inpatient panel</div><div class="abx">Mecillinam · AmoxClav · Cefpodoxime · Gentamicin · Nitrofurantoin · Trimethoprim</div></div></div>
+</div>
+
+<div class="arrow-down" style="margin:4px 0">↓ reflex on resistance pattern</div>
+<div style="display:flex;gap:10px;align-items:flex-start;margin:4px 0">
+  <div style="flex:1"><div class="card blue" onclick="showDetail('gp1')"><div class="name">GP1 Donker <span style="font-weight:400;font-size:10px">(reflex)</span></div><div class="desc">Extended GP follow-up</div><div class="abx">Cipro · Gentamicin · Ertapenem · Fosfomycin · Temocillin · Mecillinam</div></div></div>
+  <div style="flex:1"><div class="card blue" onclick="showDetail('in1')"><div class="name">IN1 Donker <span style="font-weight:400;font-size:10px">(reflex)</span></div><div class="desc">Extended inpatient follow-up</div><div class="abx">Cipro · Ampicillin · Temocillin · Ertapenem · Fosfomycin · Pip/Taz</div></div></div>
+</div>
+
+<div class="arrow-down" style="margin:6px 0">↓ ESBL / AmpC / carbapenemase screen triggered by resistance pattern</div>
+<div class="resist-trigger">
+  <div style="margin-bottom:8px"><strong>Phenotypic screen selection</strong> — triggered by cefpodoxime resistance, multi-resistance, or clinical flag:</div>
+  <div class="dset-row">
+    <span class="dset-pill d68" onclick="switchView('interp','d68')">D68 — ESBL / AmpC screen ↗</span>
+    <span class="dset-pill d69" onclick="switchView('interp','d69')">D69 — AmpC characterisation ↗</span>
+    <span class="dset-pill d63" onclick="switchView('interp','d63')">D63 — ESBL confirmation ↗</span>
+    <span class="dset-pill d73" onclick="switchView('interp','d73')">D73 — Carbapenemase typing ↗</span>
+  </div>
+</div>
+
+<div class="arrow-down" style="margin:6px 0">↓ confirmed resistant phenotype / MDR escalation</div>
+<div style="display:flex;gap:10px;flex-wrap:wrap;margin:4px 0">
+  <div style="flex:1;min-width:130px"><div class="card amber" onclick="showDetail('ur2')"><div class="name">UR2 Donker</div><div class="desc">High resistance / ESBL-E / MDR</div><div class="abx">Meropenem · Cefepime · Amikacin · Ceftol/Taz · Ceftazidime · Ceftaz/Avi</div></div></div>
+  <div style="flex:1;min-width:130px"><div class="card amber" onclick="showDetail('ur4')"><div class="name">UR4 Donker</div><div class="desc">XDR / last resort</div><div class="abx">Cefiderocol</div></div></div>
+</div>
+
+<div class="arrow-down" style="margin:6px 0">↓ quantitative MIC confirmation</div>
+<div style="display:flex;gap:10px;flex-wrap:wrap;margin:4px 0">
+  <div style="flex:1;min-width:120px"><div class="card pink" onclick="showDetail('mics')"><div class="name">Standalone MICs</div><div class="desc">Quantitative breakpoints</div><div class="abx">Fosfomycin · Vancomycin · Teicoplanin</div></div></div>
+</div>
+<div class="page-footer">EUCAST sens. · 2026</div>
+</div><!-- end view-flow -->
+
+<!-- ═══ WOUND SENSITIVITIES VIEW ═══ -->
+<div class="view hidden" id="view-wound">
+<div class="legend">
+  <span class="leg"><span class="leg-dot" style="background:#7F77DD"></span>Preliminary panel</span>
+  <span class="leg"><span class="leg-dot" style="background:#D85A30"></span>Organism-specific</span>
+  <span class="leg"><span class="leg-dot" style="background:#378ADD"></span>Reflex / follow-up</span>
+  <span class="leg"><span class="leg-dot" style="background:#BA7517"></span>Resistance / MDR</span>
+  <span class="leg"><span class="leg-dot" style="background:#639922"></span>Reagent / ID tests</span>
+  <span class="leg"><span class="leg-dot" style="background:#D4537E"></span>Standalone MICs</span>
+</div>
+
+<div class="tier-label">Specimen received → Gram stain / culture / MALDI-TOF → Confirmatory reagent tests</div>
+<div style="display:flex;gap:10px;flex-wrap:wrap;margin:4px 0">
+  <div style="flex:1;min-width:120px"><div class="card green" onclick="showDetail('reagent_proteus')"><div class="name">Proteus spp.</div><div class="desc">Indole test</div><div class="abx">P. mirabilis (−) vs P. vulgaris (+)</div></div></div>
+  <div style="flex:1;min-width:120px"><div class="card green" onclick="showDetail('reagent_pseudo')"><div class="name">Pseudomonas spp.</div><div class="desc">Oxidase test</div><div class="abx">Oxidase + → triggers Pseudo donker</div></div></div>
+  <div style="flex:1;min-width:120px"><div class="card green" onclick="showDetail('reagent_staph')"><div class="name">Staphylococcus spp.</div><div class="desc">Latex · Catalase · DNase · Cefoxitin</div><div class="abx">Species ID → MRSA screen (MHE)</div></div></div>
+</div>
+
+<div class="arrow-down" style="margin:6px 0">↓ Coliform / Enterobacterales pathway — done up-front on all wound coliforms</div>
+<div style="display:flex;gap:10px;align-items:flex-start;margin:4px 0">
+  <div style="flex:1"><div class="branch-label">Preliminary (run together)</div><div class="card purple" onclick="showDetail('coli1')"><div class="name">Coli 1 Donker</div><div class="desc">Primary β-lactam / first-line</div><div class="abx">Ampicillin · AmoxClav · Cefpodoxime · Ciprofloxacin · Gentamicin · Pip/Taz</div></div></div>
+  <div style="flex:1"><div class="branch-label">Preliminary (run together)</div><div class="card purple" onclick="showDetail('coli2')"><div class="name">Coli 2 Donker</div><div class="desc">Cephalosporin / carbapenem screen</div><div class="abx">Ceftriaxone · Ertapenem · Cefoxitin · Meropenem · Co-trimoxazole · Temocillin</div></div></div>
+</div>
+
+<div class="arrow-down" style="margin:6px 0">↓ ESBL / AmpC / carbapenemase screen on resistance pattern</div>
+<div class="resist-trigger">
+  <div style="margin-bottom:8px"><strong>Phenotypic screen selection</strong> — triggered by cefpodoxime/ceftriaxone resistance, carbapenem reduced zone, or MDR phenotype:</div>
+  <div class="dset-row">
+    <span class="dset-pill d68" onclick="switchView('interp','d68')">D68 — ESBL / AmpC screen ↗</span>
+    <span class="dset-pill d69" onclick="switchView('interp','d69')">D69 — AmpC characterisation ↗</span>
+    <span class="dset-pill d63" onclick="switchView('interp','d63')">D63 — ESBL confirmation ↗</span>
+    <span class="dset-pill d73" onclick="switchView('interp','d73')">D73 — Carbapenemase typing ↗</span>
+  </div>
+</div>
+
+<div class="arrow-down" style="margin:6px 0">↓ confirmed MDR / carbapenem-reduced — reflex alongside D73 or D68</div>
+<div style="display:flex;gap:10px;flex-wrap:wrap;margin:4px 0">
+  <div style="flex:1;min-width:130px"><div class="card amber" onclick="showDetail('coli3')"><div class="name">Coli 3 Donker <span style="font-weight:400;font-size:10px">(reflex)</span></div><div class="desc">ESBL / CRE / MDR escalation</div><div class="abx">Amikacin · Aztreonam · Ceftol/Taz · Fosfomycin · Tigecycline</div></div></div>
+  <div style="flex:1;min-width:130px"><div class="card pink" onclick="showDetail('mero_mic')"><div class="name">Meropenem MIC <span style="font-weight:400;font-size:10px">(optional)</span></div><div class="desc">Quantitative confirmation</div><div class="abx">Gradient strip / broth microdilution</div></div></div>
+</div>
+
+<div class="arrow-down" style="margin:10px 0">↓ Non-coliform organisms — select from dropdown for organism-specific pathway</div>
+<div class="org-selector">
+  <div class="org-selector-top">
+    <span style="font-size:12px;font-weight:500;white-space:nowrap">Organism-specific donkers</span>
+    <select id="org-select-wound">
+      <option value="">— select organism —</option>
+      <option value="w_staph">Staphylococcus aureus / CoNS</option>
+      <option value="w_strep">Streptococcus spp. (BHS / AHS)</option>
+      <option value="w_pneumo">Streptococcus pneumoniae</option>
+      <option value="w_entero">Enterococcus spp.</option>
+      <option value="w_pseudo">Pseudomonas aeruginosa</option>
+      <option value="w_haem">Haemophilus spp.</option>
+      <option value="w_anaerobe">Anaerobes (Brucella agar)</option>
+      <option value="w_gpb">Corynebacterium / other GPB</option>
+      <option value="w_acine">Acinetobacter spp.</option>
+      <option value="w_aero">Aeromonas spp.</option>
+      <option value="w_kin">Kingella spp.</option>
+      <option value="w_list">Listeria monocytogenes</option>
+      <option value="w_mor">Moraxella catarrhalis</option>
+      <option value="w_past">Pasteurella spp.</option>
+      <option value="w_steno">Stenotrophomonas maltophilia</option>
+      <option value="w_topical">Topical ear / eye isolates</option>
+    </select>
+    <button class="org-btn" id="org-go-btn-wound" onclick="showOrgFlowWound()">Show pathway ↗</button>
+    <button class="org-btn" onclick="clearOrgWound()" style="font-size:11px;color:var(--color-text-secondary)">Clear</button>
+  </div>
+  <div id="org-flow-wound" style="display:none"></div>
+</div>
+
+<div class="page-footer">EUCAST sens. · 2026</div>
+</div><!-- end view-wound -->
+
+
+<!-- ═══ MOLECULAR VIEW ═══ -->
+<div class="view hidden" id="view-virology">
+  <div class="viro-hero">
+    <h2><i class="ti ti-virus" aria-hidden="true"></i> Molecular workflow</h2>
+    <p>Bench-side molecular workflow for Aptima CT/NG NAAT testing on the Hologic Panther, combined respiratory virus PCR on Cepheid GeneXpert, and TB PCR from sputum prepared in the CL3 laboratory. Click any step or information card for the same expandable detail panel used elsewhere in the guide.</p>
+  </div>
+
+  <section class="viro-flow">
+    <div class="viro-flow-title"><i class="ti ti-clipboard-check" aria-hidden="true"></i> Molecular sample acceptance — first bench check</div>
+    <div class="viro-step-row">
+      <div class="viro-step" onclick="showDetail('viro_accept_aptima')"><div class="viro-step-kicker">Panther</div><div class="viro-step-name">Aptima CT/NG acceptance</div><div class="viro-step-note">Correct Aptima container, identifiers, site/request match, volume, expiry and leakage check.</div></div>
+      <div class="viro-step" onclick="showDetail('viro_accept_resp')"><div class="viro-step-kicker">GeneXpert</div><div class="viro-step-name">Respiratory PCR acceptance</div><div class="viro-step-note">Universal viral swab container, sufficient medium, clear ID and acute respiratory request.</div></div>
+      <div class="viro-step" onclick="showDetail('viro_accept_tb')"><div class="viro-step-kicker">CL3</div><div class="viro-step-name">TB sputum acceptance</div><div class="viro-step-note">Leak-proof sputum pot, TB request, transport safety and CL3 handover before opening.</div></div>
+    </div>
+  </section>
+
+  <div class="viro-grid">
+    <div class="card purple" onclick="showDetail('viro_panther_overview')"><div class="name">Hologic Panther</div><div class="desc">Aptima NAAT workflow</div><div class="abx">Chlamydia trachomatis · Neisseria gonorrhoeae · Aptima swabs</div></div>
+    <div class="card blue" onclick="showDetail('viro_genexpert_resp_overview')"><div class="name">Cepheid GeneXpert</div><div class="desc">Respiratory multiplex PCR</div><div class="abx">RSV · Flu A/B · SARS‑CoV‑2 · Universal viral swab</div></div>
+    <div class="card amber" onclick="showDetail('viro_tb_overview')"><div class="name">TB PCR</div><div class="desc">CL3-prepared sputum</div><div class="abx">M. tuberculosis complex · rifampicin-resistance marker · aerosol risk</div></div>
+  </div>
+
+  <section class="viro-flow">
+    <div class="viro-flow-title"><i class="ti ti-device-desktop-analytics" aria-hidden="true"></i> Panther Aptima CT/NG NAAT pathway</div>
+    <div class="viro-step-row">
+      <div class="viro-step" onclick="showDetail('viro_panther_sample')"><div class="viro-step-kicker">Specimen</div><div class="viro-step-name">Aptima swab / transport</div><div class="viro-step-note">Check tube type, label, volume, leakage and request details.</div></div>
+      <div class="viro-step" onclick="showDetail('viro_panther_loading')"><div class="viro-step-kicker">Instrument</div><div class="viro-step-name">Load Panther</div><div class="viro-step-note">Barcode, rack, reagent and consumable checks before run start.</div></div>
+      <div class="viro-step" onclick="showDetail('viro_panther_result')"><div class="viro-step-kicker">Result</div><div class="viro-step-name">CT/NG NAAT interpretation</div><div class="viro-step-note">Detected / not detected / invalid with repeat and escalation rules.</div></div>
+    </div>
+  </section>
+
+  <section class="viro-flow">
+    <div class="viro-flow-title"><i class="ti ti-lungs" aria-hidden="true"></i> GeneXpert RSV / Flu A&B / SARS‑CoV‑2 pathway</div>
+    <div class="viro-step-row">
+      <div class="viro-step" onclick="showDetail('viro_resp_sample')"><div class="viro-step-kicker">Specimen</div><div class="viro-step-name">Universal viral swab container</div><div class="viro-step-note">Viral transport medium sample for acute respiratory PCR.</div></div>
+      <div class="viro-step" onclick="showDetail('viro_resp_cartridge')"><div class="viro-step-kicker">Cartridge</div><div class="viro-step-name">Cepheid Xpert Xpress</div><div class="viro-step-note">Transfer sample to cartridge, close lid, scan and run.</div></div>
+      <div class="viro-step" onclick="showDetail('viro_resp_result')"><div class="viro-step-kicker">Result</div><div class="viro-step-name">Multiplex call-out</div><div class="viro-step-note">Report each target separately and manage invalid / error runs.</div></div>
+    </div>
+  </section>
+
+  <div class="viro-warning"><i class="ti ti-alert-triangle" aria-hidden="true"></i><div><strong>CL3 SOP checkpoint:</strong> sputum for TB PCR must be handled as potentially viable <em>M. tuberculosis</em> until the locally validated inactivation process is complete. Do not open or manipulate sputum outside the approved CL3 workflow, and follow local cabinet, PPE, waste, spill and transport rules.</div></div>
+
+  <section class="viro-flow">
+    <div class="viro-flow-title"><i class="ti ti-biohazard" aria-hidden="true"></i> TB PCR pathway — sputum prepared in CL3</div>
+    <div class="viro-step-row">
+      <div class="viro-step" onclick="showDetail('viro_tb_cl3')"><div class="viro-step-kicker">Containment</div><div class="viro-step-name">CL3 sputum preparation</div><div class="viro-step-note">Open and manipulate sputum only in CL3 with local SOP controls.</div></div>
+      <div class="viro-step" onclick="showDetail('viro_tb_cartridge')"><div class="viro-step-kicker">PCR</div><div class="viro-step-name">GeneXpert TB cartridge</div><div class="viro-step-note">Prepared/inactivated material loaded according to cartridge IFU.</div></div>
+      <div class="viro-step" onclick="showDetail('viro_tb_result')"><div class="viro-step-kicker">Result</div><div class="viro-step-name">MTB and rifampicin marker</div><div class="viro-step-note">Detected calls require urgent clinical and infection-control communication.</div></div>
+    </div>
+  </section>
+
+
+
+  <div class="section-title">Molecular result interpretation mini-guides</div>
+  <p class="viro-subtitle">Click a result card for practical reporting, repeat and escalation notes. These prompts support local SOPs rather than replacing them.</p>
+
+  <section class="viro-flow">
+    <div class="viro-flow-title"><i class="ti ti-report-medical" aria-hidden="true"></i> Panther CT/NG NAAT result calls</div>
+    <div class="viro-result-grid">
+      <div class="viro-result-card positive" onclick="showDetail('viro_ct_detected')"><div class="viro-result-name">CT detected</div><div class="viro-result-note">Report Chlamydia detected and follow sexual-health notification pathway.</div></div>
+      <div class="viro-result-card positive" onclick="showDetail('viro_ng_detected')"><div class="viro-result-name">NG detected</div><div class="viro-result-note">Report Gonorrhoea detected; culture/susceptibility still matters where possible.</div></div>
+      <div class="viro-result-card positive" onclick="showDetail('viro_ctng_both_detected')"><div class="viro-result-name">CT + NG detected</div><div class="viro-result-note">Dual target positivity; report separately and trigger relevant follow-up.</div></div>
+      <div class="viro-result-card success" onclick="showDetail('viro_ctng_negative')"><div class="viro-result-name">CT/NG not detected</div><div class="viro-result-note">Valid negative result; interpret with site, timing and clinical context.</div></div>
+      <div class="viro-result-card warn" onclick="showDetail('viro_ctng_invalid')"><div class="viro-result-name">Invalid / inhibited</div><div class="viro-result-note">Repeat if sample volume and stability allow; persistent invalids need new sample/senior review.</div></div>
+    </div>
+  </section>
+
+  <section class="viro-flow">
+    <div class="viro-flow-title"><i class="ti ti-lungs" aria-hidden="true"></i> Respiratory GeneXpert result calls</div>
+    <div class="viro-result-grid">
+      <div class="viro-result-card positive" onclick="showDetail('viro_resp_sars_detected')"><div class="viro-result-name">SARS‑CoV‑2 detected</div><div class="viro-result-note">Infection-control and clinical-risk pathway according to local policy.</div></div>
+      <div class="viro-result-card positive" onclick="showDetail('viro_resp_flu_a_detected')"><div class="viro-result-name">Influenza A detected</div><div class="viro-result-note">Report as Flu A; antiviral/cohorting relevance depends on onset and risk group.</div></div>
+      <div class="viro-result-card positive" onclick="showDetail('viro_resp_flu_b_detected')"><div class="viro-result-name">Influenza B detected</div><div class="viro-result-note">Report as Flu B; do not collapse into a generic influenza result.</div></div>
+      <div class="viro-result-card positive" onclick="showDetail('viro_resp_rsv_detected')"><div class="viro-result-name">RSV detected</div><div class="viro-result-note">Important for infants, elderly patients and outbreak/cohorting decisions.</div></div>
+      <div class="viro-result-card warn" onclick="showDetail('viro_resp_codetection')"><div class="viro-result-name">Co-detection</div><div class="viro-result-note">Multiple targets can be genuine; report each target separately.</div></div>
+      <div class="viro-result-card warn" onclick="showDetail('viro_resp_invalid')"><div class="viro-result-name">Invalid / error / no result</div><div class="viro-result-note">Repeat from the same sample if suitable; request new sample if persistent.</div></div>
+    </div>
+  </section>
+
+  <section class="viro-flow">
+    <div class="viro-flow-title"><i class="ti ti-biohazard" aria-hidden="true"></i> TB GeneXpert result calls</div>
+    <div class="viro-result-grid">
+      <div class="viro-result-card danger" onclick="showDetail('viro_tb_mtb_rif_not_detected')"><div class="viro-result-name">MTB detected · RIF not detected</div><div class="viro-result-note">Urgent TB/infection-control communication; culture still required.</div></div>
+      <div class="viro-result-card danger" onclick="showDetail('viro_tb_rif_detected')"><div class="viro-result-name">MTB detected · RIF resistance detected</div><div class="viro-result-note">Possible MDR‑TB marker; urgent consultant/reference-lab escalation.</div></div>
+      <div class="viro-result-card warn" onclick="showDetail('viro_tb_trace_detected')"><div class="viro-result-name">MTB trace / very low</div><div class="viro-result-note">Low-burden positive; interpret cautiously and ensure culture/referral pathway.</div></div>
+      <div class="viro-result-card success" onclick="showDetail('viro_tb_not_detected')"><div class="viro-result-name">MTB not detected</div><div class="viro-result-note">Does not exclude TB where clinical suspicion remains high.</div></div>
+      <div class="viro-result-card warn" onclick="showDetail('viro_tb_invalid')"><div class="viro-result-name">Invalid / error / no result</div><div class="viro-result-note">Repeat under CL3/SOP controls if material remains; document failures.</div></div>
+    </div>
+  </section>
+
+  <section class="viro-flow">
+    <div class="viro-flow-title"><i class="ti ti-repeat" aria-hidden="true"></i> Invalid / error / repeat decision guide</div>
+    <div class="viro-table-wrap">
+      <table class="viro-table">
+        <thead><tr><th>Scenario</th><th>Suggested bench action</th><th>Escalation / note</th></tr></thead>
+        <tbody>
+          <tr><td>Invalid once</td><td>Repeat from the same primary specimen if sufficient volume remains and the specimen is within local stability limits.</td><td>Check internal-control/inhibition flags and instrument messages before repeating.</td></tr>
+          <tr><td>Invalid twice</td><td>Do not keep repeating automatically.</td><td>Request a repeat specimen or discuss with a senior/section lead.</td></tr>
+          <tr><td>Insufficient volume</td><td>Do not dilute or top up unless the local SOP and assay IFU explicitly permit it.</td><td>Report as unsuitable / request repeat sample according to local wording.</td></tr>
+          <tr><td>Leaking, unlabelled or mislabelled</td><td>Reject or hold for senior review according to specimen-acceptance policy.</td><td>TB sputum leaks require CL3/safety escalation before any manipulation.</td></tr>
+          <tr><td>GeneXpert cartridge error / no result</td><td>Repeat with a fresh cartridge if there is enough suitable sample or prepared material.</td><td>Persistent module/cartridge errors should be logged and escalated.</td></tr>
+          <tr><td>TB PCR repeat</td><td>Maintain CL3 chain-of-handling for sputum and prepared material until local inactivation/transport criteria are met.</td><td>Never re-open primary sputum outside the approved containment workflow.</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="viro-flow">
+    <div class="viro-flow-title"><i class="ti ti-table" aria-hidden="true"></i> TB PCR vs smear, culture and reference testing</div>
+    <div class="viro-table-wrap">
+      <table class="viro-table">
+        <thead><tr><th>Method</th><th>Detects</th><th>Strength</th><th>Limitation</th></tr></thead>
+        <tbody>
+          <tr><td>TB PCR / GeneXpert</td><td>MTB complex DNA and selected rifampicin-resistance-associated mutations.</td><td>Rapid result for clinical and infection-control decisions.</td><td>Does not replace culture; limited resistance information.</td></tr>
+          <tr><td>AFB smear</td><td>Acid-fast bacilli burden on microscopy.</td><td>Rapid marker of organism load/infectiousness.</td><td>Not species-specific and less sensitive than molecular testing.</td></tr>
+          <tr><td>Mycobacterial culture</td><td>Viable mycobacteria.</td><td>Gold-standard confirmation and enables full identification.</td><td>Slow; may take weeks.</td></tr>
+          <tr><td>Reference susceptibility testing</td><td>Phenotypic and/or molecular drug-resistance profile.</td><td>Guides definitive therapy, especially MDR/XDR concern.</td><td>Requires referral pathway and usually culture or sufficient molecular material.</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <div class="section-title">Molecular background and reporting notes</div>
+  <div class="viro-info-grid">
+    <div class="viro-info-card" onclick="showDetail('viro_ct_ng_info')"><h3>CT/NG background</h3><p>Why NAAT is used for Chlamydia and Gonorrhoea, and what a positive molecular result means.</p></div>
+    <div class="viro-info-card" onclick="showDetail('viro_resp_info')"><h3>Respiratory virus background</h3><p>Influenza, RSV and SARS‑CoV‑2 targets, seasonality and co-detection notes.</p></div>
+    <div class="viro-info-card" onclick="showDetail('viro_tb_info')"><h3>TB molecular background</h3><p>MTB complex PCR, smear/culture relationship and rifampicin-resistance screening.</p></div>
+    <div class="viro-info-card" onclick="showDetail('viro_pcr_qc')"><h3>PCR quality points</h3><p>Internal controls, inhibitors, contamination prevention and repeat criteria.</p></div>
+  </div>
+</div><!-- end view-virology -->
+
+
+<!-- ═══ MYCOLOGY VIEW ═══ -->
+<div class="view hidden" id="view-rules">
+  <div class="myco-hero">
+    <h2><i class="ti ti-shield-half" aria-hidden="true"></i> Expected resistant phenotypes &amp; intrinsic resistance</h2>
+    <p>A release-checking aid: pick an organism (or group) to see the agents that must <strong>not</strong> be reported susceptible, plus the EUCAST expert / interpretive rules that apply. EUCAST now calls these &ldquo;expected resistant phenotypes&rdquo; &mdash; a result that contradicts the expected phenotype should be viewed with suspicion and the ID / test re-checked before release.</p>
+  </div>
+
+  <div class="myco-flow-note"><i class="ti ti-info-circle" aria-hidden="true"></i> Based on EUCAST <strong>Expected Resistant Phenotypes v1.2 (2023)</strong> and <strong>Expert Rules v3.3</strong>; lists are abbreviated for the bench. Always confirm against the current EUCAST tables and your local SOP before reporting.</div>
+
+  <div class="myco-controls">
+    <input class="myco-search" id="rules-search" type="text" placeholder="Search organism, agent or rule…" oninput="renderRules()" aria-label="Search intrinsic resistance">
+    <select class="myco-filter" id="rules-group-filter" onchange="renderRules()" aria-label="Filter by group">
+      <option value="">All groups</option>
+      <option value="gnr">Enterobacterales</option>
+      <option value="nf">Non-fermenters</option>
+      <option value="gpc">Gram-positive</option>
+      <option value="anaerobe">Anaerobes</option>
+    </select>
+  </div>
+
+  <div class="section-title">Select an organism / group</div>
+  <div class="rules-grid" id="rules-grid"></div>
+  <div class="rules-detail" id="rules-detail"></div>
+  <div class="page-footer">EUCAST expected resistant phenotypes v1.2 + expert rules v3.3 · verification aid · guidance only</div>
+</div><!-- end view-rules -->
+
+<div class="view hidden" id="view-myco">
+  <div class="myco-hero">
+    <h2><i class="ti ti-mushroom" aria-hidden="true"></i> Mycology</h2>
+    <p>Two references in one. <strong>Dermatophytes</strong> covers the agents of tinea (hair, skin &amp; nails) with colony/microscopy pointers and Mycology Online (Adelaide) image links. <strong>General fungi</strong> is an interactive build of the UK SMI morphological-identification algorithm — click any node to open its bench notes and organism list, the same way the sensitivity flowcharts work.</p>
+  </div>
+
+  <div class="myco-tabs" role="tablist" aria-label="Mycology section">
+    <button class="myco-tab active" id="myco-tab-derm" role="tab" aria-selected="true" type="button" onclick="setMycoTab('derm')"><i class="ti ti-microscope" aria-hidden="true"></i> Dermatophytes — classification &amp; ID</button>
+    <button class="myco-tab" id="myco-tab-flow" role="tab" aria-selected="false" type="button" onclick="setMycoTab('flow')"><i class="ti ti-sitemap" aria-hidden="true"></i> General fungi — morphology flowchart</button>
+    <button class="myco-tab" id="myco-tab-afst" role="tab" aria-selected="false" type="button" onclick="setMycoTab('afst')"><i class="ti ti-vaccine-bottle" aria-hidden="true"></i> Antifungals — agents &amp; susceptibility</button>
+  </div>
+
+  <div class="myco-pane" id="myco-pane-derm" role="tabpanel" aria-labelledby="myco-tab-derm">
+  <div class="myco-controls">
+    <input class="myco-search" id="myco-search" type="text" placeholder="Search disease, fungus, reservoir, microscopy clue…" oninput="renderMycology()" aria-label="Search mycology">
+    <select class="myco-filter" id="myco-site-filter" onchange="renderMycology()" aria-label="Filter by site">
+      <option value="">All sites</option>
+      <option value="hair">Hair / scalp</option>
+      <option value="skin">Skin / body</option>
+      <option value="nail">Nails</option>
+      <option value="groin">Groin</option>
+      <option value="feet">Feet</option>
+    </select>
+    <select class="myco-filter" id="myco-genus-filter" onchange="renderMycology()" aria-label="Filter by genus">
+      <option value="">All genera</option>
+      <option value="Trichophyton">Trichophyton</option>
+      <option value="Microsporum">Microsporum</option>
+      <option value="Nannizzia">Nannizzia</option>
+      <option value="Epidermophyton">Epidermophyton</option>
+    </select>
+  </div>
+
+  <div class="section-title">Common forms of dermatophytosis</div>
+  <div class="myco-grid" id="myco-disease-grid"></div>
+
+  <div class="section-title">Fungus microscopy reference</div>
+  <div class="myco-grid" id="myco-fungus-grid"></div>
+  <div class="myco-fungus-panel" id="myco-fungus-panel"></div>
+  </div><!-- end myco-pane-derm -->
+
+  <div class="myco-pane is-hidden" id="myco-pane-flow" role="tabpanel" aria-labelledby="myco-tab-flow">
+    <div class="tier-label">UK SMI ID 1 · Issue 4 · 06.08.25 — morphological characteristics of fungi</div>
+    <div class="myco-flow-note"><i class="ti ti-alert-triangle" aria-hidden="true"></i> <strong>#</strong> = Hazard Group 3 — process in a Containment Level 3 laboratory. Algorithm adapted from UK SMI <strong>ID 1</strong> (Issue 4, 06.08.25); for guidance and to support validation of MALDI-TOF MS / commercial ID results — some nomenclature has since changed.</div>
+
+    <div class="myco-flow-root">
+      <div class="card" onclick="showDetail('fx_fungi')"><div class="name">Fungi</div><div class="desc">First morphological split</div><div class="abx">Filamentous mould vs pasty yeast</div></div>
+    </div>
+    <div class="arrow-down" style="margin:6px 0">↓ filamentous growth vs pasty / creamy growth</div>
+
+    <div class="myco-flow-cols">
+      <!-- MOULDS -->
+      <div class="myco-flow-col">
+        <div class="card teal" onclick="showDetail('fx_moulds')"><div class="name">Moulds (filamentous)</div><div class="desc">Branch on hyphal septation</div></div>
+        <div class="arrow-down">↓ examine hyphae</div>
+        <div class="myco-flow-subcols">
+          <div class="myco-flow-sub">
+            <div class="branch-label">Aseptate / pauci-septate</div>
+            <div class="card coral" onclick="showDetail('fx_mucorales')"><div class="name">Mucoraceous moulds &amp; relatives</div><div class="desc">Broad ribbon-like hyphae</div><div class="abx">Mucor · Rhizopus · Lichtheimia · Cunninghamella · Apophysomyces …</div></div>
+          </div>
+          <div class="myco-flow-sub">
+            <div class="branch-label">Septate hyphae</div>
+            <div class="card blue" onclick="showDetail('fx_monomorphic')"><div class="name">Monomorphic</div><div class="desc">Same form at 25°C / 37°C</div><div class="abx">Aspergillus · Fusarium · dermatophytes · Scedosporium …</div></div>
+            <div class="arrow-down">↓ or thermally dimorphic</div>
+            <div class="card amber" onclick="showDetail('fx_dimorphic')"><div class="name">Dimorphic <span style="font-weight:400;font-size:10px">(mostly HG3)</span></div><div class="desc">Yeast / spherule at 37°C</div><div class="abx">Histoplasma# · Coccidioides# · Talaromyces# · Sporothrix …</div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- YEASTS -->
+      <div class="myco-flow-col">
+        <div class="card teal" onclick="showDetail('fx_yeasts')"><div class="name">Yeasts</div><div class="desc">Branch on colony colour / texture</div></div>
+        <div class="arrow-down">↓ cream / white colonies → germ-tube test</div>
+        <div class="card green" onclick="showDetail('fx_gt_pos')"><div class="name">Germ-tube positive</div><div class="desc">True germ tube in serum, 2–3 h</div><div class="abx">C. albicans · C. dubliniensis · C. africana</div></div>
+        <div class="arrow-down">↓ germ-tube negative → cornmeal (Dalmau) morphology</div>
+        <div class="card purple" onclick="showDetail('fx_gt_neg')"><div class="name">Germ-tube negative</div><div class="desc">Read structures on Dalmau plate</div></div>
+        <div class="myco-flow-leaves">
+          <div class="card purple" onclick="showDetail('fx_gtn_chlamydo')"><div class="name">Chlamydoconidia + blastospores + pseudohyphae</div><div class="abx">Candida albicans</div></div>
+          <div class="card purple" onclick="showDetail('fx_gtn_pseudo')"><div class="name">Blastospores + pseudohyphae</div><div class="abx">Non-albicans Candida</div></div>
+          <div class="card purple" onclick="showDetail('fx_gtn_arthro_blasto')"><div class="name">Arthrospores + blastospores</div><div class="abx">Trichosporon · Geotrichum</div></div>
+          <div class="card purple" onclick="showDetail('fx_gtn_arthro')"><div class="name">Arthrospores only</div><div class="abx">Geotrichum</div></div>
+          <div class="card purple" onclick="showDetail('fx_gtn_blasto')"><div class="name">Blastospores only</div><div class="abx">Candida · Cryptococcus · Rhodotorula · Saccharomyces · Hansenula</div></div>
+        </div>
+        <div class="branch-label" style="margin-top:12px">Other colony types</div>
+        <div class="myco-flow-leaves">
+          <div class="card blue" onclick="showDetail('fx_mucoid')"><div class="name">Mucoid → capsule</div><div class="abx">Cryptococcus sp</div></div>
+          <div class="card pink" onclick="showDetail('fx_pinkred')"><div class="name">Pink / red → capsule</div><div class="abx">Rhodotorula sp</div></div>
+          <div class="card amber" onclick="showDetail('fx_lipid')"><div class="name">Lipid-dependent growth</div><div class="abx">Malassezia sp (except M. pachydermatis)</div></div>
+          <div class="card teal" onclick="showDetail('fx_black')"><div class="name">Black colonies</div><div class="abx">Exophiala · Cladophialophora</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="page-footer">UK SMI ID 1, Issue 4 (06.08.25) — fungal morphology algorithm · guidance only</div>
+  </div><!-- end myco-pane-flow -->
+
+  <div class="myco-pane is-hidden" id="myco-pane-afst" role="tabpanel" aria-labelledby="myco-tab-afst">
+    <div class="tier-label">EUCAST antifungal susceptibility (AFST)</div>
+    <div class="myco-flow-note"><i class="ti ti-info-circle" aria-hidden="true"></i> Reference methods E.Def 7.4 (yeasts) and E.Def 9.4 (moulds); categories S / I (susceptible, increased exposure) / R plus the Area of Technical Uncertainty. Breakpoints from the EUCAST antifungal table (v10.0, 2020 + technical updates) &mdash; always check the current version. Click any agent for spectrum, method and resistance notes.</div>
+
+    <div class="section-title">Antifungal agents</div>
+    <div class="myco-grid" id="afst-agent-grid">
+      <div class="myco-card" onclick="showDetail('af_fluconazole')"><h3><i class="ti ti-pill" aria-hidden="true"></i> Fluconazole</h3><p>Triazole · narrow</p><div class="myco-tag-row"><span class="myco-tag">Candida (not krusei)</span><span class="myco-tag">Cryptococcus</span><span class="myco-tag">no moulds</span></div></div>
+      <div class="myco-card" onclick="showDetail('af_voriconazole')"><h3><i class="ti ti-pill" aria-hidden="true"></i> Voriconazole</h3><p>Triazole · mould-active</p><div class="myco-tag-row"><span class="myco-tag">Aspergillus</span><span class="myco-tag">no Mucorales</span></div></div>
+      <div class="myco-card" onclick="showDetail('af_itraconazole')"><h3><i class="ti ti-pill" aria-hidden="true"></i> Itraconazole</h3><p>Triazole · mould-active</p><div class="myco-tag-row"><span class="myco-tag">Aspergillus</span><span class="myco-tag">dermatophytes</span></div></div>
+      <div class="myco-card" onclick="showDetail('af_posaconazole')"><h3><i class="ti ti-pill" aria-hidden="true"></i> Posaconazole</h3><p>Triazole · extended</p><div class="myco-tag-row"><span class="myco-tag">Aspergillus</span><span class="myco-tag">Mucorales</span></div></div>
+      <div class="myco-card" onclick="showDetail('af_isavuconazole')"><h3><i class="ti ti-pill" aria-hidden="true"></i> Isavuconazole</h3><p>Triazole · extended</p><div class="myco-tag-row"><span class="myco-tag">Aspergillus</span><span class="myco-tag">Mucorales</span></div></div>
+      <div class="myco-card" onclick="showDetail('af_anidulafungin')"><h3><i class="ti ti-pill" aria-hidden="true"></i> Anidulafungin</h3><p>Echinocandin</p><div class="myco-tag-row"><span class="myco-tag">Candida</span><span class="myco-tag">no Cryptococcus</span></div></div>
+      <div class="myco-card" onclick="showDetail('af_micafungin')"><h3><i class="ti ti-pill" aria-hidden="true"></i> Micafungin</h3><p>Echinocandin</p><div class="myco-tag-row"><span class="myco-tag">Candida</span><span class="myco-tag">no Cryptococcus</span></div></div>
+      <div class="myco-card" onclick="showDetail('af_caspofungin')"><h3><i class="ti ti-pill" aria-hidden="true"></i> Caspofungin</h3><p>Echinocandin · no EUCAST BP</p><div class="myco-tag-row"><span class="myco-tag">use anidula/mica</span></div></div>
+      <div class="myco-card" onclick="showDetail('af_amphotericinb')"><h3><i class="ti ti-pill" aria-hidden="true"></i> Amphotericin B</h3><p>Polyene · broadest</p><div class="myco-tag-row"><span class="myco-tag">yeasts</span><span class="myco-tag">moulds</span><span class="myco-tag">Mucorales</span></div></div>
+      <div class="myco-card" onclick="showDetail('af_flucytosine')"><h3><i class="ti ti-pill" aria-hidden="true"></i> Flucytosine (5-FC)</h3><p>Pyrimidine analogue</p><div class="myco-tag-row"><span class="myco-tag">combination only</span></div></div>
+      <div class="myco-card" onclick="showDetail('af_terbinafine')"><h3><i class="ti ti-pill" aria-hidden="true"></i> Terbinafine</h3><p>Allylamine</p><div class="myco-tag-row"><span class="myco-tag">dermatophytes</span></div></div>
+      <div class="myco-card" onclick="showDetail('af_method')"><h3><i class="ti ti-test-pipe" aria-hidden="true"></i> Method &amp; categories</h3><p>EUCAST AFST reference</p><div class="myco-tag-row"><span class="myco-tag">E.Def 7.4 / 9.4</span><span class="myco-tag">S / I / R</span></div></div>
+    </div>
+
+    <div class="section-title">Expected antifungal resistance &mdash; the &ldquo;do not use&rdquo; list</div>
+    <div class="myco-grid" id="afst-resist-grid">
+      <div class="myco-card coral" onclick="showDetail('afr_krusei')"><h3><i class="ti ti-ban" aria-hidden="true"></i> Candida krusei</h3><p>Intrinsic fluconazole resistance</p></div>
+      <div class="myco-card coral" onclick="showDetail('afr_glabrata')"><h3><i class="ti ti-ban" aria-hidden="true"></i> Candida glabrata</h3><p>Reduced azole; rising echinocandin R</p></div>
+      <div class="myco-card coral" onclick="showDetail('afr_cryptococcus')"><h3><i class="ti ti-ban" aria-hidden="true"></i> Cryptococcus</h3><p>Echinocandins have no activity</p></div>
+      <div class="myco-card coral" onclick="showDetail('afr_aspergillus')"><h3><i class="ti ti-ban" aria-hidden="true"></i> Aspergillus</h3><p>Intrinsic fluconazole resistance</p></div>
+      <div class="myco-card coral" onclick="showDetail('afr_mucorales')"><h3><i class="ti ti-ban" aria-hidden="true"></i> Mucorales</h3><p>R to voriconazole, echinocandins, fluconazole</p></div>
+      <div class="myco-card coral" onclick="showDetail('afr_scedosporium')"><h3><i class="ti ti-ban" aria-hidden="true"></i> Scedosporium / Lomentospora</h3><p>Multi-resistant; L. prolificans pan-R</p></div>
+      <div class="myco-card coral" onclick="showDetail('afr_indotineae')"><h3><i class="ti ti-ban" aria-hidden="true"></i> Trichophyton indotineae</h3><p>Emerging terbinafine resistance</p></div>
+    </div>
+    <div class="page-footer">EUCAST antifungal breakpoints v10.0 (2020) + updates · guidance only</div>
+  </div><!-- end myco-pane-afst -->
+</div><!-- end view-myco -->
+
+
+<!-- ═══ BLOOD SCIENCE VIEW ═══ -->
+<div class="view hidden" id="view-blood">
+  <div class="blood-hero">
+    <h2><i class="ti ti-droplet-half-2" aria-hidden="true"></i> Blood Science — test and tube finder</h2>
+    <p>Bench-side reference for common blood tests across Blood Sciences. Filter by discipline and coloured-top tube, then click a test to see why it is requested, what it broadly reflects, and why the selected tube/additive is used. Tube colours vary by supplier and local pathology network, so confirm against your local sample requirements handbook before phlebotomy or rejection decisions.</p>
+  </div>
+
+  <div class="section-title">Disciplines at a glance</div>
+  <div class="blood-guide-grid" id="blood-discipline-guide"></div>
+
+  <div class="section-title">Common coloured-top tubes and additives</div>
+  <div class="blood-guide-grid" id="blood-tube-guide"></div>
+
+  <div class="blood-controls">
+    <div class="blood-field"><label for="blood-text">Search</label><input class="blood-search" id="blood-text" type="text" placeholder="Test, tube, additive, why used…" oninput="renderBloodScience()" aria-label="Search blood science tests"></div>
+    <div class="blood-field"><label for="blood-discipline-filter">Discipline</label><select id="blood-discipline-filter" onchange="renderBloodScience()" aria-label="Filter by discipline"><option value="">All disciplines</option></select></div>
+    <div class="blood-field"><label for="blood-tube-filter">Tube</label><select id="blood-tube-filter" onchange="renderBloodScience()" aria-label="Filter by tube"><option value="">All tubes</option></select></div>
+  </div>
+
+  <div class="blood-toolbar">
+    <span class="blood-count" id="blood-count"></span>
+    <button class="blood-reset" type="button" onclick="resetBloodScienceFilters()"><i class="ti ti-refresh" aria-hidden="true"></i> Reset filters</button>
+  </div>
+
+  <div class="blood-results" id="blood-results"></div>
+  <div class="blood-detail blood-detail-placeholder" id="blood-detail"></div>
+</div><!-- end view-blood -->
+
+<!-- ═══ PLATE APPEARANCE VIEW ═══ -->
+<div class="view hidden" id="view-plate">
+  <div class="myco-hero">
+    <h2><i class="ti ti-microscope" aria-hidden="true"></i> Colony &amp; Gram appearance</h2>
+    <p>Two views of the same isolate. <strong>Plate appearance</strong> simulates colony morphology across the routine chromogenic and selective media; <strong>Gram / microscopy</strong> is a reference gallery of the classic Gram-film appearances &mdash; click a pattern for what you are looking at, the typical organisms and the next bench steps.</p>
+  </div>
+
+  <div class="myco-tabs" role="tablist" aria-label="Appearance section">
+    <button class="myco-tab active" id="plate-sect-plate" role="tab" aria-selected="true" type="button" onclick="setPlateSection('plate')"><i class="ti ti-circles" aria-hidden="true"></i> Plate appearance</button>
+    <button class="myco-tab" id="plate-sect-gram" role="tab" aria-selected="false" type="button" onclick="setPlateSection('gram')"><i class="ti ti-microscope" aria-hidden="true"></i> Gram stain / microscopy</button>
+  </div>
+
+  <div class="plate-pane" id="plate-pane-plate" role="tabpanel" aria-labelledby="plate-sect-plate">
+    <div class="plate-medium-tabs">
+      <button class="plate-tab uri active" id="ptab-uri" onclick="setPlateMedium('uri')"><i class="ti ti-droplet" aria-hidden="true"></i> Uriselect 4</button>
+      <button class="plate-tab blood" id="ptab-blood" onclick="setPlateMedium('blood')"><i class="ti ti-bandage" aria-hidden="true"></i> CBA</button>
+      <button class="plate-tab mrsa" id="ptab-mrsa" onclick="setPlateMedium('mrsa')"><i class="ti ti-shield-check" aria-hidden="true"></i> MRSA plate</button>
+      <button class="plate-tab xld" id="ptab-xld" onclick="setPlateMedium('xld')"><i class="ti ti-biohazard" aria-hidden="true"></i> XLD</button>
+      <button class="plate-tab tcbs" id="ptab-tcbs" onclick="setPlateMedium('tcbs')"><i class="ti ti-wave-sine" aria-hidden="true"></i> TCBS</button>
+      <button class="plate-tab smac" id="ptab-smac" onclick="setPlateMedium('smac')"><i class="ti ti-circle-letter-s" aria-hidden="true"></i> SMAC</button>
+      <button class="plate-tab choc" id="ptab-choc" onclick="setPlateMedium('choc')"><i class="ti ti-cookie" aria-hidden="true"></i> CHOC</button>
+    </div>
+
+    <div class="plate-stage">
+      <div class="plate-svg-wrap" id="plate-svg-wrap"></div>
+      <div class="organism-info" id="organism-info"></div>
+    </div>
+
+    <div class="section-title" style="margin-top:0">Switch organism</div>
+    <div class="organism-toggle-row" id="organism-toggle-row"></div>
+    <div class="plate-note" id="plate-note"></div>
+  </div><!-- end plate-pane-plate -->
+
+  <div class="plate-pane is-hidden" id="plate-pane-gram" role="tabpanel" aria-labelledby="plate-sect-gram">
+    <div class="myco-flow-note"><i class="ti ti-info-circle" aria-hidden="true"></i> Schematic Gram films for orientation &mdash; idealised drawings, not photomicrographs. Always read your own stain; faint, mixed or atypical films are common, and direct-specimen films may show host cells and debris.</div>
+
+    <div class="myco-controls">
+      <input class="myco-search" id="gram-search" type="text" placeholder="Search appearance, organism or clue…" oninput="renderGram()" aria-label="Search Gram appearances">
+      <select class="myco-filter" id="gram-gram-filter" onchange="renderGram()" aria-label="Filter by Gram reaction">
+        <option value="">All reactions</option>
+        <option value="pos">Gram-positive</option>
+        <option value="neg">Gram-negative</option>
+        <option value="variable">Gram-variable</option>
+      </select>
+    </div>
+
+    <div class="section-title">Gram film appearances</div>
+    <div class="gram-grid" id="gram-grid"></div>
+    <div class="myco-fungus-panel gram-panel" id="gram-panel"></div>
+  </div><!-- end plate-pane-gram -->
+
+</div><!-- end view-plate -->
+
+
+<!-- ═══ BACTERIAL IDENTIFICATION VIEW ═══ -->
+<div class="view hidden" id="view-bactid">
+  <div class="bactid-intro">
+    Filter likely bacterial identities by bench qualities. Leave any field blank if it is unknown or not tested. Results include organisms already referenced elsewhere in the guide plus common relevant wound, urine, respiratory, anaerobic and fastidious organisms. Treat this as a bench-side shortlist rather than a replacement for MALDI-TOF, full biochemical identification or local SOPs.
+  </div>
+
+  <div class="bactid-toolbar" style="margin-top:0">
+    <input class="bactid-search" id="bactid-text" type="text" placeholder="Optional text search: organism, note, trait…" oninput="renderBactId()" aria-label="Search bacterial ID organisms">
+    <button class="bactid-reset" type="button" onclick="resetBactIdFilters()"><i class="ti ti-refresh" aria-hidden="true"></i> Reset filters</button>
+  </div>
+
+  <div class="bactid-controls" id="bactid-controls">
+    <div class="bactid-field"><label for="bid-gram">Gram</label><select id="bid-gram" onchange="renderBactId()"><option value="">Unspecified</option><option value="GP">Gram positive</option><option value="GN">Gram negative</option><option value="GV">Gram variable</option></select></div>
+    <div class="bactid-field"><label for="bid-oxidase">Oxidase</label><select id="bid-oxidase" onchange="renderBactId()"><option value="">Unspecified</option><option value="positive">Positive</option><option value="negative">Negative</option><option value="variable">Variable</option></select></div>
+    <div class="bactid-field"><label for="bid-catalase">Catalase</label><select id="bid-catalase" onchange="renderBactId()"><option value="">Unspecified</option><option value="positive">Positive</option><option value="negative">Negative</option><option value="variable">Variable</option></select></div>
+    <div class="bactid-field"><label for="bid-indole">Indole</label><select id="bid-indole" onchange="renderBactId()"><option value="">Unspecified</option><option value="positive">Positive</option><option value="negative">Negative</option><option value="variable">Variable</option></select></div>
+    <div class="bactid-field"><label for="bid-fermentation">Fermentation</label><select id="bid-fermentation" onchange="renderBactId()"><option value="">Unspecified</option><option value="lactose">Lactose fermenter</option><option value="non-lactose">Non-lactose fermenter</option><option value="non-fermenter">Non-fermenter</option><option value="glucose">Glucose fermenter</option><option value="variable">Variable</option></select></div>
+    <div class="bactid-field"><label for="bid-shape">Distinctive shape</label><select id="bid-shape" onchange="renderBactId()"><option value="">Unspecified</option><option value="cocci">Cocci</option><option value="rods">Rods</option><option value="coccobacilli">Coccobacilli</option><option value="curved">Curved rods</option><option value="spiral">Spiral/curved</option><option value="branching">Branching/filamentous</option></select></div>
+    <div class="bactid-field"><label for="bid-haemolysis">Haemolysis</label><select id="bid-haemolysis" onchange="renderBactId()"><option value="">Unspecified</option><option value="alpha">Alpha</option><option value="beta">Beta</option><option value="gamma">Gamma/non-haemolytic</option><option value="variable">Variable</option><option value="none">Not applicable/none</option></select></div>
+    <div class="bactid-field"><label for="bid-coagulase">Coagulase</label><select id="bid-coagulase" onchange="renderBactId()"><option value="">Unspecified</option><option value="positive">Positive</option><option value="negative">Negative</option><option value="variable">Variable</option></select></div>
+    <div class="bactid-field"><label for="bid-aesculin">Aesculin</label><select id="bid-aesculin" onchange="renderBactId()"><option value="">Unspecified</option><option value="positive">Positive</option><option value="negative">Negative</option><option value="variable">Variable</option></select></div>
+    <div class="bactid-field"><label for="bid-pyr">PYR / PYZ</label><select id="bid-pyr" onchange="renderBactId()"><option value="">Unspecified</option><option value="positive">Positive</option><option value="negative">Negative</option><option value="variable">Variable</option></select></div>
+    <div class="bactid-field"><label for="bid-spores">Spores</label><select id="bid-spores" onchange="renderBactId()"><option value="">Unspecified</option><option value="positive">Present</option><option value="negative">Absent</option><option value="variable">Variable</option></select></div>
+    <div class="bactid-field"><label for="bid-dnase">DNase</label><select id="bid-dnase" onchange="renderBactId()"><option value="">Unspecified</option><option value="positive">Positive</option><option value="negative">Negative</option><option value="variable">Variable</option></select></div>
+    <div class="bactid-field"><label for="bid-tributyrin">Tributyrin</label><select id="bid-tributyrin" onchange="renderBactId()"><option value="">Unspecified</option><option value="positive">Positive</option><option value="negative">Negative</option><option value="variable">Variable</option></select></div>
+    <div class="bactid-field"><label for="bid-hughleifson">Hugh &amp; Leifson O/F</label><select id="bid-hughleifson" onchange="renderBactId()"><option value="">Unspecified</option><option value="fermentative">Fermentative</option><option value="oxidative">Oxidative</option><option value="asaccharolytic">Asaccharolytic / no glucose use</option><option value="variable">Variable</option></select></div>
+    <div class="bactid-field"><label for="bid-atmosphere">Atmosphere</label><select id="bid-atmosphere" onchange="renderBactId()"><option value="">Unspecified</option><option value="aerobic">O₂ / aerobic</option><option value="facultative">Facultative</option><option value="co2">CO₂ / capnophilic</option><option value="anaerobic">AnO₂ / anaerobic</option><option value="microaerophilic">Microaerophilic</option></select></div>
+    <div class="bactid-field"><label for="bid-mr">Methyl red</label><select id="bid-mr" onchange="renderBactId()"><option value="">Unspecified</option><option value="positive">Positive</option><option value="negative">Negative</option><option value="variable">Variable</option></select></div>
+    <div class="bactid-field"><label for="bid-vp">Voges-Proskauer</label><select id="bid-vp" onchange="renderBactId()"><option value="">Unspecified</option><option value="positive">Positive</option><option value="negative">Negative</option><option value="variable">Variable</option></select></div>
+    <div class="bactid-field"><label for="bid-citrate">Citrate</label><select id="bid-citrate" onchange="renderBactId()"><option value="">Unspecified</option><option value="positive">Positive</option><option value="negative">Negative</option><option value="variable">Variable</option></select></div>
+  </div>
+
+  <div class="bactid-toolbar">
+    <span class="bactid-count" id="bactid-count"></span>
+    <span class="bactid-count">Tip: “variable” results are included when you filter for a specific positive/negative trait.</span>
+  </div>
+  <div class="bactid-results" id="bactid-results"></div>
+</div><!-- end view-bactid -->
+
+<!-- ═══ INTERPRETER VIEW ═══ -->
+<div class="view hidden" id="view-interp">
+  <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:1rem">
+    <button class="tab d68" id="itab-d68" onclick="setITab('d68')">D68 — ESBL / AmpC screen</button>
+    <button class="tab d69" id="itab-d69" onclick="setITab('d69')">D69 — AmpC characterisation</button>
+    <button class="tab d63" id="itab-d63" onclick="setITab('d63')">D63 — ESBL confirmation</button>
+    <button class="tab d73" id="itab-d73" onclick="setITab('d73')">D73 — Carbapenemase typing</button>
+  </div>
+  <div id="ipanel-d68" class="ipanel">
+    <div class="section-title">D68 — disc results <span style="font-weight:400;color:var(--color-text-tertiary)">(click disc to toggle S / R)</span><button class="reset-btn" onclick="resetDiscs('d68')">Reset</button></div>
+    <div class="disc-row" id="discs-d68"></div>
+    <div class="result-box" id="res-d68"><span style="color:var(--color-text-tertiary);font-size:12px">Set all disc results to see interpretation.</span></div>
+    <div class="section-title">Estimated plate appearance <span style="font-weight:400;color:var(--color-text-tertiary)">(MHA · MAST hexagonal carrier)</span></div>
+    <div class="dset-preview"><div class="dset-plate" id="dset-plate-d68"></div><div class="dset-plate-cap" id="dset-plate-cap-d68"></div></div>
+    <div class="section-title">All patterns</div>
+    <div style="overflow-x:auto"><table class="interp-table"><thead><tr><th style="width:9%">A</th><th style="width:9%">B</th><th style="width:9%">C</th><th style="width:9%">D</th><th>Interpretation</th></tr></thead><tbody id="itbody-d68"></tbody></table></div>
+  </div>
+  <div id="ipanel-d69" class="ipanel">
+    <div class="section-title">D69 — disc results <span style="font-weight:400;color:var(--color-text-tertiary)">(click disc to toggle S / R)</span><button class="reset-btn" onclick="resetDiscs('d69')">Reset</button></div>
+    <div class="disc-row" id="discs-d69"></div>
+    <div class="result-box" id="res-d69"><span style="color:var(--color-text-tertiary);font-size:12px">Set all disc results to see interpretation.</span></div>
+    <div class="section-title">Estimated plate appearance <span style="font-weight:400;color:var(--color-text-tertiary)">(MHA · MAST hexagonal carrier)</span></div>
+    <div class="dset-preview"><div class="dset-plate" id="dset-plate-d69"></div><div class="dset-plate-cap" id="dset-plate-cap-d69"></div></div>
+    <div class="section-title">All patterns</div>
+    <div style="overflow-x:auto"><table class="interp-table"><thead><tr><th style="width:12%">A</th><th style="width:12%">B</th><th style="width:12%">C</th><th>Interpretation</th></tr></thead><tbody id="itbody-d69"></tbody></table></div>
+  </div>
+  <div id="ipanel-d63" class="ipanel">
+    <div class="section-title">D63 — disc results <span style="font-weight:400;color:var(--color-text-tertiary)">(click disc to toggle S / R)</span><button class="reset-btn" onclick="resetDiscs('d63')">Reset</button></div>
+    <div class="disc-row" id="discs-d63"></div>
+    <div class="result-box" id="res-d63"><span style="color:var(--color-text-tertiary);font-size:12px">Set all disc results to see interpretation.</span></div>
+    <div class="section-title">Estimated plate appearance <span style="font-weight:400;color:var(--color-text-tertiary)">(MHA · MAST hexagonal carrier)</span></div>
+    <div class="dset-preview"><div class="dset-plate" id="dset-plate-d63"></div><div class="dset-plate-cap" id="dset-plate-cap-d63"></div></div>
+    <div class="section-title">All patterns</div>
+    <div style="overflow-x:auto"><table class="interp-table"><thead><tr><th style="width:18%">A — Cefepime</th><th style="width:18%">B — Cefepime/Clav</th><th>Interpretation</th></tr></thead><tbody id="itbody-d63"></tbody></table></div>
+  </div>
+  <div id="ipanel-d73" class="ipanel">
+    <div class="section-title">D73 — zone diameters (mm) <span style="font-weight:400;color:var(--color-text-tertiary)">(enter measured diameter for each disc)</span><button class="reset-btn" onclick="resetD73mm()">Reset</button></div>
+    <div class="zone-input-grid" id="d73mm-inputs"></div>
+    <div class="result-box" id="res-d73mm"><span style="color:var(--color-text-tertiary);font-size:12px">Enter all five zone diameters (mm) to see interpretation.</span></div>
+    <div class="section-title">Estimated plate appearance <span style="font-weight:400;color:var(--color-text-tertiary)">(MHA · MAST hexagonal carrier)</span></div>
+    <div class="dset-preview"><div class="dset-plate" id="dset-plate-d73"></div><div class="dset-plate-cap" id="dset-plate-cap-d73"></div></div>
+    <div class="section-title">MAST interpretation criteria <span style="font-weight:400;color:var(--color-text-tertiary)">(synergy = inhibitor zone − penem-alone zone)</span></div>
+    <div style="overflow-x:auto"><table class="interp-table"><thead><tr><th style="width:13%">B−A<br><span style="font-weight:400;color:var(--color-text-tertiary)">MβL inh.</span></th><th style="width:13%">C−A<br><span style="font-weight:400;color:var(--color-text-tertiary)">KPC inh.</span></th><th style="width:13%">D−A<br><span style="font-weight:400;color:var(--color-text-tertiary)">AmpC inh.</span></th><th style="width:11%">E<br><span style="font-weight:400;color:var(--color-text-tertiary)">Tem+MβL</span></th><th>Interpretation</th></tr></thead><tbody id="itbody-d73mm"></tbody></table></div>
+  </div>
+<div class="page-footer">EUCAST sens. · 2026</div>
+</div><!-- end view-interp -->
+
+<!-- ═══ ZONE-DIAMETER S/I/R CHECKER VIEW ═══ -->
+<div class="view hidden" id="view-checker">
+  <div class="checker-banner" id="checker-banner" role="alert">
+    <i class="ti ti-alert-triangle" aria-hidden="true"></i>
+    <div>
+      <strong>Unvalidated placeholder breakpoints.</strong> The values loaded here are illustrative only and must <strong>not</strong> be used to release results. Open the current EUCAST breakpoint table (or your local SOP), correct each S/R value, and sign it off (it turns the agent green and ticks the progress meter). <span class="checker-banner-progress" id="checker-progress">0 / 0 agents validated</span>
+    </div>
+  </div>
+
+  <div class="tier-label">Enter a measured inhibition-zone diameter (mm) per agent → category is derived as zone ≥ S → S · zone &lt; R → R · between → I (increased exposure).</div>
+
+  <div class="checker-group-tabs" id="checker-group-tabs" role="tablist" aria-label="Organism group"></div>
+
+  <div class="section-title" id="checker-group-title">Select an organism group</div>
+  <div class="sir-grid" id="checker-rows"></div>
+
+  <div class="page-footer">Zone S/I/R checker · verification aid · guidance only</div>
+</div><!-- end view-checker -->
+
+<!-- ═══ ANTIBIOTIC CLASSES VIEW ═══ -->
+<div class="view hidden" id="view-abx">
+  <div class="abx-class-intro">
+    Antibiotic classes grouped by chemical family and target. <strong>Click a class header</strong> to highlight it and expand its chemistry, spectrum and resistance notes below. <strong>Hover</strong> (or tap on mobile) any individual antibiotic chip to see its specific properties.
+  </div>
+  <div class="abx-hint">
+    <i class="ti ti-info-circle" aria-hidden="true"></i>
+    <span>Acronyms (PBP, DHFR, LPS, etc.) are defined in the glossary view.</span>
+  </div>
+  <div id="abx-class-table" class="abx-class-table"></div>
+</div><!-- end view-abx -->
+
+<!-- ═══ INDEX &amp; GLOSSARY VIEW ═══ -->
+<div class="view hidden" id="view-index">
+  <div class="index-tabs">
+    <button class="idx-tab active" id="idxtab-abx" onclick="setIdxTab('abx')"><i class="ti ti-pill" aria-hidden="true"></i> Antibiotic index</button>
+    <button class="idx-tab" id="idxtab-org" onclick="setIdxTab('org')"><i class="ti ti-bacteria" aria-hidden="true"></i> Organism index</button>
+    <button class="idx-tab" id="idxtab-gloss" onclick="setIdxTab('gloss')"><i class="ti ti-book" aria-hidden="true"></i> Glossary</button>
+  </div>
+
+  <div id="idxpanel-abx" class="idx-panel active">
+    <div class="tier-label">Every antibiotic referenced in any donker / panel. Click a panel pill to jump to its detail card.</div>
+    <div id="idx-abx-list" class="idx-list" style="margin-top:8px"></div>
+  </div>
+
+  <div id="idxpanel-org" class="idx-panel">
+    <div class="tier-label">Every organism with a dedicated pathway. Click to open its detail card.</div>
+    <div id="idx-org-list" class="idx-list" style="margin-top:8px"></div>
+  </div>
+
+  <div id="idxpanel-gloss" class="idx-panel">
+    <div class="tier-label">Abbreviations &amp; concepts used in the panels above. Compiled for bench reference.</div>
+    <div id="gloss-search-banner" class="gloss-search-banner">
+      <i class="ti ti-highlight" aria-hidden="true"></i>
+      <span>Highlighting matches for</span>
+      <span class="gsb-term" id="gsb-term"></span>
+      <span class="gsb-count" id="gsb-count"></span>
+      <button class="gsb-clear" onclick="clearGlossaryHighlight()">Clear highlight</button>
+    </div>
+    <div id="idx-gloss-list" style="margin-top:8px"></div>
+  </div>
+</div><!-- end view-index -->
+
+<!-- ═══ BENCH NOTES VIEW ═══ -->
+<div class="view hidden" id="view-notes">
+  <div class="notes-header">
+    <h2 class="notes-title">Bench notes</h2>
+    <p class="notes-sub">Bench-side reference for rare antibiotic locations, anaerobe MIC panels, and QC reference strains.</p>
+  </div>
+
+  <nav class="notes-quick-nav" aria-label="Bench notes quick navigation">
+    <span class="notes-quick-nav-label"><i class="ti ti-navigation" aria-hidden="true"></i> Jump to</span>
+    <button class="notes-nav-btn" type="button" onclick="scrollNotesTo('notes-routine-urine')"><i class="ti ti-droplet" aria-hidden="true"></i> Urine sets</button>
+    <button class="notes-nav-btn" type="button" onclick="scrollNotesTo('notes-routine-wound')"><i class="ti ti-bandage" aria-hidden="true"></i> Wound sets</button>
+    <button class="notes-nav-btn" type="button" onclick="scrollNotesTo('notes-routine-ear-eye')"><i class="ti ti-eye" aria-hidden="true"></i> Ear/eye sets</button>
+    <button class="notes-nav-btn" type="button" onclick="scrollNotesTo('notes-rare')"><i class="ti ti-flask-2" aria-hidden="true"></i> Rare sets</button>
+    <button class="notes-nav-btn" type="button" onclick="scrollNotesTo('notes-qc')"><i class="ti ti-test-pipe-2" aria-hidden="true"></i> QC area</button>
+  </nav>
+
+  <section class="notes-section" id="notes-routine">
+    <h3 class="notes-section-title"><i class="ti ti-list-details" aria-hidden="true"></i> Routine antibiotic sets <span class="notes-section-tag">donker sets</span></h3>
+    <p class="notes-section-sub">Full routine sensitivity sets split by urine and wound workflows. Set codes are shown under each set name where listed.</p>
+    <div id="routine-sets"></div>
+  </section>
+
+  <section class="notes-section" id="notes-rare">
+    <h3 class="notes-section-title"><i class="ti ti-flask-2" aria-hidden="true"></i> Rare antibiotic sets <span class="notes-section-tag">non-donker</span></h3>
+    <p class="notes-section-sub">For organisms without their own donker plate — locate each antibiotic on the existing donker listed beside it.</p>
+    <div id="rare-grid" class="rare-grid"></div>
+  </section>
+
+  <section class="notes-section" id="notes-anaerobe">
+    <h3 class="notes-section-title"><i class="ti ti-test-pipe" aria-hidden="true"></i> Anaerobe sensitivities <span class="notes-section-tag">MIC strips</span></h3>
+    <p class="notes-section-sub">Performed as MIC strips rather than disc diffusion.</p>
+    <div id="anaerobe-list" class="anaerobe-list"></div>
+    <p class="notes-section-note">For Gram-positive isolates, additionally include <strong>Vancomycin</strong>.</p>
+  </section>
+
+  <section class="notes-section" id="notes-qc">
+    <h3 class="notes-section-title"><i class="ti ti-test-pipe-2" aria-hidden="true"></i> QC organisms &amp; platings</h3>
+    <p class="notes-section-sub">Reference strains and the media each should be plated to for routine quality control.</p>
+    <div class="qc-table-wrap">
+      <table class="qc-table">
+        <thead><tr><th>Organism</th><th>Strain</th><th>Plates</th></tr></thead>
+        <tbody id="qc-tbody"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="notes-section" id="notes-qc-barcodes">
+    <h3 class="notes-section-title"><i class="ti ti-barcode" aria-hidden="true"></i> Daily QC barcode labels</h3>
+    <p class="notes-section-sub">Pick a date and copy the per-strain labels. Format: <code class="inline-code">[organism][strain].DDMMYY</code></p>
+
+    <div class="barcode-controls">
+      <label class="barcode-date-label" for="barcode-date">
+        <i class="ti ti-calendar" aria-hidden="true"></i>
+        <span>Date</span>
+        <input type="date" id="barcode-date" class="barcode-date-input" aria-label="Date for barcode labels">
+      </label>
+      <button class="barcode-copy-all" id="barcode-copy-all" type="button" onclick="copyAllBarcodes()">
+        <i class="ti ti-clipboard-copy" aria-hidden="true"></i> Copy all
+      </button>
+    </div>
+
+    <div class="barcode-table-wrap">
+      <table class="barcode-table">
+        <thead><tr><th>Organism</th><th>Barcode label</th><th aria-label="Copy"></th></tr></thead>
+        <tbody id="barcode-tbody"></tbody>
+      </table>
+    </div>
+  </section>
+</div><!-- end view-notes -->
+</div><!-- end view-container -->
+
+<div id="detail-fc">
+  <button class="detail-close" onclick="closeDetail()" aria-label="Close detail panel" title="Close (Esc)">×</button>
+  <h3 id="d-title"></h3>
+  <div class="sub" id="d-sub"></div>
+  <div class="abx-grid" id="d-abx"></div>
+  <div id="d-notes" style="margin-top:10px;font-size:11px;color:var(--color-text-secondary);line-height:1.6"></div>
+  <button class="detail-copy" id="d-copy" onclick="copyDetail()"><i class="ti ti-copy" aria-hidden="true"></i> Copy panel summary</button>
+</div>
+
+</div>
+
+<!-- Scripts: load order matters — data.js defines the datasets that app.js uses. -->
+<script src="data.js"></script>
+<script src="app.js"></script>
+
+<!-- HUD/0S chrome: background particle field, theme toggle, custom reticle cursor.
+     Self-contained; app.js owns search + keyboard handlers, so nothing here duplicates them. -->
+<script>
+/* ---- THEME TOGGLE (in-memory, no storage) ---- */
+(function(){
+  const root=document.documentElement,
+        tg=document.getElementById('themeToggle'),
+        lbl=document.getElementById('themeLabel');
+  if(!tg||!lbl)return;
+  function setTheme(dark){
+    root.setAttribute('data-theme',dark?'dark':'light');
+    lbl.textContent=dark?'DARK':'LIGHT';
+    tg.checked=!dark;
+  }
+  setTheme(true);
+  tg.addEventListener('change',()=>setTheme(!tg.checked));
+})();
+
+/* ---- PARTICLE FIELD: scatter squares, count scaled to viewport ---- */
+(function(){
+  const layer=document.querySelector('.fx-particles');
+  if(!layer)return;
+  function build(){
+    layer.innerHTML='';
+    const area=window.innerWidth*window.innerHeight;
+    const count=Math.max(30,Math.min(120,Math.round(area/20000)));
+    const frag=document.createDocumentFragment();
+    for(let i=0;i<count;i++){
+      const d=document.createElement('span');
+      d.className='fx-dot';
+      d.style.left=(Math.random()*100).toFixed(2)+'%';
+      d.style.top=(Math.random()*100).toFixed(2)+'%';
+      const dur=4+Math.random()*6;
+      d.style.setProperty('--pdur',dur.toFixed(2)+'s');
+      d.style.setProperty('--pdelay',(-Math.random()*dur).toFixed(2)+'s');
+      frag.appendChild(d);
+    }
+    layer.appendChild(frag);
+  }
+  build();
+  let t;window.addEventListener('resize',()=>{clearTimeout(t);t=setTimeout(build,300);});
+})();
+
+/* ---- CUSTOM CURSOR: square reticle + teal afterimage (fine pointers only) ---- */
+(function(){
+  if(!window.matchMedia||!matchMedia('(pointer:fine)').matches)return;
+  const reduce=matchMedia('(prefers-reduced-motion:reduce)').matches;
+  const cur=document.createElement('div');
+  cur.className='cursor';cur.setAttribute('aria-hidden','true');
+  cur.innerHTML='<div class="cursor__box"><i class="cursor__ring"></i></div>';
+  document.body.appendChild(cur);
+  document.documentElement.classList.add('cursor-custom');
+
+  let x=0,y=0,lx=0,ly=0,shown=false,raf=0;
+  function render(){cur.style.transform='translate3d('+x+'px,'+y+'px,0)';raf=0;}
+  function spawn(px,py){
+    const t=document.createElement('span');t.className='trace';
+    t.style.left=px+'px';t.style.top=py+'px';
+    document.body.appendChild(t);
+    t.addEventListener('animationend',()=>t.remove());
+  }
+  window.addEventListener('mousemove',e=>{
+    x=e.clientX;y=e.clientY;
+    if(!shown){shown=true;cur.style.opacity='1';lx=x;ly=y;}
+    if(!raf)raf=requestAnimationFrame(render);
+    if(!reduce){
+      const dx=x-lx,dy=y-ly;
+      if(dx*dx+dy*dy>80){spawn(x,y);lx=x;ly=y;}
+    }
+  });
+  document.addEventListener('mouseleave',()=>{shown=false;cur.style.opacity='0';});
+  window.addEventListener('mousedown',()=>cur.classList.add('cursor--down'));
+  window.addEventListener('mouseup',()=>cur.classList.remove('cursor--down'));
+  const HOT='a,button,input,select,textarea,label,.sw-btn,.org-btn,.dset-pill,.card,.plate-tab,[tabindex]';
+  document.addEventListener('mouseover',e=>{if(e.target.closest&&e.target.closest(HOT))cur.classList.add('cursor--hot');});
+  document.addEventListener('mouseout',e=>{if(e.target.closest&&e.target.closest(HOT))cur.classList.remove('cursor--hot');});
+})();
+</script>
+</body></html>
