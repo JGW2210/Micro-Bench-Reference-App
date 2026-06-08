@@ -673,7 +673,7 @@ const navMenus = [
   { id:'class-menu', triggerId:'sw-class', labelId:'class-label', prefix:'Classification',
     views:{ plate:'Colony & Gram', bactid:'Bacterial ID' } },
   { id:'disc-menu',  triggerId:'sw-disc',  labelId:'disc-label',  prefix:'Disciplines',
-    views:{ virology:'Molecular', blood:'Blood Science', myco:'Mycology' } },
+    views:{ virology:'Molecular', blood:'Blood Science', myco:'Mycology', serology:'Serology' } },
 ];
 function navMenuById(id){ return navMenus.find(m => m.id === id); }
 function navMenuOwning(view){ return navMenus.find(m => Object.prototype.hasOwnProperty.call(m.views, view)); }
@@ -761,7 +761,7 @@ function switchView(to,iTabId){
   const toEl=document.getElementById('view-'+to);
   // crude ordering for transition direction, matching the quick-nav numbering:
   // notes < sensitivities(flow,wound,interp) < abx < classification(plate,bactid) < disciplines(virology,blood,myco) < index
-  const order={notes:-1,flow:0,wound:1,interp:2,rules:2.5,checker:2.7,abx:3,plate:4,bactid:5,virology:6,blood:7,myco:8,index:9};
+  const order={notes:-1,flow:0,wound:1,interp:2,rules:2.5,checker:2.7,abx:3,plate:4,bactid:5,virology:6,blood:7,myco:8,serology:8.5,index:9};
   const goingRight=order[to]>order[curView];
   fromEl.style.transition='opacity .3s cubic-bezier(.4,0,.2,1),transform .3s cubic-bezier(.4,0,.2,1)';
   fromEl.style.opacity='0';
@@ -1512,6 +1512,26 @@ let abxFinderIndex = null;   // [{name, occurrences:[...]}] sorted by name
 let abxFinderResults = [];   // current dropdown results
 let abxFinderFocusIdx = -1;
 
+// Normalise an antibiotic name for alias matching (case/punctuation/space-insensitive).
+function normAbxName(s){ return String(s).toLowerCase().replace(/[^a-z0-9]/g, ''); }
+
+// Lazily build a lookup from every normalised alias to its full alias-row text,
+// then return the synonyms for a given antibiotic name (excluding the name itself).
+let _abxAliasLookup = null;
+function abxAliasText(name){
+  if(typeof abxAliasGroups === 'undefined') return '';
+  if(!_abxAliasLookup){
+    _abxAliasLookup = new Map();
+    abxAliasGroups.forEach(group => {
+      group.forEach(g => _abxAliasLookup.set(normAbxName(g), group));
+    });
+  }
+  const group = _abxAliasLookup.get(normAbxName(name));
+  if(!group) return '';
+  const self = normAbxName(name);
+  return group.filter(g => normAbxName(g) !== self).join(' ');
+}
+
 function buildAbxFinderIndex(){
   const map = new Map();
   routineSets.forEach(group => {
@@ -1519,7 +1539,7 @@ function buildAbxFinderIndex(){
       set.antibiotics.forEach(entry => {
         const {name, conc} = parseAbxDisc(entry);
         const key = name.toLowerCase();
-        if(!map.has(key)) map.set(key, {name, occurrences:[]});
+        if(!map.has(key)) map.set(key, {name, aliases:abxAliasText(name), occurrences:[]});
         map.get(key).occurrences.push({section:group.section, setName:set.name, codes:set.codes, conc, entry});
       });
     });
@@ -1531,7 +1551,8 @@ function abxFinderResultSnippet(item){
   const setCount = item.occurrences.length;
   const concs = [...new Set(item.occurrences.map(o => formatDiscConc(o.conc)).filter(Boolean))];
   const concStr = concs.length ? ' · ' + concs.join(' / ') : '';
-  return `${setCount} donker${setCount === 1 ? '' : 's'}${concStr}`;
+  const aka = item.aliases ? ` · a.k.a. ${item.aliases}` : '';
+  return `${setCount} donker${setCount === 1 ? '' : 's'}${concStr}${aka}`;
 }
 
 function runAbxFinderSearch(q){
@@ -1551,7 +1572,10 @@ function runAbxFinderSearch(q){
     matches = abxFinderIndex
       .map(it => {
         const idx = it.name.toLowerCase().indexOf(ql);
-        return idx === -1 ? null : {it, score:idx};
+        if(idx !== -1) return {it, score:idx};
+        // Fall back to an alternative-name match (ranked below direct matches).
+        if(it.aliases && it.aliases.toLowerCase().includes(ql)) return {it, score:1000};
+        return null;
       })
       .filter(Boolean)
       .sort((a, b) => a.score - b.score || a.it.name.localeCompare(b.it.name))
@@ -1756,6 +1780,122 @@ function showCopiedFeedback(btn, iconOnly){
 })();
 
 renderNotesView();
+
+// ─── Serology directory (search / filter / reference) ───────────
+let serologyQuery = '';
+let serologyLocFilter = 'all';   // 'all' | 'in' | 'send'
+let serologyShowDisc = false;
+
+function serologyLocBadge(loc){
+  return loc === 'in'
+    ? '<span class="sero-loc sero-loc-in">In-house</span>'
+    : '<span class="sero-loc sero-loc-send">Sendaway</span>';
+}
+
+function renderSerology(){
+  const tbody = document.getElementById('serology-tbody');
+  if(!tbody) return;
+  const q = serologyQuery.trim().toLowerCase();
+  const rows = serologyTests.filter(t => {
+    if(t.disc && !serologyShowDisc) return false;
+    if(serologyLocFilter !== 'all' && t.loc !== serologyLocFilter) return false;
+    if(q){
+      const hay = (t.code + ' ' + t.name + ' ' + t.sample + ' ' + (t.note || '') + ' ' + (t.analyser || '')).toLowerCase();
+      if(!hay.includes(q)) return false;
+    }
+    return true;
+  });
+
+  const countEl = document.getElementById('serology-count');
+  if(countEl) countEl.textContent = `${rows.length} test${rows.length === 1 ? '' : 's'}`;
+
+  if(!rows.length){
+    tbody.innerHTML = `<tr><td colspan="5" class="sero-empty">No serology tests match — try a code, drug or organism name.</td></tr>`;
+    return;
+  }
+
+  tbody.innerHTML = rows.map(t => {
+    const code = t.code
+      ? `<code class="sero-code">${highlightMatch(t.code, q)}</code>`
+      : `<span class="sero-na">—</span>`;
+    const note = t.note ? `<span class="sero-note">${t.note}</span>` : '';
+    const discTag = t.disc ? `<span class="sero-disc-tag">No longer available</span>` : '';
+    const sample = t.sample ? highlightMatch(t.sample, q) : `<span class="sero-na">—</span>`;
+    const analyser = t.loc === 'in'
+      ? (t.analyser || `<span class="sero-na">[not yet listed]</span>`)
+      : `<span class="sero-na">—</span>`;
+    return `<tr class="${t.disc ? 'is-disc' : ''}">
+      <td>${code}</td>
+      <td><span class="sero-test">${highlightMatch(t.name, q)}</span>${discTag}${note}</td>
+      <td class="sero-sample">${sample}</td>
+      <td>${serologyLocBadge(t.loc)}</td>
+      <td class="sero-analyser">${analyser}</td>
+    </tr>`;
+  }).join('');
+}
+
+function setSerologyFilter(loc){
+  serologyLocFilter = loc;
+  ['all','in','send'].forEach(k => {
+    const el = document.getElementById('sero-chip-' + k);
+    if(el) el.classList.toggle('active', k === loc);
+  });
+  renderSerology();
+}
+
+function toggleSerologyDisc(show){
+  serologyShowDisc = !!show;
+  renderSerology();
+}
+
+function clearSerologySearch(){
+  const input = document.getElementById('serology-search');
+  if(input) input.value = '';
+  serologyQuery = '';
+  const clear = document.getElementById('serology-search-clear');
+  if(clear) clear.classList.remove('show');
+  renderSerology();
+}
+
+function renderSerologyReference(){
+  const profEl = document.getElementById('serology-profiles');
+  if(profEl){
+    const byCode = {};
+    serologyTests.forEach(t => { if(t.code && !(t.code in byCode)) byCode[t.code] = t; });
+    profEl.innerHTML = serologyProfiles.map(p => `
+      <div class="sero-profile">
+        <div class="sero-profile-head">${p.name}${p.note ? `<span class="sero-profile-note">${p.note}</span>` : ''}</div>
+        <div class="sero-profile-codes">
+          ${p.codes.map(c => {
+            const t = byCode[c];
+            const title = t ? t.name.replace(/"/g, '&quot;') : c;
+            return `<span class="sero-pill" title="${title}">${c}</span>`;
+          }).join('')}
+        </div>
+      </div>
+    `).join('');
+  }
+  const keyEl = document.getElementById('serology-key');
+  if(keyEl){
+    keyEl.innerHTML = serologySampleKey.map(k =>
+      `<div class="sero-key-row"><span class="sero-key-abbr">${k.abbr}</span><span class="sero-key-label">${k.label}</span></div>`
+    ).join('');
+  }
+}
+
+(function initSerology(){
+  const input = document.getElementById('serology-search');
+  if(input){
+    input.addEventListener('input', e => {
+      serologyQuery = e.target.value;
+      const clear = document.getElementById('serology-search-clear');
+      if(clear) clear.classList.toggle('show', e.target.value.length > 0);
+      renderSerology();
+    });
+  }
+  renderSerologyReference();
+  renderSerology();
+})();
 
 // ═══════════════════════════════════════════════
 // v5 — Glossary, Index, Search, Keyboard, Detail polish
@@ -2149,7 +2289,7 @@ function buildSearchIndex(){
           key:c.id+':'+it.name,
           name:it.name+(it.aka?' ('+it.aka+')':'')+' — '+c.name.toLowerCase(),
           snippet:(it.tip||'').replace(/<[^>]+>/g,' ').replace(/\s+/g,' ').trim().slice(0,120),
-          hay:(it.name+' '+(it.aka||'')+' '+(it.tip||'').replace(/<[^>]+>/g,' ')+' '+c.name+' '+sg.label).toLowerCase(),
+          hay:(it.name+' '+(it.aka||'')+' '+abxAliasText(it.name)+' '+(it.tip||'').replace(/<[^>]+>/g,' ')+' '+c.name+' '+sg.label).toLowerCase(),
           action:()=>{
             switchView('abx');
             setTimeout(()=>{
@@ -2176,6 +2316,33 @@ function buildSearchIndex(){
       });
     });
   });
+
+  // ── Serology tests ──
+  if(typeof serologyTests !== 'undefined'){
+    serologyTests.forEach(t => {
+      if(t.disc) return;            // skip discontinued tests in global search
+      const loc = t.loc === 'in' ? 'In-house' : 'Sendaway';
+      out.push({
+        kind:'serology',
+        key:'serology_' + (t.code || t.name),
+        name:t.name,
+        snippet:[t.code, loc, t.sample].filter(Boolean).join(' · '),
+        hay:(t.code + ' ' + t.name + ' ' + t.sample + ' ' + (t.note || '') + ' serology').toLowerCase(),
+        action:()=>{
+          switchView('serology');
+          setTimeout(()=>{
+            const inp = document.getElementById('serology-search');
+            setSerologyFilter('all');
+            if(inp){ inp.value = t.code || t.name; serologyQuery = inp.value; }
+            const clr = document.getElementById('serology-search-clear');
+            if(clr) clr.classList.add('show');
+            renderSerology();
+          }, 360);
+        }
+      });
+    });
+  }
+
   return out;
 }
 
@@ -2359,7 +2526,7 @@ function runSearch(q){
     return;
   }
   results.innerHTML = matches.map((m,i)=>{
-    const kindLabel = {panel:'Panel',organism:'Plate organism',glossary:'Glossary',pathway:'Pathway','abx-class':'Antibiotic class',antibiotic:'Antibiotic',bactid:'Bacterial ID',intrinsic:'Intrinsic resistance',antifungal:'Antifungal',gram:'Gram film'}[m.kind] || m.kind;
+    const kindLabel = {panel:'Panel',organism:'Plate organism',glossary:'Glossary',pathway:'Pathway','abx-class':'Antibiotic class',antibiotic:'Antibiotic',bactid:'Bacterial ID',intrinsic:'Intrinsic resistance',antifungal:'Antifungal',gram:'Gram film',serology:'Serology test'}[m.kind] || m.kind;
     const name = highlightMatch(m.name, q);
     const snip = m.snippet ? `<div class="sr-snip">${highlightMatch(m.snippet, q)}</div>` : '';
     return `<div class="search-result" data-idx="${i}" onclick="selectResult(${i})"><div class="sr-kind">${kindLabel}</div><div class="sr-name">${name}</div>${snip}</div>`;
