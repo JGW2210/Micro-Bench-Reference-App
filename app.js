@@ -1551,6 +1551,12 @@ function abxAliasGroupFor(name){ return _ensureAbxAliasLookup().get(normAbxName(
 // A stable key that collapses every alias of one drug into a single bucket, so
 // the disc finder merges e.g. Penicillin + Benzylpenicillin into one entry.
 function abxMergeKey(name){ const g = abxAliasGroupFor(name); return g ? normAbxName(g[0]) : name.toLowerCase(); }
+// Preferred finder label for specific drugs, overriding the default (bench
+// spelling / alias-group canonical). Keyed by the alias-group merge key.
+const ABX_DISPLAY_OVERRIDE = {
+  'benzylpenicillin': 'Penicillin',                            // Penicillin / Benzylpenicillin group
+  'amoxicillinclavulanicacid': 'Amoxicillin/Clavulanic acid'   // Augmentin / co-amoxiclav group
+};
 // Synonyms for a name, excluding the name itself (for the result "a.k.a." hint).
 function abxAliasText(name){
   const g = abxAliasGroupFor(name);
@@ -1577,9 +1583,11 @@ function buildAbxFinderIndex(){
   const out = [];
   map.forEach(rec => {
     const distinct = [...rec.names.values()];
-    // One spelling on the bench → keep it; several spellings of the same drug →
-    // show the canonical alias-group name so the label is single across all sets.
-    const name = distinct.length === 1 ? distinct[0] : (rec.group ? rec.group[0] : distinct[0]);
+    // Preferred override wins; else one spelling on the bench → keep it; several
+    // spellings of the same drug → the alias-group canonical, so the label is
+    // single across all sets.
+    const name = ABX_DISPLAY_OVERRIDE[rec.key]
+      || (distinct.length === 1 ? distinct[0] : (rec.group ? rec.group[0] : distinct[0]));
     out.push({ key:rec.key, name, aliases:abxAliasText(name), occurrences:rec.occurrences });
   });
   return out.sort((a, b) => a.name.localeCompare(b.name));
