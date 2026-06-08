@@ -1,0 +1,3 @@
+PR merge verification.
+
+Created to verify that a tiny text-file branch can be pushed, opened as a pull request, and merged into main.
