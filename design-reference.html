@@ -1,0 +1,850 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HUD/0S — Design Reference System</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   HUD/0S DESIGN REFERENCE  —  vanilla CSS, no dependencies
+   ------------------------------------------------------------
+   Aesthetic: minimal sci-fi HUD. Thin lines, sharp type,
+   modular bracketed panels, restrained cyan/teal accent,
+   subtle motion. Light + dark via [data-theme].
+   All design decisions live in :root + the two theme blocks
+   below. Change tokens there to re-skin the whole system.
+   ============================================================ */
+
+/* ---- THEME: DARK (default) ---- */
+html[data-theme="dark"]{
+  --bg:#05070a;
+  --bg-elev:#0a0e14;
+  --bg-elev-2:#0e141c;
+  --line:rgba(126,205,224,.14);
+  --line-strong:rgba(126,224,235,.34);
+  --text:#d7e3e8;
+  --text-dim:#7d909b;
+  --text-faint:#46555f;
+  --accent:#38e8d0;
+  --accent-ink:#04231f;
+  --accent-dim:rgba(56,232,208,.12);
+  --accent-glow:rgba(56,232,208,.40);
+  --danger:#ff5d6c;
+  --warn:#ffb347;
+  --success:#4fe6a0;
+  --grid:rgba(126,205,224,.045);
+  --particle:#ffffff;
+  --shadow:0 12px 40px -12px rgba(0,0,0,.7);
+}
+/* ---- THEME: LIGHT ---- */
+html[data-theme="light"]{
+  --bg:#e9eef0;
+  --bg-elev:#ffffff;
+  --bg-elev-2:#f4f8f9;
+  --line:rgba(10,46,58,.16);
+  --line-strong:rgba(8,64,82,.40);
+  --text:#0c1a21;
+  --text-dim:#46606b;
+  --text-faint:#90a4ad;
+  --accent:#0a9b8e;
+  --accent-ink:#ffffff;
+  --accent-dim:rgba(10,155,142,.10);
+  --accent-glow:rgba(10,155,142,.30);
+  --danger:#d92d43;
+  --warn:#b96b00;
+  --success:#0f8a5a;
+  --grid:rgba(10,46,58,.05);
+  --particle:rgba(8,64,82,.9);
+  --shadow:0 12px 36px -16px rgba(20,50,60,.35);
+}
+/* ---- NON-COLOR TOKENS (shared) ---- */
+:root{
+  --font-display:'Chakra Petch',sans-serif;
+  --font-body:'Chakra Petch',sans-serif;
+  --font-mono:'JetBrains Mono',ui-monospace,monospace;
+  --sp-1:4px; --sp-2:8px; --sp-3:12px; --sp-4:16px;
+  --sp-5:24px; --sp-6:32px; --sp-7:48px; --sp-8:64px;
+  --radius:2px;
+  --max:1140px;
+  --ease:cubic-bezier(.2,.8,.2,1);
+  --dur:.25s;
+  --type-xs:11px; --type-sm:13px; --type-base:15px;
+  --type-lg:19px; --type-xl:26px; --type-2xl:38px; --type-3xl:54px;
+}
+
+/* ============================================================
+   BASE
+   ============================================================ */
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0;
+  font-family:var(--font-body);
+  font-weight:300;
+  font-size:var(--type-base);
+  line-height:1.6;
+  color:var(--text);
+  background:var(--bg);
+  -webkit-font-smoothing:antialiased;
+  transition:background-color var(--dur) var(--ease),color var(--dur) var(--ease);
+  overflow-x:hidden;
+}
+h1,h2,h3,h4{font-family:var(--font-display);font-weight:600;line-height:1.1;margin:0;letter-spacing:.01em}
+p{margin:0}
+a{color:var(--accent);text-decoration:none}
+::selection{background:var(--accent);color:var(--accent-ink)}
+
+/* ---- BACKGROUND LAYERS ----
+   Stacking (back -> front): body bg color · particle field · grid matrix · content.
+   Both layers are fixed, behind content (negative z-index), and click-through. */
+.fx-particles,.fx-grid{position:fixed;inset:0;pointer-events:none}
+.fx-particles{z-index:-2}
+.fx-grid{
+  z-index:-1;
+  background-image:
+    linear-gradient(var(--grid) 1px,transparent 1px),
+    linear-gradient(90deg,var(--grid) 1px,transparent 1px);
+  background-size:46px 46px;
+}
+/* tiny squares: grow 1px -> 5px while fading 0 -> 70% -> 0, then restart */
+.fx-dot{
+  position:absolute;width:5px;height:5px;background:var(--particle);
+  transform-origin:center;transform:scale(.2);opacity:0;will-change:transform,opacity;
+  animation:bubble var(--pdur,6s) linear infinite;animation-delay:var(--pdelay,0s);
+}
+@keyframes bubble{
+  0%  {transform:scale(.2);opacity:0}    /* ~1px, invisible */
+  50% {transform:scale(.6);opacity:.7}   /* ~3px, peak 70% */
+  100%{transform:scale(1);opacity:0}     /* 5px, fades out */
+}
+
+.wrap{max-width:var(--max);margin:0 auto;padding:0 var(--sp-5)}
+.mono{font-family:var(--font-mono)}
+.kicker{
+  font-family:var(--font-mono);font-size:var(--type-xs);font-weight:500;
+  letter-spacing:.22em;text-transform:uppercase;color:var(--accent);
+}
+
+/* ============================================================
+   COMPONENT: TOP NAVIGATION BAR
+   ============================================================ */
+.nav{
+  position:sticky;top:0;z-index:100;
+  display:flex;align-items:center;gap:var(--sp-5);
+  height:60px;padding:0 var(--sp-5);
+  background:color-mix(in srgb,var(--bg) 82%,transparent);
+  backdrop-filter:blur(10px);
+  border-bottom:1px solid var(--line);
+}
+.nav__brand{
+  font-family:var(--font-display);font-weight:700;font-size:var(--type-lg);
+  letter-spacing:.04em;display:flex;align-items:center;gap:var(--sp-2);
+}
+.nav__brand b{color:var(--accent)}
+.nav__brand::before{content:"";width:9px;height:9px;background:var(--accent);
+  box-shadow:0 0 10px var(--accent-glow);animation:pulse 2.4s var(--ease) infinite}
+@keyframes pulse{50%{opacity:.35;transform:scale(.7)}}
+.nav__links{display:flex;gap:var(--sp-2);margin-left:auto}
+.nav__link{
+  position:relative;font-family:var(--font-mono);font-size:var(--type-sm);
+  letter-spacing:.08em;text-transform:uppercase;color:var(--text-dim);
+  padding:var(--sp-2) var(--sp-3);transition:color var(--dur) var(--ease);
+}
+.nav__link::after{content:"";position:absolute;left:var(--sp-3);right:var(--sp-3);
+  bottom:4px;height:1px;background:var(--accent);transform:scaleX(0);
+  transform-origin:left;transition:transform var(--dur) var(--ease)}
+.nav__link:hover,.nav__link[aria-current]{color:var(--text)}
+.nav__link:hover::after,.nav__link[aria-current]::after{transform:scaleX(1)}
+
+/* ============================================================
+   COMPONENT: PANEL / CONTENT BOX  (the core module)
+   bracketed corners + optional header strip
+   ============================================================ */
+.panel{
+  position:relative;background:var(--bg-elev);border:1px solid var(--line);
+  border-radius:var(--radius);padding:var(--sp-5);
+  transition:border-color var(--dur) var(--ease),transform var(--dur) var(--ease);
+}
+/* L-brackets at opposing corners */
+.panel::before,.panel::after{
+  content:"";position:absolute;width:14px;height:14px;pointer-events:none;
+  border:1px solid var(--line-strong);transition:border-color var(--dur) var(--ease);
+}
+.panel::before{top:-1px;left:-1px;border-right:0;border-bottom:0}
+.panel::after{bottom:-1px;right:-1px;border-left:0;border-top:0}
+.panel:hover{border-color:var(--line-strong)}
+.panel:hover::before,.panel:hover::after{border-color:var(--accent)}
+.panel--selectable{cursor:pointer}
+.panel--selectable[aria-selected="true"]{border-color:var(--accent);
+  box-shadow:0 0 0 1px var(--accent),0 0 30px -10px var(--accent-glow)}
+.panel--selectable[aria-selected="true"]::before,
+.panel--selectable[aria-selected="true"]::after{border-color:var(--accent)}
+.panel__label{
+  font-family:var(--font-mono);font-size:var(--type-xs);letter-spacing:.18em;
+  text-transform:uppercase;color:var(--accent);margin-bottom:var(--sp-2);
+  display:flex;align-items:center;gap:var(--sp-2);
+}
+.panel__label::after{content:"";flex:1;height:1px;background:var(--line)}
+.panel h3{font-size:var(--type-lg);margin-bottom:var(--sp-2)}
+.panel p{color:var(--text-dim);font-size:var(--type-sm)}
+
+/* ============================================================
+   COMPONENT: BUTTONS
+   ============================================================ */
+.btn{
+  --b:var(--line-strong);
+  position:relative;display:inline-flex;align-items:center;gap:var(--sp-2);
+  font-family:var(--font-mono);font-size:var(--type-sm);font-weight:500;
+  letter-spacing:.10em;text-transform:uppercase;
+  padding:10px 20px;border:1px solid var(--b);border-radius:var(--radius);
+  background:transparent;color:var(--text);cursor:pointer;overflow:hidden;
+  transition:color var(--dur) var(--ease),border-color var(--dur) var(--ease),
+    background var(--dur) var(--ease),box-shadow var(--dur) var(--ease);
+}
+/* hover light-sweep */
+.btn::before{content:"";position:absolute;inset:0;
+  background:linear-gradient(120deg,transparent,var(--accent-dim),transparent);
+  transform:translateX(-120%);transition:transform .5s var(--ease)}
+.btn:hover::before{transform:translateX(120%)}
+.btn:hover{border-color:var(--accent);box-shadow:0 0 18px -6px var(--accent-glow)}
+.btn:active{transform:translateY(1px)}
+.btn:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.btn--primary{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.btn--primary:hover{box-shadow:0 0 22px -4px var(--accent-glow)}
+.btn--ghost{border-color:transparent;color:var(--text-dim)}
+.btn--ghost:hover{color:var(--text);border-color:var(--line)}
+.btn--danger{border-color:var(--danger);color:var(--danger)}
+.btn--danger:hover{background:var(--danger);color:#fff;box-shadow:0 0 18px -6px var(--danger)}
+.btn--icon{padding:10px;width:40px;justify-content:center}
+.btn:disabled{opacity:.4;cursor:not-allowed;box-shadow:none}
+.btn:disabled::before{display:none}
+
+/* ============================================================
+   COMPONENT: FORM CONTROLS
+   ============================================================ */
+.field{display:flex;flex-direction:column;gap:6px;margin-bottom:var(--sp-4)}
+.field__label{font-family:var(--font-mono);font-size:var(--type-xs);
+  letter-spacing:.14em;text-transform:uppercase;color:var(--text-dim)}
+.input,.textarea,.select{
+  font-family:var(--font-body);font-size:var(--type-base);font-weight:300;
+  color:var(--text);background:var(--bg-elev-2);
+  border:1px solid var(--line);border-radius:var(--radius);
+  padding:11px 14px;width:100%;
+  transition:border-color var(--dur) var(--ease),box-shadow var(--dur) var(--ease);
+}
+.input::placeholder,.textarea::placeholder{color:var(--text-faint)}
+.input:focus,.textarea:focus,.select:focus{
+  outline:none;border-color:var(--accent);
+  box-shadow:0 0 0 1px var(--accent),0 0 20px -8px var(--accent-glow);
+}
+.textarea{resize:vertical;min-height:84px}
+.select{appearance:none;cursor:pointer;
+  background-image:linear-gradient(45deg,transparent 50%,var(--accent) 50%),
+    linear-gradient(135deg,var(--accent) 50%,transparent 50%);
+  background-position:calc(100% - 18px) center,calc(100% - 13px) center;
+  background-size:5px 5px,5px 5px;background-repeat:no-repeat}
+
+/* checkbox / radio */
+.check{display:flex;align-items:center;gap:var(--sp-2);cursor:pointer;
+  font-size:var(--type-sm);color:var(--text-dim);user-select:none}
+.check input{position:absolute;opacity:0;pointer-events:none}
+.check__box{width:18px;height:18px;border:1px solid var(--line-strong);
+  border-radius:var(--radius);display:grid;place-items:center;
+  transition:all var(--dur) var(--ease)}
+.check input:checked+.check__box{background:var(--accent);border-color:var(--accent);
+  box-shadow:0 0 12px -4px var(--accent-glow)}
+.check__box::after{content:"";width:9px;height:9px;background:var(--accent-ink);
+  transform:scale(0);transition:transform var(--dur) var(--ease)}
+.check--radio .check__box,.check--radio .check__box::after{border-radius:50%}
+.check input:checked+.check__box::after{transform:scale(1)}
+.check input:focus-visible+.check__box{outline:2px solid var(--accent);outline-offset:2px}
+
+/* toggle switch */
+.switch{display:inline-flex;align-items:center;gap:var(--sp-3);cursor:pointer;
+  font-family:var(--font-mono);font-size:var(--type-xs);letter-spacing:.12em;
+  text-transform:uppercase;color:var(--text-dim);user-select:none}
+.switch input{position:absolute;opacity:0}
+.switch__track{width:42px;height:20px;border:1px solid var(--line-strong);
+  border-radius:20px;position:relative;transition:all var(--dur) var(--ease)}
+.switch__track::after{content:"";position:absolute;top:2px;left:2px;width:14px;height:14px;
+  background:var(--text-dim);border-radius:50%;transition:all var(--dur) var(--ease)}
+.switch input:checked+.switch__track{border-color:var(--accent);background:var(--accent-dim)}
+.switch input:checked+.switch__track::after{left:24px;background:var(--accent);
+  box-shadow:0 0 10px var(--accent-glow)}
+
+/* ============================================================
+   COMPONENT: BADGES / STATUS TAGS
+   ============================================================ */
+.badge{display:inline-flex;align-items:center;gap:6px;
+  font-family:var(--font-mono);font-size:var(--type-xs);font-weight:500;
+  letter-spacing:.10em;text-transform:uppercase;
+  padding:4px 10px;border:1px solid var(--line-strong);border-radius:var(--radius);
+  color:var(--text-dim)}
+.badge__dot{width:6px;height:6px;border-radius:50%;background:currentColor}
+.badge--ok{color:var(--success);border-color:color-mix(in srgb,var(--success) 50%,transparent)}
+.badge--warn{color:var(--warn);border-color:color-mix(in srgb,var(--warn) 50%,transparent)}
+.badge--err{color:var(--danger);border-color:color-mix(in srgb,var(--danger) 50%,transparent)}
+.badge--ok .badge__dot{box-shadow:0 0 8px var(--success)}
+
+/* ============================================================
+   COMPONENT: ALERTS / CALLOUTS
+   ============================================================ */
+.alert{display:flex;gap:var(--sp-3);align-items:flex-start;
+  padding:var(--sp-4);border:1px solid var(--line);border-left-width:2px;
+  border-radius:var(--radius);background:var(--bg-elev-2)}
+.alert__icon{font-family:var(--font-mono);font-weight:700;color:var(--accent)}
+.alert__body{font-size:var(--type-sm)}
+.alert__body strong{font-family:var(--font-display);font-weight:600}
+.alert--info{border-left-color:var(--accent)}
+.alert--warn{border-left-color:var(--warn)} .alert--warn .alert__icon{color:var(--warn)}
+.alert--err{border-left-color:var(--danger)} .alert--err .alert__icon{color:var(--danger)}
+
+/* ============================================================
+   COMPONENT: DATA TABLE
+   ============================================================ */
+.table{width:100%;border-collapse:collapse;font-size:var(--type-sm)}
+.table th{font-family:var(--font-mono);font-size:var(--type-xs);font-weight:500;
+  letter-spacing:.12em;text-transform:uppercase;color:var(--accent);
+  text-align:left;padding:10px 14px;border-bottom:1px solid var(--line-strong)}
+.table td{padding:11px 14px;border-bottom:1px solid var(--line);color:var(--text-dim)}
+.table tbody tr{transition:background var(--dur) var(--ease)}
+.table tbody tr:hover{background:var(--accent-dim)}
+.table tbody tr:hover td{color:var(--text)}
+
+/* ============================================================
+   COMPONENT: TABS
+   ============================================================ */
+.tabs{border-bottom:1px solid var(--line);display:flex;gap:var(--sp-1);position:relative}
+.tab{font-family:var(--font-mono);font-size:var(--type-sm);letter-spacing:.06em;
+  text-transform:uppercase;color:var(--text-dim);background:none;border:0;cursor:pointer;
+  padding:12px 18px;position:relative;transition:color var(--dur) var(--ease)}
+.tab[aria-selected="true"]{color:var(--accent)}
+.tab[aria-selected="true"]::after{content:"";position:absolute;left:0;right:0;bottom:-1px;
+  height:2px;background:var(--accent);box-shadow:0 0 10px var(--accent-glow)}
+.tab__panel{padding-top:var(--sp-4);font-size:var(--type-sm);color:var(--text-dim)}
+.tab__panel[hidden]{display:none}
+
+/* ============================================================
+   COMPONENT: PROGRESS + LOADER
+   ============================================================ */
+.progress{height:6px;background:var(--bg-elev-2);border:1px solid var(--line);
+  border-radius:var(--radius);overflow:hidden}
+.progress__bar{height:100%;background:var(--accent);box-shadow:0 0 12px var(--accent-glow);
+  position:relative;transition:width .6s var(--ease)}
+.progress__bar::after{content:"";position:absolute;inset:0;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,.35),transparent);
+  animation:shimmer 1.8s linear infinite}
+@keyframes shimmer{0%{transform:translateX(-100%)}100%{transform:translateX(100%)}}
+.loader{display:inline-flex;gap:5px}
+.loader span{width:6px;height:18px;background:var(--accent);
+  animation:bars 1s var(--ease) infinite}
+.loader span:nth-child(2){animation-delay:.12s}
+.loader span:nth-child(3){animation-delay:.24s}
+.loader span:nth-child(4){animation-delay:.36s}
+@keyframes bars{0%,100%{transform:scaleY(.4);opacity:.4}50%{transform:scaleY(1);opacity:1}}
+
+/* ============================================================
+   COMPONENT: TOOLTIP
+   ============================================================ */
+.tip{position:relative;border-bottom:1px dashed var(--text-faint);cursor:help}
+.tip::after{content:attr(data-tip);position:absolute;bottom:calc(100% + 8px);left:50%;
+  transform:translateX(-50%) translateY(4px);white-space:nowrap;
+  font-family:var(--font-mono);font-size:var(--type-xs);letter-spacing:.05em;
+  padding:6px 10px;background:var(--bg-elev);border:1px solid var(--accent);
+  color:var(--text);opacity:0;pointer-events:none;transition:all var(--dur) var(--ease);
+  box-shadow:0 0 18px -8px var(--accent-glow)}
+.tip:hover::after{opacity:1;transform:translateX(-50%) translateY(0)}
+
+/* ============================================================
+   COMPONENT: MODAL / DIALOG
+   ============================================================ */
+.overlay{position:fixed;inset:0;z-index:200;display:grid;place-items:center;
+  background:color-mix(in srgb,var(--bg) 70%,#000 40%);backdrop-filter:blur(4px);
+  opacity:0;pointer-events:none;transition:opacity var(--dur) var(--ease)}
+.overlay[data-open="true"]{opacity:1;pointer-events:auto}
+.modal{width:min(440px,90vw);background:var(--bg-elev);border:1px solid var(--accent);
+  border-radius:var(--radius);padding:var(--sp-5);box-shadow:var(--shadow),0 0 40px -12px var(--accent-glow);
+  transform:translateY(12px) scale(.98);transition:transform var(--dur) var(--ease)}
+.overlay[data-open="true"] .modal{transform:none}
+.modal__head{display:flex;justify-content:space-between;align-items:center;margin-bottom:var(--sp-3)}
+
+/* ============================================================
+   COMPONENT: CUSTOM CURSOR  (square reticle + teal afterimage)
+   Injected by script for fine pointers only; hides native cursor.
+   ============================================================ */
+html.cursor-custom,html.cursor-custom *{cursor:none!important}
+.cursor{position:fixed;left:0;top:0;width:0;height:0;z-index:10000;pointer-events:none;
+  opacity:0;transition:opacity .2s var(--ease)}
+.cursor__box{position:absolute;left:-13px;top:-13px;width:26px;height:26px;color:var(--accent);
+  filter:drop-shadow(0 0 5px var(--accent-glow));transition:transform .14s var(--ease)}
+/* center square (filled) */
+.cursor__ring{position:absolute;inset:8px;background:currentColor;border:1px solid currentColor}
+/* states */
+.cursor--hot .cursor__box{transform:scale(1.5) rotate(45deg)}
+.cursor--down .cursor__box{transform:scale(.7)}
+/* afterimage trail squares */
+.trace{position:fixed;width:6px;height:6px;margin:-3px 0 0 -3px;background:var(--accent);
+  pointer-events:none;z-index:9999;box-shadow:0 0 6px var(--accent-glow);
+  animation:trace .55s var(--ease) forwards}
+@keyframes trace{0%{opacity:.6;transform:scale(1)}100%{opacity:0;transform:scale(.25)}}
+@media (pointer:coarse){.cursor,.trace{display:none}}
+
+/* ============================================================
+   PAGE SCAFFOLD (reference doc itself — not part of the system)
+   ============================================================ */
+.hero{padding:var(--sp-8) 0 var(--sp-6);border-bottom:1px solid var(--line)}
+.hero h1{font-size:var(--type-3xl);font-weight:700;letter-spacing:.01em;margin:var(--sp-3) 0}
+.hero p{color:var(--text-dim);max-width:60ch}
+.spec{padding:var(--sp-7) 0;border-bottom:1px solid var(--line)}
+.spec__head{margin-bottom:var(--sp-5)}
+.spec__head h2{font-size:var(--type-xl);margin:4px 0}
+.spec__head p{color:var(--text-dim);font-size:var(--type-sm);max-width:62ch}
+.demo{display:flex;flex-wrap:wrap;gap:var(--sp-4);align-items:flex-start;
+  padding:var(--sp-5);background:var(--bg-elev-2);border:1px solid var(--line);
+  border-radius:var(--radius)}
+.demo--col{flex-direction:column}
+.demo--grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr))}
+.code{margin-top:-1px}
+.code__head{display:flex;justify-content:space-between;align-items:center;
+  padding:8px 14px;background:var(--bg-elev);border:1px solid var(--line);border-top:0}
+.code__head span{font-family:var(--font-mono);font-size:var(--type-xs);
+  letter-spacing:.12em;text-transform:uppercase;color:var(--text-faint)}
+.code__copy{font-family:var(--font-mono);font-size:var(--type-xs);letter-spacing:.1em;
+  text-transform:uppercase;background:none;border:1px solid var(--line);color:var(--text-dim);
+  padding:4px 10px;border-radius:var(--radius);cursor:pointer;transition:all var(--dur) var(--ease)}
+.code__copy:hover{border-color:var(--accent);color:var(--accent)}
+.code pre{margin:0;padding:var(--sp-4);background:var(--bg);border:1px solid var(--line);
+  border-top:0;border-radius:0 0 var(--radius) var(--radius);overflow-x:auto}
+.code code{font-family:var(--font-mono);font-size:var(--type-sm);line-height:1.7;
+  color:var(--text-dim);white-space:pre}
+.tokrow{display:flex;gap:var(--sp-3);align-items:center;flex-wrap:wrap}
+.swatch{display:flex;flex-direction:column;gap:6px;align-items:center;font-family:var(--font-mono);
+  font-size:10px;letter-spacing:.06em;color:var(--text-dim)}
+.swatch i{width:54px;height:54px;border:1px solid var(--line);border-radius:var(--radius);display:block}
+.typescale>*{margin:0}
+
+/* staggered load reveal */
+.reveal{opacity:0;transform:translateY(14px);animation:rise .6s var(--ease) forwards}
+@keyframes rise{to{opacity:1;transform:none}}
+
+@media (max-width:640px){
+  .nav__links{display:none}
+  .hero h1{font-size:var(--type-2xl)}
+}
+@media (prefers-reduced-motion:reduce){
+  *{animation-duration:.001s!important;transition-duration:.001s!important}
+  .fx-particles,.trace{display:none}
+}
+</style>
+</head>
+<body>
+
+<div class="fx-particles" aria-hidden="true"></div>
+<div class="fx-grid" aria-hidden="true"></div>
+
+<!-- ============ NAV ============ -->
+<nav class="nav">
+  <span class="nav__brand">HUD<b>/0S</b></span>
+  <div class="nav__links">
+    <a class="nav__link" href="#tokens">Tokens</a>
+    <a class="nav__link" href="#nav" aria-current="page">Nav</a>
+    <a class="nav__link" href="#buttons">Buttons</a>
+    <a class="nav__link" href="#panels">Panels</a>
+    <a class="nav__link" href="#forms">Forms</a>
+    <a class="nav__link" href="#feedback">Feedback</a>
+    <a class="nav__link" href="#cursor">Cursor</a>
+  </div>
+  <label class="switch" title="Toggle theme">
+    <input type="checkbox" id="themeToggle">
+    <span class="switch__track"></span>
+    <span id="themeLabel">DARK</span>
+  </label>
+</nav>
+
+<div class="wrap">
+
+  <!-- ============ HERO ============ -->
+  <header class="hero reveal">
+    <span class="kicker">// Design Reference System · v1.0</span>
+    <h1>HUD/0S</h1>
+    <p>A modular, minimal sci-fi component language. Every pattern below is defined
+    in vanilla CSS using design tokens. Feed this file to an LLM as the single source
+    of truth for look, layout, and behaviour — then ask it to build pages that reuse
+    these exact classes and variables.</p>
+  </header>
+
+  <!-- ============ HOW TO USE WITH AN LLM ============ -->
+  <section class="spec reveal">
+    <div class="spec__head">
+      <span class="kicker">// 00 · Usage</span>
+      <h2>How to use this with an LLM</h2>
+      <p>Paste the whole file (or just the &lt;style&gt; block + the snippets below) into
+      context. The CSS is the spec; the components are the vocabulary.</p>
+    </div>
+    <div class="panel">
+      <span class="panel__label">Prompt template</span>
+      <pre style="margin:0;overflow-x:auto"><code class="mono" style="font-size:13px;color:var(--text-dim);white-space:pre-wrap">Use the attached HUD/0S design reference as the strict design system.
+Rules:
+1. Reuse the CSS variables in :root and the two [data-theme] blocks. Do not invent colors.
+2. Reuse component classes verbatim (.nav, .panel, .btn, .field, .badge, .alert, .table, .tabs, .modal...).
+3. Keep the aesthetic: thin lines, sharp Chakra Petch / JetBrains Mono type, bracketed modular panels, restrained cyan accent, subtle motion only.
+4. Support both light and dark via [data-theme].
+5. Build me: &lt;describe the page&gt;.</code></pre>
+    </div>
+  </section>
+
+  <!-- ============ TOKENS ============ -->
+  <section class="spec reveal" id="tokens">
+    <div class="spec__head">
+      <span class="kicker">// 01 · Foundations</span>
+      <h2>Design tokens</h2>
+      <p>Color, type, spacing. Swap these and the entire system re-skins. Colors are
+      defined per theme; everything else is shared in :root.</p>
+    </div>
+    <div class="demo demo--col">
+      <div class="tokrow">
+        <span class="swatch"><i style="background:var(--accent)"></i>--accent</span>
+        <span class="swatch"><i style="background:var(--bg)"></i>--bg</span>
+        <span class="swatch"><i style="background:var(--bg-elev)"></i>--bg-elev</span>
+        <span class="swatch"><i style="background:var(--text)"></i>--text</span>
+        <span class="swatch"><i style="background:var(--success)"></i>--success</span>
+        <span class="swatch"><i style="background:var(--warn)"></i>--warn</span>
+        <span class="swatch"><i style="background:var(--danger)"></i>--danger</span>
+      </div>
+      <div class="typescale" style="border-top:1px solid var(--line);padding-top:var(--sp-4);width:100%">
+        <h1 style="font-size:var(--type-2xl)">Display 2xl</h1>
+        <h2 style="font-size:var(--type-xl)">Heading xl</h2>
+        <h3 style="font-size:var(--type-lg)">Subhead lg</h3>
+        <p>Body base — Chakra Petch 300 keeps long text readable while staying sharp.</p>
+        <p class="mono" style="font-size:var(--type-sm);color:var(--text-dim)">mono sm — JetBrains Mono for labels, code, data.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ NAVIGATION ============ -->
+  <section class="spec reveal" id="nav">
+    <div class="spec__head">
+      <span class="kicker">// 02 · Navigation</span>
+      <h2>Navigation bar</h2>
+      <p>Sticky, blurred, thin underline indicator that draws in on hover. Brand dot pulses.</p>
+    </div>
+    <div class="demo">
+      <nav class="nav" style="position:static;width:100%;border:1px solid var(--line)">
+        <span class="nav__brand">HUD<b>/0S</b></span>
+        <div class="nav__links">
+          <a class="nav__link" href="#" aria-current="page">Overview</a>
+          <a class="nav__link" href="#">Systems</a>
+          <a class="nav__link" href="#">Telemetry</a>
+        </div>
+      </nav>
+    </div>
+  </section>
+
+  <!-- ============ BUTTONS ============ -->
+  <section class="spec reveal" id="buttons">
+    <div class="spec__head">
+      <span class="kicker">// 03 · Actions</span>
+      <h2>Buttons</h2>
+      <p>Mono uppercase labels, light-sweep on hover, accent glow. Variants for hierarchy.</p>
+    </div>
+    <div class="demo">
+      <button class="btn btn--primary">Execute</button>
+      <button class="btn">Standby</button>
+      <button class="btn btn--ghost">Cancel</button>
+      <button class="btn btn--danger">Abort</button>
+      <button class="btn btn--icon" aria-label="settings">⚙</button>
+      <button class="btn" disabled>Locked</button>
+    </div>
+  </section>
+
+  <!-- ============ PANELS ============ -->
+  <section class="spec reveal" id="panels">
+    <div class="spec__head">
+      <span class="kicker">// 04 · Containers</span>
+      <h2>Panels &amp; selectable modules</h2>
+      <p>The core box. Bracketed corners light up on hover. Add <code class="mono">--selectable</code>
+      and toggle <code class="mono">aria-selected</code> to join page content into selectable modules.</p>
+    </div>
+    <div class="demo demo--grid">
+      <article class="panel">
+        <span class="panel__label">Module A</span>
+        <h3>Static panel</h3>
+        <p>Content box with bracketed corners and a labelled header strip.</p>
+      </article>
+      <article class="panel panel--selectable" aria-selected="true" tabindex="0">
+        <span class="panel__label">Module B</span>
+        <h3>Selected</h3>
+        <p>Click to select. Accent ring + glow signals active state.</p>
+      </article>
+      <article class="panel panel--selectable" aria-selected="false" tabindex="0">
+        <span class="panel__label">Module C</span>
+        <h3>Selectable</h3>
+        <p>Click to select. Keyboard focusable.</p>
+      </article>
+    </div>
+  </section>
+
+  <!-- ============ FORMS ============ -->
+  <section class="spec reveal" id="forms">
+    <div class="spec__head">
+      <span class="kicker">// 05 · Input</span>
+      <h2>Form controls</h2>
+      <p>Transparent fields with accent focus ring. Custom checkbox, radio, and toggle.</p>
+    </div>
+    <div class="demo demo--col">
+      <div style="width:100%;max-width:380px">
+        <div class="field">
+          <label class="field__label" for="d1">Callsign</label>
+          <input class="input" id="d1" placeholder="enter identifier">
+        </div>
+        <div class="field">
+          <label class="field__label" for="d2">Channel</label>
+          <select class="select" id="d2"><option>Alpha</option><option>Bravo</option></select>
+        </div>
+        <div class="field">
+          <label class="field__label" for="d3">Notes</label>
+          <textarea class="textarea" id="d3" placeholder="transmission log..."></textarea>
+        </div>
+      </div>
+      <div style="display:flex;gap:var(--sp-5);flex-wrap:wrap;align-items:center">
+        <label class="check"><input type="checkbox" checked><span class="check__box"></span>Encrypt</label>
+        <label class="check check--radio"><input type="radio" name="r" checked><span class="check__box"></span>Manual</label>
+        <label class="check check--radio"><input type="radio" name="r"><span class="check__box"></span>Auto</label>
+        <label class="switch"><input type="checkbox" checked><span class="switch__track"></span>Online</label>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ FEEDBACK ============ -->
+  <section class="spec reveal" id="feedback">
+    <div class="spec__head">
+      <span class="kicker">// 06 · Feedback</span>
+      <h2>Status, alerts &amp; tooltips</h2>
+      <p>Badges with status dots, left-accent callouts, hover tooltips.</p>
+    </div>
+    <div class="demo demo--col">
+      <div class="tokrow">
+        <span class="badge badge--ok"><span class="badge__dot"></span>Online</span>
+        <span class="badge badge--warn"><span class="badge__dot"></span>Degraded</span>
+        <span class="badge badge--err"><span class="badge__dot"></span>Offline</span>
+        <span class="badge"><span class="badge__dot"></span>Idle</span>
+        <span>Hover the <span class="tip" data-tip="reticulating splines...">dashed term</span> for a tooltip.</span>
+      </div>
+      <div class="alert alert--info" style="width:100%">
+        <span class="alert__icon">[i]</span>
+        <span class="alert__body"><strong>System nominal.</strong> All subsystems reporting within tolerance.</span>
+      </div>
+      <div class="alert alert--warn" style="width:100%">
+        <span class="alert__icon">[!]</span>
+        <span class="alert__body"><strong>Latency rising.</strong> Throughput degraded on channel 3.</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ DATA ============ -->
+  <section class="spec reveal">
+    <div class="spec__head">
+      <span class="kicker">// 07 · Data</span>
+      <h2>Table, tabs, progress &amp; loader</h2>
+      <p>HUD data table with row-hover, sliding tab indicator, shimmering progress.</p>
+    </div>
+    <div class="demo demo--col">
+      <table class="table">
+        <thead><tr><th>Node</th><th>Status</th><th>Load</th></tr></thead>
+        <tbody>
+          <tr><td>core-01</td><td>active</td><td>62%</td></tr>
+          <tr><td>core-02</td><td>active</td><td>41%</td></tr>
+          <tr><td>relay-07</td><td>standby</td><td>08%</td></tr>
+        </tbody>
+      </table>
+      <div style="width:100%">
+        <div class="tabs" role="tablist">
+          <button class="tab" role="tab" aria-selected="true" data-tab="0">Signal</button>
+          <button class="tab" role="tab" aria-selected="false" data-tab="1">Power</button>
+          <button class="tab" role="tab" aria-selected="false" data-tab="2">Thermal</button>
+        </div>
+        <div class="tab__panel" data-panel="0">Signal lock established. SNR 28dB.</div>
+        <div class="tab__panel" data-panel="1" hidden>Power draw stable at 1.2kW.</div>
+        <div class="tab__panel" data-panel="2" hidden>Core temp 41°C, within limits.</div>
+      </div>
+      <div style="width:100%;max-width:380px">
+        <div class="progress"><div class="progress__bar" style="width:68%"></div></div>
+      </div>
+      <div class="loader"><span></span><span></span><span></span><span></span></div>
+    </div>
+  </section>
+
+  <!-- ============ MODAL ============ -->
+  <section class="spec reveal">
+    <div class="spec__head">
+      <span class="kicker">// 08 · Overlay</span>
+      <h2>Modal dialog</h2>
+      <p>Blurred overlay, accent-bordered panel that scales in. Closes on backdrop or button.</p>
+    </div>
+    <div class="demo">
+      <button class="btn btn--primary" id="openModal">Open dialog</button>
+    </div>
+  </section>
+
+  <!-- ============ CURSOR ============ -->
+  <section class="spec reveal" id="cursor">
+    <div class="spec__head">
+      <span class="kicker">// 09 · Pointer</span>
+      <h2>Custom cursor</h2>
+      <p>A small square reticle replaces the native pointer (fine pointers only),
+      leaving a fading teal afterimage trail along its path. It expands and rotates
+      over interactive elements and contracts on click. Built from
+      <code class="mono">.cursor</code> + <code class="mono">.trace</code> and a small
+      mousemove script that injects itself — no markup required. Auto-disabled on touch
+      devices and under reduced-motion.</p>
+    </div>
+    <div class="panel">
+      <span class="panel__label">Live on this page</span>
+      <p>Move your pointer to see the reticle track and the teal squares trace behind it.
+      Hover a button or link to watch the reticle open and rotate; press to contract it.</p>
+    </div>
+  </section>
+
+  <footer style="padding:var(--sp-7) 0;text-align:center">
+    <span class="kicker">// End of reference · HUD/0S v1.0</span>
+  </footer>
+</div>
+
+<!-- ============ MODAL MARKUP ============ -->
+<div class="overlay" id="overlay" data-open="false">
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="mtitle">
+    <div class="modal__head">
+      <h3 id="mtitle">Confirm sequence</h3>
+      <button class="btn btn--icon btn--ghost" id="closeModal" aria-label="close">✕</button>
+    </div>
+    <p style="color:var(--text-dim);font-size:var(--type-sm)">This action initiates the launch sequence. Proceed?</p>
+    <div style="display:flex;gap:var(--sp-3);margin-top:var(--sp-5);justify-content:flex-end">
+      <button class="btn btn--ghost" id="closeModal2">Cancel</button>
+      <button class="btn btn--primary">Confirm</button>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ---- THEME TOGGLE (in-memory, no storage) ---- */
+const root=document.documentElement,tg=document.getElementById('themeToggle'),lbl=document.getElementById('themeLabel');
+function setTheme(dark){root.setAttribute('data-theme',dark?'dark':'light');lbl.textContent=dark?'DARK':'LIGHT';tg.checked=!dark;}
+setTheme(true);
+tg.addEventListener('change',()=>setTheme(!tg.checked));
+
+/* ---- SELECTABLE PANELS ---- */
+document.querySelectorAll('.panel--selectable').forEach(p=>{
+  const sel=()=>p.setAttribute('aria-selected',p.getAttribute('aria-selected')!=='true');
+  p.addEventListener('click',sel);
+  p.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();sel();}});
+});
+
+/* ---- TABS ---- */
+document.querySelectorAll('.tab').forEach(t=>t.addEventListener('click',()=>{
+  const i=t.dataset.tab,scope=t.closest('.demo');
+  scope.querySelectorAll('.tab').forEach(x=>x.setAttribute('aria-selected',x===t));
+  scope.querySelectorAll('.tab__panel').forEach(p=>p.hidden=p.dataset.panel!==i);
+}));
+
+/* ---- MODAL ---- */
+const ov=document.getElementById('overlay');
+const open=()=>ov.dataset.open='true',close=()=>ov.dataset.open='false';
+document.getElementById('openModal').addEventListener('click',open);
+['closeModal','closeModal2'].forEach(id=>document.getElementById(id).addEventListener('click',close));
+ov.addEventListener('click',e=>{if(e.target===ov)close();});
+document.addEventListener('keydown',e=>{if(e.key==='Escape')close();});
+
+/* ---- AUTO-GENERATE CODE SNIPPETS from each live demo ---- */
+function dedent(s){
+  s=s.replace(/^\n+|\s+$/g,'');
+  const lines=s.split('\n');
+  const indent=Math.min(...lines.filter(l=>l.trim()).map(l=>l.match(/^\s*/)[0].length));
+  return lines.map(l=>l.slice(indent)).join('\n');
+}
+const esc=s=>s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+document.querySelectorAll('.spec').forEach(spec=>{
+  const demo=spec.querySelector('.demo');
+  if(!demo)return;
+  const html=dedent(demo.innerHTML);
+  const wrap=document.createElement('div');wrap.className='code';
+  wrap.innerHTML='<div class="code__head"><span>HTML</span><button class="code__copy">Copy</button></div>'+
+    '<pre><code>'+esc(html)+'</code></pre>';
+  demo.after(wrap);
+  wrap.querySelector('.code__copy').addEventListener('click',function(){
+    const txt=html;const btn=this;
+    const done=()=>{btn.textContent='Copied';setTimeout(()=>btn.textContent='Copy',1400);};
+    if(navigator.clipboard&&navigator.clipboard.writeText){
+      navigator.clipboard.writeText(txt).then(done).catch(()=>fallback(txt,done));
+    }else fallback(txt,done);
+  });
+});
+function fallback(t,cb){const ta=document.createElement('textarea');ta.value=t;document.body.appendChild(ta);ta.select();try{document.execCommand('copy');cb();}catch(e){}document.body.removeChild(ta);}
+
+/* ---- PARTICLE FIELD: scatter squares in a noise distribution ---- */
+(function(){
+  const layer=document.querySelector('.fx-particles');
+  if(!layer)return;
+  function build(){
+    layer.innerHTML='';
+    const area=window.innerWidth*window.innerHeight;
+    const count=Math.max(30,Math.min(120,Math.round(area/20000)));
+    const frag=document.createDocumentFragment();
+    for(let i=0;i<count;i++){
+      const d=document.createElement('span');
+      d.className='fx-dot';
+      d.style.left=(Math.random()*100).toFixed(2)+'%';
+      d.style.top=(Math.random()*100).toFixed(2)+'%';
+      const dur=4+Math.random()*6;                 // 4–10s per cycle
+      d.style.setProperty('--pdur',dur.toFixed(2)+'s');
+      d.style.setProperty('--pdelay',(-Math.random()*dur).toFixed(2)+'s'); // desync starts
+      frag.appendChild(d);
+    }
+    layer.appendChild(frag);
+  }
+  build();
+  let t;window.addEventListener('resize',()=>{clearTimeout(t);t=setTimeout(build,300);});
+})();
+
+/* ---- CUSTOM CURSOR: square reticle + teal afterimage ---- */
+(function(){
+  if(!window.matchMedia||!matchMedia('(pointer:fine)').matches)return;
+  const reduce=matchMedia('(prefers-reduced-motion:reduce)').matches;
+  const cur=document.createElement('div');
+  cur.className='cursor';cur.setAttribute('aria-hidden','true');
+  cur.innerHTML='<div class="cursor__box"><i class="cursor__ring"></i></div>';
+  document.body.appendChild(cur);
+  document.documentElement.classList.add('cursor-custom');
+
+  let x=0,y=0,lx=0,ly=0,shown=false,raf=0;
+  function render(){cur.style.transform='translate3d('+x+'px,'+y+'px,0)';raf=0;}
+  function spawn(px,py){
+    const t=document.createElement('span');t.className='trace';
+    t.style.left=px+'px';t.style.top=py+'px';
+    document.body.appendChild(t);
+    t.addEventListener('animationend',()=>t.remove());
+  }
+  window.addEventListener('mousemove',e=>{
+    x=e.clientX;y=e.clientY;
+    if(!shown){shown=true;cur.style.opacity='1';lx=x;ly=y;}
+    if(!raf)raf=requestAnimationFrame(render);
+    if(!reduce){
+      const dx=x-lx,dy=y-ly;
+      if(dx*dx+dy*dy>80){spawn(x,y);lx=x;ly=y;}   // trace every ~9px of travel
+    }
+  });
+  document.addEventListener('mouseleave',()=>{shown=false;cur.style.opacity='0';});
+  window.addEventListener('mousedown',()=>cur.classList.add('cursor--down'));
+  window.addEventListener('mouseup',()=>cur.classList.remove('cursor--down'));
+  const HOT='a,button,input,select,textarea,label,.tab,.panel--selectable,[role="tab"],[tabindex]';
+  document.addEventListener('mouseover',e=>{if(e.target.closest&&e.target.closest(HOT))cur.classList.add('cursor--hot');});
+  document.addEventListener('mouseout',e=>{if(e.target.closest&&e.target.closest(HOT))cur.classList.remove('cursor--hot');});
+})();
+
+/* ---- staggered reveal delays ---- */
+document.querySelectorAll('.reveal').forEach((el,i)=>el.style.animationDelay=(i*0.06)+'s');
+</script>
+</body>
+</html>
