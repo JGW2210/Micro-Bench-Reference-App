@@ -684,18 +684,26 @@ function positionNavMenu(menuId){
   const trigger=menu.querySelector('.sens-trigger');
   const list=menu.querySelector('.sens-menu-list');
   if(!trigger||!list)return;
-  /* Each menu is absolutely anchored to its own .sens-menu, so it appears
-     directly below its trigger. Keep it at least as wide as the trigger and
-     nudge it left/right if it would run off-screen. */
+  /* The list is position:fixed so it escapes the horizontally-scrollable pill
+     row instead of being clipped by it. Because .top-nav uses backdrop-filter,
+     a fixed descendant's containing block may be .top-nav rather than the
+     viewport — so we don't assume. We park the list at (0,0), measure where that
+     origin actually lands in the viewport, then anchor it just below its trigger
+     and nudge left/right to stay on-screen. */
   const r=trigger.getBoundingClientRect();
   list.style.minWidth=Math.max(228,Math.ceil(r.width))+'px';
   list.style.left='0px';
+  list.style.top='0px';
+  const origin=list.getBoundingClientRect();      // viewport coords of the fixed (0,0) origin
+  let left=r.left-origin.left;
+  list.style.left=left+'px';
+  list.style.top=(r.bottom-origin.top+6)+'px';
   requestAnimationFrame(()=>{
     const lr=list.getBoundingClientRect();
     const overflowRight=lr.right-(window.innerWidth-10);
     const overflowLeft=10-lr.left;
-    if(overflowRight>0)list.style.left=(-overflowRight)+'px';
-    if(overflowLeft>0)list.style.left=overflowLeft+'px';
+    if(overflowRight>0){left-=overflowRight;list.style.left=left+'px';}
+    else if(overflowLeft>0){left+=overflowLeft;list.style.left=left+'px';}
   });
 }
 function closeAllNavMenus(except){
@@ -2583,6 +2591,9 @@ document.addEventListener('click',e=>{
 });
 window.addEventListener('resize',()=>{if(anyNavMenuOpen())repositionOpenNavMenus();},{passive:true});
 window.addEventListener('scroll',()=>{if(anyNavMenuOpen())repositionOpenNavMenus();},{passive:true});
+// The pill row scrolls horizontally on narrow screens — keep any open dropdown
+// anchored to its trigger while the row slides.
+(function(){const pills=document.querySelector('.switcher-pills');if(pills)pills.addEventListener('scroll',()=>{if(anyNavMenuOpen())repositionOpenNavMenus();},{passive:true});})();
 
 // ─── Keyboard shortcuts ────────────────────────
 document.addEventListener('keydown',e=>{

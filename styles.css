@@ -335,13 +335,18 @@ html.cursor-custom,html.cursor-custom *{cursor:none!important}
 .switcher{display:flex;align-items:center;justify-content:space-between;gap:14px;flex-wrap:wrap;max-width:1140px;margin:0 auto;width:100%}
 .switcher-pills{
   display:flex;border:1px solid var(--line);border-radius:var(--border-radius-md);
-  overflow:hidden;background:var(--bg-elev-2)
+  overflow-x:auto;overflow-y:hidden;min-width:0;background:var(--bg-elev-2);
+  -webkit-overflow-scrolling:touch;scrollbar-width:thin;scrollbar-color:var(--line-strong) transparent
 }
+/* Thin horizontal scrollbar so the pill row slides instead of running off-screen */
+.switcher-pills::-webkit-scrollbar{height:5px}
+.switcher-pills::-webkit-scrollbar-thumb{background:var(--line-strong);border-radius:5px}
+.switcher-pills::-webkit-scrollbar-track{background:transparent}
 .sw-btn{
   font-family:var(--font-mono);font-size:11px;font-weight:500;letter-spacing:.06em;text-transform:uppercase;
   padding:9px 16px;border:none;background:transparent;color:var(--text-dim);cursor:pointer;
   transition:color var(--dur) var(--ease),background var(--dur) var(--ease);
-  display:flex;align-items:center;gap:6px;white-space:nowrap;border-right:1px solid var(--line)
+  display:flex;flex:0 0 auto;align-items:center;gap:6px;white-space:nowrap;border-right:1px solid var(--line)
 }
 .switcher-pills>*:last-child .sw-btn,.switcher-pills>.sw-btn:last-child{border-right:0}
 .sw-btn i{font-size:15px}
@@ -363,8 +368,8 @@ html.cursor-custom,html.cursor-custom *{cursor:none!important}
 .sens-trigger .sens-chevron{font-size:13px;margin-left:2px;transition:transform .18s var(--ease)}
 .sens-menu.open .sens-trigger .sens-chevron{transform:rotate(180deg)}
 .sens-menu-list{
-  position:absolute;top:calc(100% + 6px);left:0;
-  min-width:max(100%,232px);max-width:min(92vw,340px);
+  position:fixed;top:0;left:0;
+  min-width:232px;max-width:min(92vw,340px);
   display:none;flex-direction:column;padding:6px;
   border:1px solid var(--line-strong);border-radius:var(--border-radius-lg);
   background:var(--solid-pop);
@@ -1282,8 +1287,10 @@ html[data-theme="light"] .barcode-date-input{color-scheme:light}
 }
 /* Keep the nav containers unclipped so the sensitivities dropdown can sit
    directly under its tab instead of being cut off by the pill row's rounding.
-   Placed after the responsive block so it also wins over the mobile overflow-x. */
-.top-nav,.app-header,.switcher,.switcher-pills{overflow:visible}
+   The pill row itself is now horizontally scrollable (see .switcher-pills); its
+   dropdowns are position:fixed so they escape the scroll container instead of
+   being clipped, so the pill row no longer needs overflow:visible. */
+.top-nav,.app-header,.switcher{overflow:visible}
 
 /* ════════════════════════════════════════════════════════════════
    ADDITIONS v25 — recents strip · S/I/R checker · empty state · stamp
