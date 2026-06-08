@@ -70,6 +70,7 @@
             <button class="sens-menu-item" id="sw-virology" type="button" role="menuitem" onclick="selectNavView('virology')"><i class="ti ti-virus" aria-hidden="true"></i><span>Molecular</span></button>
             <button class="sens-menu-item" id="sw-blood" type="button" role="menuitem" onclick="selectNavView('blood')"><i class="ti ti-droplet-half-2" aria-hidden="true"></i><span>Blood Science</span></button>
             <button class="sens-menu-item" id="sw-myco" type="button" role="menuitem" onclick="selectNavView('myco')"><i class="ti ti-mushroom" aria-hidden="true"></i><span>Mycology</span></button>
+            <button class="sens-menu-item" id="sw-serology" type="button" role="menuitem" onclick="selectNavView('serology')"><i class="ti ti-test-pipe" aria-hidden="true"></i><span>Serology</span></button>
           </div>
         </div>
         <button class="sw-btn" id="sw-index" onclick="switchView('index')" aria-label="Index & glossary" title="Index & glossary"><i class="ti ti-list-search" aria-hidden="true"></i></button>
@@ -854,6 +855,51 @@
     </div>
   </section>
 </div><!-- end view-notes -->
+
+<!-- ═══ SEROLOGY VIEW ═══ -->
+<div class="view hidden" id="view-serology">
+  <div class="sero-header">
+    <h2 class="sero-title"><i class="ti ti-test-pipe" aria-hidden="true"></i> Serology</h2>
+    <p class="sero-sub">Search serology &amp; referred tests by code or name. Shows sample type, whether it is run in-house or sent away, and the analyser used where known.</p>
+  </div>
+
+  <div class="sero-controls">
+    <div class="sero-search-wrap">
+      <i class="ti ti-search search-icon" aria-hidden="true"></i>
+      <input type="text" class="sero-search-input" id="serology-search" placeholder="Search by code or test name (e.g. TOXO, hepatitis, HIV)…" autocomplete="off" aria-label="Search serology tests">
+      <button class="search-clear sero-search-clear" id="serology-search-clear" type="button" onclick="clearSerologySearch()" aria-label="Clear search">×</button>
+    </div>
+    <div class="sero-filter-row">
+      <div class="sero-chips" role="group" aria-label="Filter by location">
+        <button class="sero-chip active" id="sero-chip-all"  type="button" onclick="setSerologyFilter('all')">All</button>
+        <button class="sero-chip"        id="sero-chip-in"   type="button" onclick="setSerologyFilter('in')">In-house</button>
+        <button class="sero-chip"        id="sero-chip-send" type="button" onclick="setSerologyFilter('send')">Sendaway</button>
+      </div>
+      <label class="sero-toggle">
+        <input type="checkbox" id="serology-show-disc" onchange="toggleSerologyDisc(this.checked)">
+        <span>Show discontinued</span>
+      </label>
+      <span class="sero-count" id="serology-count"></span>
+    </div>
+  </div>
+
+  <div class="sero-table-wrap">
+    <table class="sero-table">
+      <thead><tr><th>Code</th><th>Test</th><th>Sample type</th><th>Location</th><th>Analyser</th></tr></thead>
+      <tbody id="serology-tbody"></tbody>
+    </table>
+  </div>
+
+  <section class="sero-ref">
+    <h3 class="sero-ref-title"><i class="ti ti-stack-2" aria-hidden="true"></i> Profiles &amp; screens</h3>
+    <div class="sero-profiles" id="serology-profiles"></div>
+  </section>
+
+  <section class="sero-ref">
+    <h3 class="sero-ref-title"><i class="ti ti-key" aria-hidden="true"></i> Sample-type key</h3>
+    <div class="sero-key" id="serology-key"></div>
+  </section>
+</div><!-- end view-serology -->
 </div><!-- end view-container -->
 
 <div id="detail-fc">
