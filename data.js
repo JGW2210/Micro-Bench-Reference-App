@@ -1264,7 +1264,7 @@ const rareSets = [
   ['Stenotrophomonas', [['SXT25','Pot / Coli 2 / Staph 2']]],
   ['Eye Extra',        [['AK30','Pseudo 2'],['CAZ10','Pseudo 1']]],
   ['CSF Haem',         [['AMP2','ESP 1'],['C30','Pneumo 1'],['CIP5','Haem 1'],['CRO30','Coli 2'],['CXM30','Haem 1'],['SXT25','Haem 2']]],
-  ['UR3 QC',           [['AMP2','ESP 1'],['TZP36','Coli 1'],['C/T40','Pseudo 1'],['TIM85','Pot']]]
+  ['UR3 QC',           [['AMC30','Coli 1'],['TZP36','Coli 1'],['C/T40','Pseudo 1'],['TIM85','Pot']]]
 ];
 
 const anaerobeMICs = ['Augmentin','Clindamycin','Meropenem','Metronidazole','Penicillin G','Piperacillin/Tazobactam'];
@@ -1284,6 +1284,55 @@ const qcOrganisms = [
 ];
 
 
+
+// ─── Antibiotic alternative names ─────────────────────────────────────────
+// Each row groups every searchable name for one agent: generic (BAN/INN),
+// bench/short name, trade names, combination shorthands and spelling variants.
+// Any antibiotic whose name matches a member of a row gains the whole row as
+// search synonyms, so a search for any one name surfaces the drug under all of
+// its names — in both the global search and the bench-notes disc finder.
+const abxAliasGroups = [
+  ['Amoxicillin/Clavulanic acid','Co-amoxiclav','Coamoxiclav','Amoxiclav','AmoxClav','Amoxicillin-clavulanate','Augmentin'],
+  ['Co-trimoxazole','Cotrimoxazole','Septrin','Sulfamethoxazole/Trimethoprim','Sulphamethoxazole/Trimethoprim','Trimethoprim/Sulfamethoxazole','Trimethoprim-sulfamethoxazole','TMP-SMX','TMP/SMX','SXT','Bactrim'],
+  ['Piperacillin/Tazobactam','Piperacillin-Tazobactam','Tazocin','Pip/Taz','Pip-Taz','TZP'],
+  ['Ticarcillin/Clavulanic acid','Ticarcillin-clavulanate','Ticarcillin/Clavulanate','Ticar/Clav','Timentin'],
+  ['Ceftolozane/Tazobactam','Ceftolozane-Tazobactam','Ceftol/Taz','Zerbaxa'],
+  ['Ceftazidime/Avibactam','Ceftazidime-Avibactam','Caz/Avi','Zavicefta'],
+  ['Fusidic acid','Fucidin','Sodium fusidate'],
+  ['Benzylpenicillin','Penicillin G','Pen G','Penicillin'],
+  ['Phenoxymethylpenicillin','Penicillin V','Pen V'],
+  ['Colistin','Polymyxin E','Colistimethate','Colomycin'],
+  ['Rifampicin','Rifampin'],
+  ['Mecillinam','Pivmecillinam'],
+  ['Trimethoprim','TMP'],
+  ['Nitrofurantoin','Macrobid','Macrodantin'],
+  ['Fosfomycin','Monurol'],
+  ['Gentamicin','Gentamycin'],
+  ['Cephalexin','Cefalexin','Keflex'],
+  ['Cefuroxime','Zinacef','Zinnat'],
+  ['Ceftriaxone','Rocephin'],
+  ['Ceftazidime','Fortum'],
+  ['Cefotaxime','Claforan'],
+  ['Cefpodoxime','Orelox'],
+  ['Cefiderocol','Fetcroja'],
+  ['Cefepime','Maxipime'],
+  ['Temocillin','Negaban'],
+  ['Meropenem','Meronem'],
+  ['Ertapenem','Invanz'],
+  ['Linezolid','Zyvox'],
+  ['Tigecycline','Tygacil'],
+  ['Daptomycin','Cubicin'],
+  ['Teicoplanin','Targocid'],
+  ['Vancomycin','Vancocin'],
+  ['Ciprofloxacin','Ciproxin'],
+  ['Levofloxacin','Tavanic'],
+  ['Clarithromycin','Klaricid'],
+  ['Clindamycin','Dalacin'],
+  ['Doxycycline','Vibramycin'],
+  ['Mupirocin','Bactroban'],
+  ['Metronidazole','Flagyl'],
+  ['Aztreonam','Azactam']
+];
 
 // ─── Serology test directory ──────────────────────────────────────────────
 // loc: 'in' = in-house bench, 'send' = sendaway / referred to a reference lab.

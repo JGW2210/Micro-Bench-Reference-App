@@ -1512,6 +1512,26 @@ let abxFinderIndex = null;   // [{name, occurrences:[...]}] sorted by name
 let abxFinderResults = [];   // current dropdown results
 let abxFinderFocusIdx = -1;
 
+// Normalise an antibiotic name for alias matching (case/punctuation/space-insensitive).
+function normAbxName(s){ return String(s).toLowerCase().replace(/[^a-z0-9]/g, ''); }
+
+// Lazily build a lookup from every normalised alias to its full alias-row text,
+// then return the synonyms for a given antibiotic name (excluding the name itself).
+let _abxAliasLookup = null;
+function abxAliasText(name){
+  if(typeof abxAliasGroups === 'undefined') return '';
+  if(!_abxAliasLookup){
+    _abxAliasLookup = new Map();
+    abxAliasGroups.forEach(group => {
+      group.forEach(g => _abxAliasLookup.set(normAbxName(g), group));
+    });
+  }
+  const group = _abxAliasLookup.get(normAbxName(name));
+  if(!group) return '';
+  const self = normAbxName(name);
+  return group.filter(g => normAbxName(g) !== self).join(' ');
+}
+
 function buildAbxFinderIndex(){
   const map = new Map();
   routineSets.forEach(group => {
@@ -1519,7 +1539,7 @@ function buildAbxFinderIndex(){
       set.antibiotics.forEach(entry => {
         const {name, conc} = parseAbxDisc(entry);
         const key = name.toLowerCase();
-        if(!map.has(key)) map.set(key, {name, occurrences:[]});
+        if(!map.has(key)) map.set(key, {name, aliases:abxAliasText(name), occurrences:[]});
         map.get(key).occurrences.push({section:group.section, setName:set.name, codes:set.codes, conc, entry});
       });
     });
@@ -1531,7 +1551,8 @@ function abxFinderResultSnippet(item){
   const setCount = item.occurrences.length;
   const concs = [...new Set(item.occurrences.map(o => formatDiscConc(o.conc)).filter(Boolean))];
   const concStr = concs.length ? ' · ' + concs.join(' / ') : '';
-  return `${setCount} donker${setCount === 1 ? '' : 's'}${concStr}`;
+  const aka = item.aliases ? ` · a.k.a. ${item.aliases}` : '';
+  return `${setCount} donker${setCount === 1 ? '' : 's'}${concStr}${aka}`;
 }
 
 function runAbxFinderSearch(q){
@@ -1551,7 +1572,10 @@ function runAbxFinderSearch(q){
     matches = abxFinderIndex
       .map(it => {
         const idx = it.name.toLowerCase().indexOf(ql);
-        return idx === -1 ? null : {it, score:idx};
+        if(idx !== -1) return {it, score:idx};
+        // Fall back to an alternative-name match (ranked below direct matches).
+        if(it.aliases && it.aliases.toLowerCase().includes(ql)) return {it, score:1000};
+        return null;
       })
       .filter(Boolean)
       .sort((a, b) => a.score - b.score || a.it.name.localeCompare(b.it.name))
@@ -2265,7 +2289,7 @@ function buildSearchIndex(){
           key:c.id+':'+it.name,
           name:it.name+(it.aka?' ('+it.aka+')':'')+' — '+c.name.toLowerCase(),
           snippet:(it.tip||'').replace(/<[^>]+>/g,' ').replace(/\s+/g,' ').trim().slice(0,120),
-          hay:(it.name+' '+(it.aka||'')+' '+(it.tip||'').replace(/<[^>]+>/g,' ')+' '+c.name+' '+sg.label).toLowerCase(),
+          hay:(it.name+' '+(it.aka||'')+' '+abxAliasText(it.name)+' '+(it.tip||'').replace(/<[^>]+>/g,' ')+' '+c.name+' '+sg.label).toLowerCase(),
           action:()=>{
             switchView('abx');
             setTimeout(()=>{
