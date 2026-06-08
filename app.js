@@ -1976,6 +1976,10 @@ function buildAntibioticIndex(){
   };
   Object.entries(fcPanels).forEach(([key,p])=>{
     if(!p || !p.abx || p.reagents || p.title==='') return; // skip reagent panels and sentinel
+    // Antibacterial index only: exclude mycology morphology (fx_*), antifungal
+    // agent / expected-resistance (af_*, afr_*) and molecular (viro_*) panels —
+    // their abx lists hold organisms, morphology or antifungal agents, not antibiotics.
+    if(/^(fx_|afr?_|viro_)/.test(key)) return;
     p.abx.forEach(a=>{
       // Some entries are like "ESP1: Ampicillin · Levofloxacin · Nitrofurantoin"
       // Split on '·' if present, else treat as one entry
@@ -1985,7 +1989,7 @@ function buildAntibioticIndex(){
         const cleaned = part.replace(/^[A-Za-z0-9/]+\s*\d*\s*:\s*/,'').trim();
         if(!cleaned) return;
         // Some are descriptors like "Indole reagent (Kovács...)" - skip if not a known abx-looking term
-        if(/reagent|test|stain|culture|MALDI|gram|haemolysis|pcr|optochin|bile|nitrocefin|pyr|camp|x factor|v factor|xv combined|species id|aerotolerance|β-lactamase test|catalase|dnase agar|staph latex|specimen type|gram stain/i.test(cleaned)) return;
+        if(/reagent|test|stain|culture|MALDI|gram|haemolysis|pcr|optochin|bile|nitrocefin|pyr|camp|x factor|v factor|xv combined|species id|aerotolerance|β-lactamase test|catalase|dnase agar|staph latex|specimen type|gram stain|donker|\binhibitor\b|^penem\b/i.test(cleaned)) return;
         const c = canonicalise(cleaned);
         if(!c) return;
         if(!idx[c]) idx[c]=new Set();
