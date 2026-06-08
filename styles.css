@@ -1149,6 +1149,18 @@ html.cursor-custom,html.cursor-custom *{cursor:none!important}
 #view-notes .routine-card.is-filtered{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent),0 0 24px -12px var(--accent-glow)}
 #view-notes .abx-finder-noresults{padding:20px 12px;font-size:12px;color:var(--text-faint);text-align:center;border:1px dashed var(--line-strong);border-radius:var(--border-radius-md)}
 
+/* Names ⇄ Oxoid disc codes toggle for the donker lists */
+#view-notes .notes-code-toggle-row{display:flex;justify-content:flex-end;margin:0 0 8px}
+#view-notes .notes-switch{display:inline-flex;align-items:center;gap:9px;cursor:pointer;user-select:none}
+#view-notes .notes-switch input{position:absolute;opacity:0;width:0;height:0}
+#view-notes .notes-switch-track{position:relative;width:38px;height:20px;border-radius:20px;border:1px solid var(--line-strong);background:var(--bg-elev-2);transition:background .18s,border-color .18s;flex:0 0 auto}
+#view-notes .notes-switch-thumb{position:absolute;top:2px;left:2px;width:14px;height:14px;border-radius:50%;background:var(--text-dim);transition:transform .18s,background .18s}
+#view-notes .notes-switch input:checked + .notes-switch-track{background:var(--accent-dim);border-color:var(--accent)}
+#view-notes .notes-switch input:checked + .notes-switch-track .notes-switch-thumb{transform:translateX(18px);background:var(--accent)}
+#view-notes .notes-switch input:focus-visible + .notes-switch-track{box-shadow:0 0 0 2px var(--accent)}
+#view-notes .notes-switch-label{font-family:var(--font-mono);font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:var(--text-dim)}
+#view-notes .notes-switch input:checked ~ .notes-switch-label{color:var(--accent)}
+
 #view-notes .rare-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:10px}
 #view-notes .rare-card{border:1px solid var(--line);border-radius:var(--border-radius-md);background:var(--bg-elev);overflow:hidden;transition:border-color .15s,box-shadow .15s,transform .15s}
 #view-notes .rare-card:hover{border-color:var(--line-strong);transform:translateY(-1px)}

@@ -1334,6 +1334,63 @@ const abxAliasGroups = [
   ['Aztreonam','Azactam']
 ];
 
+// ─── Oxoid antibiotic disc codes ──────────────────────────────────────────
+// Maps each donker-list antibiotic to its Oxoid/EUCAST disc code for the
+// bench-notes "disc codes" toggle. Codes already used in the rare sets and
+// glossary (AMC, AK, CIP, CN, SXT, AMP, CAZ, MEM…) are authoritative; the rest
+// follow standard Oxoid disc lettering. Lookup is case/punctuation-insensitive
+// and alias-aware (see discCodeFor), so only one spelling per drug is needed.
+const oxoidDiscCodes = {
+  'Amikacin':'AK',
+  'Ampicillin':'AMP',
+  'Augmentin':'AMC', 'Amoxicillin/Clavulanic acid':'AMC',
+  'Aztreonam':'ATM',
+  'Benzylpenicillin':'P', 'Penicillin':'P',
+  'Cefepime':'FEP',
+  'Cefiderocol':'FDC',
+  'Cefotaxime':'CTX',
+  'Cefoxitin':'FOX',
+  'Cefpodoxime':'CPD',
+  'Ceftazidime':'CAZ',
+  'Ceftazidime-avibactam':'CZA',
+  'Ceftolozane-tazobactam':'C/T',
+  'Ceftriaxone':'CRO',
+  'Cefuroxime':'CXM',
+  'Cephalexin':'CL',
+  'Chloramphenicol':'C',
+  'Ciprofloxacin':'CIP',
+  'Clarithromycin':'CLR',
+  'Clindamycin':'DA',
+  'Ertapenem':'ETP',
+  'Erythromycin':'E',
+  'Fosfomycin':'FOS',
+  'Fucidin':'FD', 'Fusidic acid':'FD',
+  'Gentamicin':'CN',
+  'Levofloxacin':'LEV',
+  'Linezolid':'LZD',
+  'Mecillinam':'MEL',
+  'Meropenem':'MEM',
+  'Metronidazole':'MTZ',
+  'Mupirocin':'MUP',
+  'Nalidixic Acid':'NA',
+  'Nitrofurantoin':'F',
+  'Norfloxacin':'NOR',
+  'Novobiocin':'NV',
+  'Oxacillin':'OX',
+  'Pefloxacin':'PEF',
+  'Rifampicin':'RD',
+  'Septrin':'SXT', 'Co-trimoxazole':'SXT',
+  'Tazocin':'TZP', 'Piperacillin/Tazobactam':'TZP',
+  'Teicoplanin':'TEC',
+  'Temocillin':'TEM',
+  'Tetracycline':'TE',
+  'Ticarcillin-clavulanate':'TIM', 'Ticarcillin/Clavulanic acid':'TIM',
+  'Tigecycline':'TGC',
+  'Tobramycin':'TOB',
+  'Trimethoprim':'W',
+  'Vancomycin':'VAN'
+};
+
 // ─── Serology test directory ──────────────────────────────────────────────
 // loc: 'in' = in-house bench, 'send' = sendaway / referred to a reference lab.
 // analyser: only meaningful for in-house tests; omit to show "[not yet listed]".

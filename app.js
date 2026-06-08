@@ -1438,6 +1438,26 @@ function formatDiscConc(conc){
 // Shape: {name, occurrences:[{section,setName,codes,conc,entry}]}
 let activeAbxFilter = null;
 
+// When true, the donker lists show Oxoid disc codes instead of full drug names.
+let routineCodeMode = false;
+
+// Oxoid disc code for an antibiotic name (case/punctuation-insensitive,
+// alias-aware), or null if none is mapped.
+let _discCodeLookup = null;
+function discCodeFor(name){
+  if(typeof oxoidDiscCodes === 'undefined') return null;
+  if(!_discCodeLookup){
+    _discCodeLookup = new Map();
+    Object.entries(oxoidDiscCodes).forEach(([k, v]) => _discCodeLookup.set(normAbxName(k), v));
+  }
+  const direct = _discCodeLookup.get(normAbxName(name));
+  if(direct) return direct;
+  const g = abxAliasGroupFor(name);              // resolve aliases (e.g. Co-amoxiclav → Augmentin → AMC)
+  if(g){ for(const m of g){ const c = _discCodeLookup.get(normAbxName(m)); if(c) return c; } }
+  return null;
+}
+function toggleRoutineCodes(on){ routineCodeMode = !!on; renderRoutineSets(); }
+
 function renderRoutineSets(){
   const routineEl = document.getElementById('routine-sets');
   if(!routineEl) return;
@@ -1461,11 +1481,14 @@ function renderRoutineSets(){
               <ul class="rare-list routine-list">
                 ${set.antibiotics.map(abx => {
                   const p = parseAbxDisc(abx);
+                  const code = routineCodeMode ? discCodeFor(p.name) : null;   // null → no code known / names mode
                   if(filterKey && abxMergeKey(p.name) === filterKey){
-                    // Use the single canonical label across every set, not the per-disc spelling.
-                    return `<li class="routine-abx-match"><span class="routine-abx">${activeAbxFilter.name}<span class="routine-conc">${formatDiscConc(p.conc) || '—'}</span></span></li>`;
+                    // Use the single canonical label (or its disc code) across every set.
+                    const label = code || activeAbxFilter.name;
+                    return `<li class="routine-abx-match"><span class="routine-abx">${label}<span class="routine-conc">${formatDiscConc(p.conc) || '—'}</span></span></li>`;
                   }
-                  return `<li><span class="routine-abx">${abx}</span></li>`;
+                  const text = code ? `${code}${p.conc ? ' ' + p.conc : ''}` : abx;
+                  return `<li><span class="routine-abx">${text}</span></li>`;
                 }).join('')}
               </ul>
             </div>
