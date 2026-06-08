@@ -1441,11 +1441,11 @@ let activeAbxFilter = null;
 function renderRoutineSets(){
   const routineEl = document.getElementById('routine-sets');
   if(!routineEl) return;
-  const filterKey = activeAbxFilter ? activeAbxFilter.name.toLowerCase() : null;
+  const filterKey = activeAbxFilter ? activeAbxFilter.key : null;   // merge key, matches all aliases
 
   const blocks = routineSets.map((group, index) => {
     const sets = filterKey
-      ? group.sets.filter(set => set.antibiotics.some(a => parseAbxDisc(a).name.toLowerCase() === filterKey))
+      ? group.sets.filter(set => set.antibiotics.some(a => abxMergeKey(parseAbxDisc(a).name) === filterKey))
       : group.sets;
     if(filterKey && !sets.length) return '';
     return `
@@ -1461,8 +1461,9 @@ function renderRoutineSets(){
               <ul class="rare-list routine-list">
                 ${set.antibiotics.map(abx => {
                   const p = parseAbxDisc(abx);
-                  if(filterKey && p.name.toLowerCase() === filterKey){
-                    return `<li class="routine-abx-match"><span class="routine-abx">${p.name}<span class="routine-conc">${formatDiscConc(p.conc) || '—'}</span></span></li>`;
+                  if(filterKey && abxMergeKey(p.name) === filterKey){
+                    // Use the single canonical label across every set, not the per-disc spelling.
+                    return `<li class="routine-abx-match"><span class="routine-abx">${activeAbxFilter.name}<span class="routine-conc">${formatDiscConc(p.conc) || '—'}</span></span></li>`;
                   }
                   return `<li><span class="routine-abx">${abx}</span></li>`;
                 }).join('')}
@@ -1535,21 +1536,27 @@ let abxFinderFocusIdx = -1;
 // Normalise an antibiotic name for alias matching (case/punctuation/space-insensitive).
 function normAbxName(s){ return String(s).toLowerCase().replace(/[^a-z0-9]/g, ''); }
 
-// Lazily build a lookup from every normalised alias to its full alias-row text,
-// then return the synonyms for a given antibiotic name (excluding the name itself).
+// Lazily build a lookup from every normalised alias to its full alias-row.
 let _abxAliasLookup = null;
-function abxAliasText(name){
-  if(typeof abxAliasGroups === 'undefined') return '';
-  if(!_abxAliasLookup){
-    _abxAliasLookup = new Map();
-    abxAliasGroups.forEach(group => {
-      group.forEach(g => _abxAliasLookup.set(normAbxName(g), group));
-    });
+function _ensureAbxAliasLookup(){
+  if(_abxAliasLookup) return _abxAliasLookup;
+  _abxAliasLookup = new Map();
+  if(typeof abxAliasGroups !== 'undefined'){
+    abxAliasGroups.forEach(group => group.forEach(g => _abxAliasLookup.set(normAbxName(g), group)));
   }
-  const group = _abxAliasLookup.get(normAbxName(name));
-  if(!group) return '';
+  return _abxAliasLookup;
+}
+// The alias group a name belongs to (Penicillin & Benzylpenicillin share one), or null.
+function abxAliasGroupFor(name){ return _ensureAbxAliasLookup().get(normAbxName(name)) || null; }
+// A stable key that collapses every alias of one drug into a single bucket, so
+// the disc finder merges e.g. Penicillin + Benzylpenicillin into one entry.
+function abxMergeKey(name){ const g = abxAliasGroupFor(name); return g ? normAbxName(g[0]) : name.toLowerCase(); }
+// Synonyms for a name, excluding the name itself (for the result "a.k.a." hint).
+function abxAliasText(name){
+  const g = abxAliasGroupFor(name);
+  if(!g) return '';
   const self = normAbxName(name);
-  return group.filter(g => normAbxName(g) !== self).join(' ');
+  return g.filter(x => normAbxName(x) !== self).join(' ');
 }
 
 function buildAbxFinderIndex(){
@@ -1558,13 +1565,24 @@ function buildAbxFinderIndex(){
     group.sets.forEach(set => {
       set.antibiotics.forEach(entry => {
         const {name, conc} = parseAbxDisc(entry);
-        const key = name.toLowerCase();
-        if(!map.has(key)) map.set(key, {name, aliases:abxAliasText(name), occurrences:[]});
-        map.get(key).occurrences.push({section:group.section, setName:set.name, codes:set.codes, conc, entry});
+        const key = abxMergeKey(name);   // collapses aliases of the same drug into one bucket
+        if(!map.has(key)) map.set(key, {key, group:abxAliasGroupFor(name), names:new Map(), occurrences:[]});
+        const rec = map.get(key);
+        const low = name.toLowerCase();
+        if(!rec.names.has(low)) rec.names.set(low, name);   // remember each distinct on-disc spelling
+        rec.occurrences.push({section:group.section, setName:set.name, codes:set.codes, conc, entry});
       });
     });
   });
-  return [...map.values()].sort((a, b) => a.name.localeCompare(b.name));
+  const out = [];
+  map.forEach(rec => {
+    const distinct = [...rec.names.values()];
+    // One spelling on the bench → keep it; several spellings of the same drug →
+    // show the canonical alias-group name so the label is single across all sets.
+    const name = distinct.length === 1 ? distinct[0] : (rec.group ? rec.group[0] : distinct[0]);
+    out.push({ key:rec.key, name, aliases:abxAliasText(name), occurrences:rec.occurrences });
+  });
+  return out.sort((a, b) => a.name.localeCompare(b.name));
 }
 
 function abxFinderResultSnippet(item){
