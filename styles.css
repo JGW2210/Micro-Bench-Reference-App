@@ -966,6 +966,39 @@ html.cursor-custom,html.cursor-custom *{cursor:none!important}
 #view-myco .myco-flow-col .arrow-down{margin:2px 0}
 @media(max-width:720px){#view-myco .myco-panel-grid{grid-template-columns:1fr}#view-myco .myco-micro-svg{min-height:150px}#view-myco .myco-flow-cols{grid-template-columns:1fr}#view-myco .myco-flow-subcols{grid-template-columns:1fr}#view-myco .myco-tab{min-width:0}}
 
+/* ---- parasitology (reuses the Mycology card / panel styling) ---- */
+#view-parasitology .myco-hero{position:relative;overflow:hidden;margin-bottom:14px;padding:14px 16px;border:1px solid var(--line);border-radius:var(--border-radius-lg);background:var(--bg-elev-2)}
+#view-parasitology .myco-hero h2{font-size:16px;font-weight:700;margin:0 0 5px;color:var(--text);display:flex;align-items:center;gap:8px}
+#view-parasitology .myco-hero h2 i{color:var(--accent)}
+#view-parasitology .myco-hero p{font-size:12px;line-height:1.6;color:var(--text-dim);margin:0}
+#view-parasitology .myco-hero a{color:var(--accent);text-decoration:none}
+#view-parasitology .myco-controls{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:12px;padding:11px 13px;border:1px solid var(--line);border-radius:var(--border-radius-lg);background:var(--bg-elev-2)}
+#view-parasitology .myco-search,#view-parasitology .myco-filter{font-family:var(--font-sans);font-size:12px;padding:8px 10px;border-radius:var(--border-radius-md);border:1px solid var(--line);background:var(--bg-elev);color:var(--text)}
+#view-parasitology .myco-search{flex:1;min-width:180px}
+#view-parasitology .myco-search:focus,#view-parasitology .myco-filter:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 1px var(--accent)}
+#view-parasitology .myco-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:10px;margin-bottom:14px}
+#view-parasitology .myco-card{border:1px solid var(--line);border-radius:var(--border-radius-md);padding:11px 13px;background:var(--bg-elev);cursor:pointer;min-height:132px;display:flex;flex-direction:column;gap:6px;transition:border-color .15s,background .15s,transform .15s}
+#view-parasitology .myco-card:hover{border-color:var(--line-strong);background:var(--bg-elev-2);transform:translateY(-1px)}
+#view-parasitology .myco-card h3{font-size:13px;font-weight:600;color:var(--text);display:flex;align-items:center;gap:7px}
+#view-parasitology .myco-card h3 i{color:var(--accent)}
+#view-parasitology .myco-card p{font-size:11px;color:var(--text-dim);line-height:1.5}
+#view-parasitology .myco-card p em{color:var(--text);font-style:italic}
+#view-parasitology .myco-tag-row{display:flex;flex-wrap:wrap;gap:4px;margin-top:auto}
+#view-parasitology .myco-tag{font-family:var(--font-mono);font-size:9px;letter-spacing:.02em;padding:3px 7px;border-radius:var(--border-radius-md);background:var(--bg-elev-2);border:1px solid var(--line);color:var(--text-dim)}
+#view-parasitology .myco-empty{font-size:12px;color:var(--text-dim);padding:14px;text-align:center;border:1px dashed var(--line);border-radius:var(--border-radius-md)}
+#view-parasitology .myco-fungus-panel{position:relative;border:1px solid var(--line-strong);border-radius:var(--border-radius-lg);background:var(--bg-elev-2);padding:13px 15px;margin-top:8px;display:none}
+#view-parasitology .myco-panel-head{display:flex;justify-content:space-between;gap:10px;align-items:flex-start;flex-wrap:wrap;margin-bottom:10px}
+#view-parasitology .myco-panel-head h3{font-size:14px;font-weight:600;color:var(--text)}
+#view-parasitology .myco-panel-sub{font-size:11px;color:var(--text-dim)}
+#view-parasitology .myco-panel-sub em{color:var(--text);font-style:italic}
+#view-parasitology .myco-source-link{font-family:var(--font-mono);font-size:10px;letter-spacing:.04em;padding:6px 11px;border-radius:var(--border-radius-md);border:1px solid var(--accent);background:var(--accent-dim);color:var(--accent);text-decoration:none;display:inline-flex;gap:5px;align-items:center}
+#view-parasitology .myco-facts{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:8px}
+#view-parasitology .myco-fact{border:1px solid var(--line);border-radius:var(--border-radius-md);padding:8px 10px;background:var(--bg-elev)}
+#view-parasitology .myco-fact-title{font-family:var(--font-mono);font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);margin-bottom:3px}
+#view-parasitology .myco-fact p{font-size:11px;color:var(--text-dim);line-height:1.5}
+#view-parasitology .myco-fact ul{margin:0;padding-left:16px}
+#view-parasitology .myco-fact li{font-size:11px;color:var(--text-dim);line-height:1.5}
+
 /* ---- intrinsic resistance / expected phenotypes ---- */
 #view-rules .myco-controls{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:12px;padding:11px 13px;border:1px solid var(--line);border-radius:var(--border-radius-lg);background:var(--bg-elev-2)}
 #view-rules .myco-search,#view-rules .myco-filter{font-family:var(--font-sans);font-size:12px;padding:8px 10px;border-radius:var(--border-radius-md);border:1px solid var(--line);background:var(--bg-elev);color:var(--text)}
