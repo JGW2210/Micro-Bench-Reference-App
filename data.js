@@ -1271,16 +1271,16 @@ const anaerobeMICs = ['Augmentin','Clindamycin','Meropenem','Metronidazole','Pen
 
 const qcOrganisms = [
   {name:'E. coli',       strain:'25922',              plates:['CBA','CLED'],  bcName:'E.coli', bcStrain:'25922'},
+  {name:'P. aeruginosa', strain:'27853 / NCTC 12903', plates:['CBA','CLED'],  bcName:'P.aeru', bcStrain:'27853'},
   {name:'S. aureus',     strain:'29213',              plates:['CBA','CNA'],   bcName:'S.aure', bcStrain:'29213'},
   {name:'E. faecalis',   strain:'29212',              plates:['CBA','CNA'],   bcName:'E.faec', bcStrain:'29212'},
-  {name:'P. aeruginosa', strain:'27853 / NCTC 12903', plates:['CBA','CLED'],  bcName:'P.aeru', bcStrain:'27853'},
+  {name:'S. pneumoniae', strain:'49619',              plates:['CBA','CNA'],   bcName:'S.pneu', bcStrain:'49619'},
+  {name:'MRSA',          strain:'12493',              plates:['CBA','MRSA'],  bcName:'MRSA',   bcStrain:'12493'},
   {name:'H. influenzae', strain:'49247',              plates:['Choc','BACH'], bcName:'H.infl', bcStrain:'49247'},
   {name:'H. influenzae', strain:'49766',              plates:['Choc','BACH'], bcName:'H.infl', bcStrain:'49766'},
-  {name:'MRSA',          strain:'12493',              plates:['CBA','MRSA'],  bcName:'MRSA',   bcStrain:'12493'},
   {name:'VRE',           strain:'51299',              plates:['CBA'],         bcName:'VRE',    bcStrain:'51299'},
   {name:'K. pneumoniae', strain:'700603',             plates:['CBA'],         bcName:'K.pneu', bcStrain:'700603'},
-  {name:'ESBL E. coli',  strain:'35218',              plates:['CBA'],         bcName:'ESBL',   bcStrain:'35218'},
-  {name:'S. pneumoniae', strain:'49619',              plates:['CBA','CNA'],   bcName:'S.pneu', bcStrain:'49619'}
+  {name:'ESBL E. coli',  strain:'35218',              plates:['CBA'],         bcName:'ESBL',   bcStrain:'35218'}
 ];
 
 
