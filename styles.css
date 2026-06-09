@@ -1057,7 +1057,19 @@ html.cursor-custom,html.cursor-custom *{cursor:none!important}
 #view-plate .gram-film-big{border:1px solid var(--line);border-radius:var(--border-radius-md);background:#e7dee8;padding:8px;display:flex;flex-direction:column;gap:7px;align-items:center;justify-content:center}
 #view-plate .gram-film-big .gram-film-svg{max-width:320px}
 #view-plate .gram-film-big .myco-img-cap{font-family:var(--font-mono);font-size:9px;letter-spacing:.06em;text-transform:uppercase;color:#7a6a86;text-align:center}
-@media(max-width:720px){#view-plate .myco-tab{min-width:0}#view-plate .gram-grid{grid-template-columns:repeat(auto-fit,minmax(150px,1fr))}}
+/* Gram detail panel box (reuses the Mycology panel styling, which is scoped to #view-myco) */
+#view-plate .myco-fungus-panel{position:relative;border:1px solid var(--line-strong);border-radius:var(--border-radius-lg);background:var(--bg-elev-2);padding:13px 15px;margin-top:8px}
+#view-plate .myco-panel-head{display:flex;justify-content:space-between;gap:10px;align-items:flex-start;flex-wrap:wrap;margin-bottom:10px}
+#view-plate .myco-panel-head h3{font-size:14px;font-weight:600;color:var(--text)}
+#view-plate .myco-panel-sub{font-size:11px;color:var(--text-dim)}
+#view-plate .myco-panel-grid{display:grid;grid-template-columns:minmax(180px,260px) 1fr;gap:12px;align-items:start}
+#view-plate .myco-facts{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:8px}
+#view-plate .myco-fact{border:1px solid var(--line);border-radius:var(--border-radius-md);padding:8px 10px;background:var(--bg-elev)}
+#view-plate .myco-fact-title{font-family:var(--font-mono);font-size:9px;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);margin-bottom:3px}
+#view-plate .myco-fact p{font-size:11px;color:var(--text-dim);line-height:1.5}
+#view-plate .myco-fact ul{margin:0;padding-left:16px}
+#view-plate .myco-fact li{font-size:11px;color:var(--text-dim);line-height:1.5}
+@media(max-width:720px){#view-plate .myco-tab{min-width:0}#view-plate .gram-grid{grid-template-columns:repeat(auto-fit,minmax(150px,1fr))}#view-plate .myco-panel-grid{grid-template-columns:1fr}}
 
 /* ---- blood science ---- */
 #view-blood .blood-guide-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:10px;margin:10px 0 14px}
