@@ -5,6 +5,11 @@
 const istate={d68:[],d69:[],d63:[],d73:[]};
 let curITab='d68', curView='flow';
 
+// Hash-routing state (declared early with var so the hoisted writeHash() can
+// safely short-circuit during initial module load, before the routing config
+// further down is initialised). See the HASH ROUTING block at end of file.
+var routingReady=false, routingApply=false;
+
 function initDiscs(id){
   const cfg=dconfigs[id];
   istate[id]=cfg.discs.map(()=>null);
@@ -89,6 +94,7 @@ function setITab(id){
   const panel=document.getElementById('ipanel-'+id);
   panel.classList.add('active','pop-in');
   panel.addEventListener('animationend',()=>panel.classList.remove('pop-in'),{once:true});
+  writeHash('interp',id);
 }
 
 // ─── D73 mm zone-diameter calculator (replaces legacy S/R toggle for D73) ─────
@@ -510,6 +516,7 @@ function setMycoTab(tab){
     if(pane) pane.classList.toggle('is-hidden', !on);
     if(btn){ btn.classList.toggle('active', on); btn.setAttribute('aria-selected', on ? 'true' : 'false'); }
   });
+  writeHash('myco',tab);
 }
 
 function showMycoFungus(key){
@@ -854,6 +861,7 @@ function switchView(to,iTabId){
   const dfc=document.getElementById('detail-fc');
   if(dfc&&to!==curView)dfc.style.display='none';
   curView=to;
+  writeHash(to);
   if(iTabId)setTimeout(()=>setITab(iTabId),200);
   // When entering the index view, re-apply any pending glossary highlight.
   if(to==='index' && lastSearchQuery){
@@ -1246,6 +1254,7 @@ function setPlateSection(sec){
     if(pane) pane.classList.toggle('is-hidden',!on);
     if(btn){ btn.classList.toggle('active',on); btn.setAttribute('aria-selected',on?'true':'false'); }
   });
+  writeHash('plate',sec);
 }
 
 renderGram();
@@ -2159,6 +2168,7 @@ function setIdxTab(id){
   document.getElementById('idxtab-'+id).classList.add('active');
   document.getElementById('idxpanel-'+id).classList.add('active');
   if(id==='gloss' && lastSearchQuery) applyGlossarySearchHighlight(lastSearchQuery, {scroll:false});
+  writeHash('index',id);
 }
 
 // Render index/glossary content once at load (idempotent — safe even though hidden)
@@ -2999,6 +3009,87 @@ function stampGuidelineVersions(){
     view.appendChild(stamp);
   });
 }
+
+// ═══════════════════════════════════════════════
+// HASH ROUTING — shareable deep links (#/section/subsection)
+// Static-host friendly: works on GitHub Pages with no server config because
+// everything after the # is handled client-side and never sent to the server.
+//   e.g.  …/Micro-Bench-Reference-App/#/mycology/dermatophytes
+//         …/Micro-Bench-Reference-App/#/d-sets/d68
+// ═══════════════════════════════════════════════
+
+// Section slug ↔ internal view id.
+const viewSlugs = {
+  flow:'urine', wound:'wound', interp:'d-sets', rules:'intrinsic-resistance',
+  checker:'sir-checker', abx:'antibiotics', plate:'colony-gram', bactid:'bacterial-id',
+  virology:'molecular', blood:'blood-science', myco:'mycology',
+  parasitology:'parasitology', serology:'serology', index:'index', notes:'bench-notes'
+};
+const slugToView = {};
+Object.keys(viewSlugs).forEach(v => { slugToView[viewSlugs[v]] = v; });
+
+// Friendly subsection slugs for views whose internal tab keys aren't
+// self-explanatory. Views not listed here (interp, index) use their internal
+// tab id directly as the slug (e.g. d68, gloss).
+const subSlugMaps = {
+  myco:  { derm:'dermatophytes', flow:'flowchart', afst:'antifungals' },
+  plate: { plate:'plates', gram:'gram' }
+};
+function subKeyToSlug(view, key){ const m = subSlugMaps[view]; return m ? (m[key] || key) : key; }
+function subSlugToKey(view, slug){
+  const m = subSlugMaps[view];
+  if(!m) return slug;
+  const hit = Object.keys(m).find(k => m[k].toLowerCase() === slug);
+  return hit || slug;
+}
+
+function buildHash(view, subKey){
+  let h = '#/' + (viewSlugs[view] || view);
+  if(subKey) h += '/' + subKeyToSlug(view, subKey);
+  return h;
+}
+
+// Called by switchView and the sub-tab setters to keep the URL in sync. Gated
+// so it stays silent during initial module load and while a route is being
+// applied from the URL — this prevents hashchange feedback loops.
+function writeHash(view, subKey){
+  if(!routingReady || routingApply) return;
+  const target = buildHash(view, subKey);
+  if(location.hash !== target) location.hash = target;
+}
+
+function applySubRoute(view, subSlug){
+  const key = subSlugToKey(view, subSlug);
+  if(view === 'myco') setMycoTab(key);
+  else if(view === 'plate') setPlateSection(key);
+  else if(view === 'interp'){ if(document.getElementById('itab-' + key)) setITab(key); }
+  else if(view === 'index'){ if(document.getElementById('idxtab-' + key)) setIdxTab(key); }
+}
+
+function applyRoute(){
+  const raw = location.hash.replace(/^#\/?/, '').replace(/\/+$/, '');
+  if(!raw) return;                       // no route → leave the current view
+  const parts = raw.split('/').filter(Boolean).map(s => decodeURIComponent(s).toLowerCase());
+  const view = slugToView[parts[0]];
+  if(!view) return;                      // unknown section → ignore quietly
+  routingApply = true;
+  if(view !== curView) switchView(view);
+  if(parts[1]) applySubRoute(view, parts[1]);
+  routingApply = false;
+}
+
+(function initRouting(){
+  routingApply = true;
+  applyRoute();                          // honour a deep link present on first load
+  routingApply = false;
+  routingReady = true;                   // from here on, navigation updates the URL
+  window.addEventListener('hashchange', () => {
+    routingApply = true;
+    applyRoute();
+    routingApply = false;
+  });
+})();
+
 
 // ─── init (added v25) ───
 checkerInit();
