@@ -540,11 +540,11 @@ function showMycoFungus(key){
 // ═══════════════════════════════════════════════
 const paraClassLabels = {protozoa:'Protozoa',nematode:'Nematodes (roundworms)',cestode:'Cestodes (tapeworms)',trematode:'Trematodes (flukes)',ectoparasite:'Ectoparasites'};
 const paraClassOrder = ['protozoa','nematode','cestode','trematode','ectoparasite'];
-const paraSiteLabels = {blood:'Blood',stool:'Stool / intestinal',urogenital:'Urogenital',tissue:'Tissue / biopsy',skin:'Skin / hair',csf:'CSF / CNS',respiratory:'Respiratory'};
+const paraSiteLabels = {blood:'Blood',stool:'Stool / intestinal',urogenital:'Urogenital',tissue:'Tissue / biopsy',skin:'Skin',csf:'CSF / CNS',respiratory:'Respiratory'};
 const paraDxLabels = {microscopy:'Microscopy',serology:'Serology',molecular:'Antigen / PCR'};
 
 function paraHay(p){
-  return (p.name+' '+p.disease+' '+(paraClassLabels[p.cls]||'')+' '+p.note+' '+p.clues.join(' ')+' '+p.site.map(s=>paraSiteLabels[s]||'').join(' ')+' '+p.dx.map(d=>paraDxLabels[d]||'').join(' ')).toLowerCase();
+  return (p.name+' '+p.disease+' '+(paraClassLabels[p.cls]||'')+' '+p.note+' '+(p.specimen||'')+' '+p.clues.join(' ')+' '+p.site.map(s=>paraSiteLabels[s]||'').join(' ')+' '+p.dx.map(d=>paraDxLabels[d]||'').join(' ')).toLowerCase();
 }
 
 function renderParasitology(){
@@ -569,7 +569,7 @@ function showParasite(key){
   const panel=document.getElementById('para-panel'); if(!panel)return;
   const siteTags=p.site.map(s=>`<span class="myco-tag">${paraSiteLabels[s]}</span>`).join('');
   const dxTags=p.dx.map(d=>`<span class="myco-tag">${paraDxLabels[d]}</span>`).join('');
-  panel.innerHTML=`<div class="myco-panel-head"><div><h3>${p.disease}</h3><div class="myco-panel-sub"><em>${p.name}</em> · ${paraClassLabels[p.cls]}</div></div><a class="myco-source-link" href="${p.url}" target="_blank" rel="noopener"><i class="ti ti-external-link" aria-hidden="true"></i> CDC DPDx</a></div><div class="myco-facts"><div class="myco-fact"><div class="myco-fact-title">Overview</div><p>${p.note}</p></div><div class="myco-fact"><div class="myco-fact-title">Specimen</div><div class="myco-tag-row">${siteTags}</div></div><div class="myco-fact"><div class="myco-fact-title">Diagnostic method</div><div class="myco-tag-row">${dxTags}</div></div><div class="myco-fact"><div class="myco-fact-title">Bench clues</div><ul>${p.clues.map(c=>`<li>${c}</li>`).join('')}</ul></div></div>`;
+  panel.innerHTML=`<div class="myco-panel-head"><div><h3>${p.disease}</h3><div class="myco-panel-sub"><em>${p.name}</em> · ${paraClassLabels[p.cls]}</div></div><a class="myco-source-link" href="${p.url}" target="_blank" rel="noopener"><i class="ti ti-external-link" aria-hidden="true"></i> CDC DPDx</a></div><div class="myco-facts"><div class="myco-fact"><div class="myco-fact-title">Overview</div><p>${p.note}</p></div><div class="myco-fact"><div class="myco-fact-title">Specimen</div><p>${p.specimen}</p><div class="myco-tag-row">${siteTags}</div></div><div class="myco-fact"><div class="myco-fact-title">Diagnostic method</div><div class="myco-tag-row">${dxTags}</div></div><div class="myco-fact"><div class="myco-fact-title">Bench clues</div><ul>${p.clues.map(c=>`<li>${c}</li>`).join('')}</ul></div></div>`;
   panel.style.display='block';
   panel.style.animation='none';panel.offsetHeight;panel.style.animation='slideUp .28s cubic-bezier(.4,0,.2,1) forwards';
   panel.scrollIntoView({behavior:'smooth',block:'nearest'});

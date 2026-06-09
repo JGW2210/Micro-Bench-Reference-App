@@ -171,6 +171,7 @@ function validateRoutineSets() {
     assert(hasText(p.name), `${where} is missing name`);
     assert(hasText(p.disease), `${where} is missing disease`);
     assert(hasText(p.note), `${where} is missing note`);
+    assert(hasText(p.specimen), `${where} is missing specimen`);
     assert(parasiteClasses.has(p.cls), `${where} has invalid cls ${p.cls}`);
     assert(Array.isArray(p.site) && p.site.length > 0 && p.site.every(s => parasiteSites.has(s)), `${where}.site must be non-empty valid specimen keys`);
     assert(Array.isArray(p.dx) && p.dx.length > 0 && p.dx.every(d => parasiteMethods.has(d)), `${where}.dx must be non-empty valid method keys`);
