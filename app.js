@@ -521,6 +521,7 @@ function setMycoTab(tab){
 
 function showMycoFungus(key){
   const f=mycoFungi[key]; if(!f)return;
+  if(typeof pushRecent === 'function') pushRecent('fungus', key, f.name);
   setMycoTab('derm');
   const panel=document.getElementById('myco-fungus-panel'); if(!panel)return;
   const visual = f.img
@@ -566,6 +567,7 @@ function renderParasitology(){
 
 function showParasite(key){
   const p=parasites.find(x=>x.key===key); if(!p)return;
+  if(typeof pushRecent === 'function') pushRecent('parasite', key, p.disease);
   const panel=document.getElementById('para-panel'); if(!panel)return;
   const siteTags=p.site.map(s=>`<span class="myco-tag">${paraSiteLabels[s]}</span>`).join('');
   const dxTags=p.dx.map(d=>`<span class="myco-tag">${paraDxLabels[d]}</span>`).join('');
@@ -599,6 +601,7 @@ function renderRules(){
 
 function showRulesOrg(id){
   const o=expectedPhenotypes.find(x=>x.id===id); if(!o)return;
+  if(typeof pushRecent === 'function') pushRecent('rules', id, o.name);
   const panel=document.getElementById('rules-detail'); if(!panel)return;
   panel.innerHTML = `<button class="detail-close" onclick="hideRulesOrg()" aria-label="Close" title="Close (Esc)">×</button>`+
     `<div class="rules-detail-head"><h3>${o.name}</h3><span class="rules-grp-tag">${rulesGroupLabels[o.group]||o.group}</span></div>`+
@@ -699,6 +702,7 @@ function resetBloodScienceFilters(){
 
 function showBloodTest(idx){
   const t=bloodTests[idx]; if(!t)return;
+  if(typeof pushRecent === 'function') pushRecent('blood', idx, t.name);
   const d=bloodDisciplines[t.discipline]||{};
   const b=bloodTubes[t.tube]||{};
   const panel=document.getElementById('blood-detail'); if(!panel)return;
@@ -1231,6 +1235,7 @@ function renderGram(){
 
 function showGramPattern(id){
   const p=gramPatterns.find(x=>x.id===id); if(!p)return;
+  if(typeof pushRecent === 'function') pushRecent('gram', id, p.name);
   setPlateSection('gram');
   const panel=document.getElementById('gram-panel'); if(!panel)return;
   const gramLabel={pos:'Gram-positive',neg:'Gram-negative',variable:'Gram-variable'};
@@ -2183,7 +2188,7 @@ const origShowDetail = showDetail;
 showDetail = function(key){
   currentDetailKey = key;
   origShowDetail(key);
-  if(typeof pushRecent === 'function') pushRecent(key);
+  if(typeof pushRecent === 'function' && typeof fcPanels !== 'undefined' && fcPanels[key]) pushRecent('fc', key, fcPanels[key].title || key);
   const btn = document.getElementById('d-copy');
   if(btn){btn.classList.remove('copied');btn.innerHTML='<i class="ti ti-copy" aria-hidden="true"></i> Copy panel summary';}
 };
@@ -2950,18 +2955,30 @@ function checkerInit(){
 // RECENTLY-VIEWED STRIP  (added v25) — session-only, no storage
 // ═══════════════════════════════════════════════════════════════════════
 const RECENTS_MAX = 8;
+// Each entry is {kind, key, title}. kind selects which detail panel to reopen,
+// so the strip can hold cards from any section, not just the sensitivity
+// (fcPanels) flowcharts. key is the panel id (or array index for blood tests).
 let recentPanels = [];
-function pushRecent(key){
-  if(typeof fcPanels === 'undefined' || !fcPanels[key]) return;  // only real detail panels
-  recentPanels = recentPanels.filter(k=>k!==key);
-  recentPanels.unshift(key);
+const recentKindIcons = {fc:'ti-file-description', fungus:'ti-microscope', parasite:'ti-bug', rules:'ti-ban', blood:'ti-droplet', gram:'ti-flask'};
+function pushRecent(kind, key, title){
+  if(!kind || key === undefined || key === null || !title) return;
+  recentPanels = recentPanels.filter(r => !(r.kind === kind && r.key === key));
+  recentPanels.unshift({kind, key, title});
   if(recentPanels.length > RECENTS_MAX) recentPanels.length = RECENTS_MAX;
   renderRecents();
 }
-function openRecent(key){
-  // #detail-fc is global (outside the view container), so the panel opens
-  // from any view — no view switch needed.
-  showDetail(key);
+function openRecent(kind, key){
+  // #detail-fc is global so fc panels open from any view; the discipline
+  // panels live inside their view, so switch first and open after the
+  // transition settles (mirrors the global-search result actions).
+  switch(kind){
+    case 'fc':       showDetail(key); break;
+    case 'fungus':   switchView('myco');          setTimeout(()=>showMycoFungus(key), 340); break;
+    case 'parasite': switchView('parasitology');  setTimeout(()=>showParasite(key), 340); break;
+    case 'rules':    switchView('rules');         setTimeout(()=>showRulesOrg(key), 340); break;
+    case 'blood':    switchView('blood');         setTimeout(()=>showBloodTest(Number(key)), 340); break;
+    case 'gram':     switchView('plate');         setTimeout(()=>{setPlateSection('gram');showGramPattern(key);}, 360); break;
+  }
 }
 function clearRecents(){ recentPanels = []; renderRecents(); }
 function renderRecents(){
@@ -2970,12 +2987,13 @@ function renderRecents(){
   if(!bar || !chips) return;
   if(!recentPanels.length){ bar.hidden = true; chips.innerHTML=''; return; }
   bar.hidden = false;
-  chips.innerHTML = recentPanels.map(k=>{
-    const p = fcPanels[k];
-    const title = (p && p.title) ? p.title : k;
+  chips.innerHTML = recentPanels.map(r=>{
+    const title = r.title || String(r.key);
     const safe = title.replace(/[&<>"]/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
     const tip = safe.replace(/"/g,'&quot;');
-    return `<button class="recents-chip" type="button" onclick="openRecent('${k.replace(/'/g,"\\'")}')" title="${tip}"><i class="ti ti-file-description" aria-hidden="true"></i><span>${safe}</span></button>`;
+    const icon = recentKindIcons[r.kind] || 'ti-file-description';
+    const keyArg = (typeof r.key === 'number') ? r.key : `'${String(r.key).replace(/'/g,"\\'")}'`;
+    return `<button class="recents-chip" type="button" onclick="openRecent('${r.kind}',${keyArg})" title="${tip}"><i class="ti ${icon}" aria-hidden="true"></i><span>${safe}</span></button>`;
   }).join('');
 }
 
