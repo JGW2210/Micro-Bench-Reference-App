@@ -527,6 +527,49 @@ function showMycoFungus(key){
 
 
 // ═══════════════════════════════════════════════
+// PARASITOLOGY MODULE — CDC DPDx A-Z reference
+// Primary grouping by taxonomic class; secondary filters by specimen and
+// diagnostic method. Each card opens a detail panel linking to its DPDx page.
+// ═══════════════════════════════════════════════
+const paraClassLabels = {protozoa:'Protozoa',nematode:'Nematodes (roundworms)',cestode:'Cestodes (tapeworms)',trematode:'Trematodes (flukes)',ectoparasite:'Ectoparasites'};
+const paraClassOrder = ['protozoa','nematode','cestode','trematode','ectoparasite'];
+const paraSiteLabels = {blood:'Blood',stool:'Stool / intestinal',urogenital:'Urogenital',tissue:'Tissue / biopsy',skin:'Skin / hair',csf:'CSF / CNS',respiratory:'Respiratory'};
+const paraDxLabels = {microscopy:'Microscopy',serology:'Serology',molecular:'Antigen / PCR'};
+
+function paraHay(p){
+  return (p.name+' '+p.disease+' '+(paraClassLabels[p.cls]||'')+' '+p.note+' '+p.clues.join(' ')+' '+p.site.map(s=>paraSiteLabels[s]||'').join(' ')+' '+p.dx.map(d=>paraDxLabels[d]||'').join(' ')).toLowerCase();
+}
+
+function renderParasitology(){
+  const q=(document.getElementById('para-search')?.value||'').trim().toLowerCase();
+  const site=document.getElementById('para-site-filter')?.value||'';
+  const dx=document.getElementById('para-dx-filter')?.value||'';
+  const grid=document.getElementById('para-grid');
+  if(!grid)return;
+  const matches=parasites.filter(p=>(!site||p.site.includes(site)) && (!dx||p.dx.includes(dx)) && (!q||paraHay(p).includes(q)));
+  if(!matches.length){grid.innerHTML='<div class="myco-empty">No parasites match those filters.</div>';return;}
+  grid.innerHTML=paraClassOrder.filter(c=>matches.some(p=>p.cls===c)).map(c=>{
+    const cards=matches.filter(p=>p.cls===c).map(p=>{
+      const tags=p.site.map(s=>`<span class="myco-tag">${paraSiteLabels[s]}</span>`).join('');
+      return `<div class="myco-card" onclick="showParasite('${p.key}')"><h3><i class="ti ti-bug" aria-hidden="true"></i>${p.disease}</h3><p><em>${p.name}</em></p><p>${p.note}</p><div class="myco-tag-row">${tags}</div></div>`;
+    }).join('');
+    return `<div class="section-title">${paraClassLabels[c]}</div><div class="myco-grid">${cards}</div>`;
+  }).join('');
+}
+
+function showParasite(key){
+  const p=parasites.find(x=>x.key===key); if(!p)return;
+  const panel=document.getElementById('para-panel'); if(!panel)return;
+  const siteTags=p.site.map(s=>`<span class="myco-tag">${paraSiteLabels[s]}</span>`).join('');
+  const dxTags=p.dx.map(d=>`<span class="myco-tag">${paraDxLabels[d]}</span>`).join('');
+  panel.innerHTML=`<div class="myco-panel-head"><div><h3>${p.disease}</h3><div class="myco-panel-sub"><em>${p.name}</em> · ${paraClassLabels[p.cls]}</div></div><a class="myco-source-link" href="${p.url}" target="_blank" rel="noopener"><i class="ti ti-external-link" aria-hidden="true"></i> CDC DPDx</a></div><div class="myco-facts"><div class="myco-fact"><div class="myco-fact-title">Overview</div><p>${p.note}</p></div><div class="myco-fact"><div class="myco-fact-title">Specimen</div><div class="myco-tag-row">${siteTags}</div></div><div class="myco-fact"><div class="myco-fact-title">Diagnostic method</div><div class="myco-tag-row">${dxTags}</div></div><div class="myco-fact"><div class="myco-fact-title">Bench clues</div><ul>${p.clues.map(c=>`<li>${c}</li>`).join('')}</ul></div></div>`;
+  panel.style.display='block';
+  panel.style.animation='none';panel.offsetHeight;panel.style.animation='slideUp .28s cubic-bezier(.4,0,.2,1) forwards';
+  panel.scrollIntoView({behavior:'smooth',block:'nearest'});
+}
+
+
+// ═══════════════════════════════════════════════
 // EXPECTED RESISTANT PHENOTYPES / INTRINSIC RESISTANCE LOOKUP
 // (EUCAST Expected Resistant Phenotypes v1.2 + Expert Rules v3.3)
 // ═══════════════════════════════════════════════
@@ -673,7 +716,7 @@ const navMenus = [
   { id:'class-menu', triggerId:'sw-class', labelId:'class-label', prefix:'Classification',
     views:{ plate:'Colony & Gram', bactid:'Bacterial ID' } },
   { id:'disc-menu',  triggerId:'sw-disc',  labelId:'disc-label',  prefix:'Disciplines',
-    views:{ virology:'Molecular', blood:'Blood Science', myco:'Mycology', serology:'Serology' } },
+    views:{ virology:'Molecular', blood:'Blood Science', myco:'Mycology', parasitology:'Parasitology', serology:'Serology' } },
 ];
 function navMenuById(id){ return navMenus.find(m => m.id === id); }
 function navMenuOwning(view){ return navMenus.find(m => Object.prototype.hasOwnProperty.call(m.views, view)); }
@@ -781,7 +824,7 @@ function switchView(to,iTabId){
   const toEl=document.getElementById('view-'+to);
   // crude ordering for transition direction, matching the quick-nav numbering:
   // notes < sensitivities(flow,wound,interp) < abx < classification(plate,bactid) < disciplines(virology,blood,myco) < index
-  const order={notes:-1,flow:0,wound:1,interp:2,rules:2.5,checker:2.7,abx:3,plate:4,bactid:5,virology:6,blood:7,myco:8,serology:8.5,index:9};
+  const order={notes:-1,flow:0,wound:1,interp:2,rules:2.5,checker:2.7,abx:3,plate:4,bactid:5,virology:6,blood:7,myco:8,parasitology:8.4,serology:8.5,index:9};
   const goingRight=order[to]>order[curView];
   fromEl.style.transition='opacity .3s cubic-bezier(.4,0,.2,1),transform .3s cubic-bezier(.4,0,.2,1)';
   fromEl.style.opacity='0';
@@ -2211,6 +2254,7 @@ function renderBactId(){
 
 renderBactId();
 renderMycology();
+renderParasitology();
 renderBloodScience();
 
 // ─── Global search ─────────────────────────────
@@ -2281,6 +2325,13 @@ function buildSearchIndex(){
     });
     Object.entries(mycoFungi).forEach(([k,f])=>{
       out.push({kind:'fungus',key:k,name:f.name+' — microscopy',snippet:f.reservoir+' · '+f.micro.slice(0,90),hay:(f.name+' '+f.genus+' '+f.reservoir+' '+f.macro+' '+f.micro+' '+f.clues.join(' ')).toLowerCase(),action:()=>{switchView('myco');setTimeout(()=>{const t=document.getElementById('myco-search');if(t){t.value=f.name;renderMycology();}showMycoFungus(k);},340);}});
+    });
+  }
+
+  // Parasitology cards (CDC DPDx)
+  if(typeof parasites !== 'undefined'){
+    parasites.forEach(p=>{
+      out.push({kind:'parasite',key:p.key,name:p.disease+' — parasitology',snippet:p.name+' · '+p.note.slice(0,90),hay:paraHay(p),action:()=>{switchView('parasitology');setTimeout(()=>{const t=document.getElementById('para-search');if(t){t.value=p.disease;renderParasitology();}showParasite(p.key);},340);}});
     });
   }
 
@@ -2620,7 +2671,7 @@ function runSearch(q){
     return;
   }
   results.innerHTML = matches.map((m,i)=>{
-    const kindLabel = {panel:'Panel',organism:'Plate organism',glossary:'Glossary',pathway:'Pathway','abx-class':'Antibiotic class',antibiotic:'Antibiotic',bactid:'Bacterial ID',intrinsic:'Intrinsic resistance',antifungal:'Antifungal',gram:'Gram film',serology:'Serology test'}[m.kind] || m.kind;
+    const kindLabel = {panel:'Panel',organism:'Plate organism',glossary:'Glossary',pathway:'Pathway','abx-class':'Antibiotic class',antibiotic:'Antibiotic',bactid:'Bacterial ID',intrinsic:'Intrinsic resistance',antifungal:'Antifungal',gram:'Gram film',serology:'Serology test',mycology:'Mycology',fungus:'Mycology',parasite:'Parasitology'}[m.kind] || m.kind;
     const name = highlightMatch(m.name, q);
     const snip = m.snippet ? `<div class="sr-snip">${highlightMatch(m.snippet, q)}</div>` : '';
     return `<div class="search-result" data-idx="${i}" onclick="selectResult(${i})"><div class="sr-kind">${kindLabel}</div><div class="sr-name">${name}</div>${snip}</div>`;

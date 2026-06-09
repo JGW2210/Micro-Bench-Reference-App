@@ -70,6 +70,7 @@
             <button class="sens-menu-item" id="sw-virology" type="button" role="menuitem" onclick="selectNavView('virology')"><i class="ti ti-virus" aria-hidden="true"></i><span>Molecular</span></button>
             <button class="sens-menu-item" id="sw-blood" type="button" role="menuitem" onclick="selectNavView('blood')"><i class="ti ti-droplet-half-2" aria-hidden="true"></i><span>Blood Science</span></button>
             <button class="sens-menu-item" id="sw-myco" type="button" role="menuitem" onclick="selectNavView('myco')"><i class="ti ti-mushroom" aria-hidden="true"></i><span>Mycology</span></button>
+            <button class="sens-menu-item" id="sw-parasitology" type="button" role="menuitem" onclick="selectNavView('parasitology')"><i class="ti ti-bug" aria-hidden="true"></i><span>Parasitology</span></button>
             <button class="sens-menu-item" id="sw-serology" type="button" role="menuitem" onclick="selectNavView('serology')"><i class="ti ti-test-pipe" aria-hidden="true"></i><span>Serology</span></button>
           </div>
         </div>
@@ -543,6 +544,39 @@
     <div class="page-footer">EUCAST antifungal breakpoints v10.0 (2020) + updates · guidance only</div>
   </div><!-- end myco-pane-afst -->
 </div><!-- end view-myco -->
+
+
+<!-- ═══ PARASITOLOGY VIEW ═══ -->
+<div class="view hidden" id="view-parasitology">
+  <div class="myco-hero">
+    <h2><i class="ti ti-bug" aria-hidden="true"></i> Parasitology</h2>
+    <p>A quick-reference index of medically important parasites, grouped by taxonomic class with the specimen and diagnostic method for each. Search by parasite, disease, specimen or microscopy clue, then click a card for bench clues and a direct link to its <strong>CDC DPDx</strong> page. Built from the <a href="https://www.cdc.gov/dpdx/az.html" target="_blank" rel="noopener">DPDx Parasites A–Z index</a>; entries are a rudimentary teaching aid — always confirm against your local SOP and the linked DPDx page.</p>
+  </div>
+
+  <div class="myco-controls">
+    <input class="myco-search" id="para-search" type="text" placeholder="Search parasite, disease, specimen, microscopy clue…" oninput="renderParasitology()" aria-label="Search parasitology">
+    <select class="myco-filter" id="para-site-filter" onchange="renderParasitology()" aria-label="Filter by specimen">
+      <option value="">All specimens</option>
+      <option value="blood">Blood</option>
+      <option value="stool">Stool / intestinal</option>
+      <option value="urogenital">Urogenital</option>
+      <option value="tissue">Tissue / biopsy</option>
+      <option value="skin">Skin / hair</option>
+      <option value="csf">CSF / CNS</option>
+      <option value="respiratory">Respiratory</option>
+    </select>
+    <select class="myco-filter" id="para-dx-filter" onchange="renderParasitology()" aria-label="Filter by diagnostic method">
+      <option value="">All methods</option>
+      <option value="microscopy">Microscopy</option>
+      <option value="serology">Serology</option>
+      <option value="molecular">Antigen / PCR</option>
+    </select>
+  </div>
+
+  <div id="para-grid"></div>
+  <div class="myco-fungus-panel" id="para-panel"></div>
+  <div class="page-footer">Reference links: CDC DPDx (Division of Parasitic Diseases and Malaria) · educational guide only</div>
+</div><!-- end view-parasitology -->
 
 
 <!-- ═══ BLOOD SCIENCE VIEW ═══ -->

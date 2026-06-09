@@ -17,6 +17,7 @@ const data = vm.runInNewContext(`${source}
   rareSets,
   anaerobeMICs,
   qcOrganisms,
+  parasites,
   oxoidDiscCodes,
   serologyTests,
   serologyProfiles,
@@ -155,6 +156,26 @@ function validateRoutineSets() {
     assert(hasText(org.name), `qcOrganisms[${index}] is missing name`);
     assert(hasText(org.strain), `qcOrganisms[${index}] is missing strain`);
     assert(Array.isArray(org.plates) && org.plates.every(hasText), `qcOrganisms[${index}].plates must be non-empty text values`);
+  });
+
+  const parasiteClasses = new Set(['protozoa', 'nematode', 'cestode', 'trematode', 'ectoparasite']);
+  const parasiteSites = new Set(['blood', 'stool', 'urogenital', 'tissue', 'skin', 'csf', 'respiratory']);
+  const parasiteMethods = new Set(['microscopy', 'serology', 'molecular']);
+  const parasiteKeys = new Set();
+  assert(Array.isArray(data.parasites) && data.parasites.length > 0, 'parasites must be non-empty');
+  data.parasites.forEach((p, index) => {
+    const where = `parasites[${index}]${p && p.disease ? ` (${p.disease})` : ''}`;
+    assert(hasText(p.key), `${where} is missing key`);
+    assert(!parasiteKeys.has(p.key), `${where} has duplicate key ${p.key}`);
+    parasiteKeys.add(p.key);
+    assert(hasText(p.name), `${where} is missing name`);
+    assert(hasText(p.disease), `${where} is missing disease`);
+    assert(hasText(p.note), `${where} is missing note`);
+    assert(parasiteClasses.has(p.cls), `${where} has invalid cls ${p.cls}`);
+    assert(Array.isArray(p.site) && p.site.length > 0 && p.site.every(s => parasiteSites.has(s)), `${where}.site must be non-empty valid specimen keys`);
+    assert(Array.isArray(p.dx) && p.dx.length > 0 && p.dx.every(d => parasiteMethods.has(d)), `${where}.dx must be non-empty valid method keys`);
+    assert(Array.isArray(p.clues) && p.clues.every(hasText), `${where}.clues must be non-empty text values`);
+    assert(/^https:\/\/www\.cdc\.gov\/dpdx\/.+\/index\.html$/.test(p.url || ''), `${where} must link to a CDC DPDx index.html page`);
   });
 }
 
