@@ -1927,7 +1927,7 @@ function renderSerology(){
     if(t.disc && !serologyShowDisc) return false;
     if(serologyLocFilter !== 'all' && t.loc !== serologyLocFilter) return false;
     if(q){
-      const hay = (t.code + ' ' + t.name + ' ' + t.sample + ' ' + (t.note || '') + ' ' + (t.analyser || '')).toLowerCase();
+      const hay = (t.code + ' ' + t.name + ' ' + t.sample + ' ' + (t.note || '') + ' ' + (t.analyser || '') + ' ' + (t.urgent ? 'urgent' : '')).toLowerCase();
       if(!hay.includes(q)) return false;
     }
     return true;
@@ -1947,13 +1947,14 @@ function renderSerology(){
       : `<span class="sero-na">—</span>`;
     const note = t.note ? `<span class="sero-note">${t.note}</span>` : '';
     const discTag = t.disc ? `<span class="sero-disc-tag">No longer available</span>` : '';
+    const urgentTag = t.urgent ? `<span class="sero-urgent-tag">Urgent</span>` : '';
     const sample = t.sample ? highlightMatch(t.sample, q) : `<span class="sero-na">—</span>`;
     const analyser = t.loc === 'in'
       ? (t.analyser || `<span class="sero-na">[not yet listed]</span>`)
       : `<span class="sero-na">—</span>`;
     return `<tr class="${t.disc ? 'is-disc' : ''}">
       <td>${code}</td>
-      <td><span class="sero-test">${highlightMatch(t.name, q)}</span>${discTag}${note}</td>
+      <td><span class="sero-test">${highlightMatch(t.name, q)}</span>${urgentTag}${discTag}${note}</td>
       <td class="sero-sample">${sample}</td>
       <td>${serologyLocBadge(t.loc)}</td>
       <td class="sero-analyser">${analyser}</td>
