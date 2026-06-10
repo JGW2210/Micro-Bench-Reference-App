@@ -1911,16 +1911,39 @@ renderNotesView();
 // ─── Serology directory (search / filter / reference) ───────────
 let serologyQuery = '';
 let serologyLocFilter = 'all';   // 'all' | 'in' | 'send'
-let serologySampleFilter = 'all'; // 'all' | sample-key abbreviation
+let serologySampleFilter = 'all'; // 'all' | sample-key abbr | '__viral' | '__nt' | '__other'
 let serologyShowDisc = false;
 
-// Match a test's free-text sample against a sample-key abbreviation by
-// comparing whole tokens (so 'S' matches 'S/P' but not 'SST or EDTA').
+// A few key abbreviations are also written out in full in the data — match both.
+const SERO_SAMPLE_WORDS = { U: 'urine', F: 'faeces' };
+
+// Composite sample-type categories beyond the key abbreviations.
+const serologySampleGroups = [
+  {value:'__viral', label:'Viral swab',                    match:s => /viral\s+swab/i.test(s)},
+  {value:'__nt',    label:'Nose &amp; throat swab',        match:s => /nose|throat/i.test(s)},
+  {value:'__other', label:'Other (biopsy, isolate, culture…)', match:s => serologySampleIsOther(s)}
+];
+
+// "Other" = nothing in the key or the named swab groups recognises this sample.
+function serologySampleIsOther(sample){
+  if(!sample) return true;
+  const named = serologySampleKey.map(k => k.abbr).concat('__viral', '__nt');
+  return !named.some(a => serologySampleMatches(sample, a));
+}
+
+// Match a test's free-text sample against a filter value. Key abbreviations use
+// whole-token matching (so 'S' matches 'S/P' but not 'SST'), with U/F also
+// matching their spelled-out word; '__viral'/'__nt'/'__other' are composite groups.
 function serologySampleMatches(sample, abbr){
   if(abbr === 'all') return true;
+  if(abbr === '__other') return serologySampleIsOther(sample);
   if(!sample) return false;
-  const want = abbr.toUpperCase();
-  return sample.split(/[^A-Za-z0-9]+/).some(tok => tok.toUpperCase() === want);
+  if(abbr === '__viral') return /viral\s+swab/i.test(sample);
+  if(abbr === '__nt')    return /nose|throat/i.test(sample);
+  const toks = sample.split(/[^A-Za-z0-9]+/).map(t => t.toLowerCase());
+  if(toks.includes(abbr.toLowerCase())) return true;
+  const word = SERO_SAMPLE_WORDS[abbr];
+  return word ? toks.includes(word) : false;
 }
 
 function serologyLocBadge(loc){
@@ -2028,7 +2051,8 @@ function renderSerologyReference(){
   const sampleSel = document.getElementById('serology-sample-filter');
   if(sampleSel){
     sampleSel.innerHTML = '<option value="all">All sample types</option>' +
-      serologySampleKey.map(k => `<option value="${k.abbr}">${k.abbr} — ${k.label}</option>`).join('');
+      serologySampleKey.map(k => `<option value="${k.abbr}">${k.abbr} — ${k.label}</option>`).join('') +
+      serologySampleGroups.map(g => `<option value="${g.value}">${g.label}</option>`).join('');
     sampleSel.value = serologySampleFilter;
   }
 }
