@@ -2869,12 +2869,16 @@ document.addEventListener('keydown',e=>{
 });
 
 // ─── Barcode failsafe ──────────────────────────────────────────────────
-// Agar-plate barcodes are 'C' followed by 11 digits and are entered by a
-// scanner as a rapid keystroke burst (ending in Enter). Outside a text field
-// those digits would trigger the 1-9/0 page-switch shortcuts, flipping through
-// pages. We detect the scanner-speed 'C########### ' pattern, swallow the
-// digits so no navigation happens, and show a dismissible alert telling the
-// user to scan into Synapsys instead.
+// Bench barcodes are entered by a scanner as a rapid keystroke burst (ending
+// in Enter). Outside a text field their characters would trigger the 1-9/0
+// page-switch shortcuts, flipping through pages. We recognise two shapes:
+//   • agar-plate:  'C' + 11 digits            (e.g. C01234567890)
+//   • specimen:    '26' + M/S/U + 8 digits    (e.g. 26M01234567)
+// On a scanner-speed burst matching either shape we swallow the keystrokes so
+// no navigation happens and show a dismissible alert telling the user to scan
+// into Synapsys instead. The specimen barcode starts with '2' — itself a
+// page-switch key — so a lone '2' keypress is held briefly and only navigates
+// if no scanner-speed follow-up arrives.
 
 function isBarcodeAlertOpen(){
   const el = document.getElementById('barcode-alert');
@@ -2895,20 +2899,34 @@ function closeBarcodeAlert(){
 }
 
 (function barcodeFailsafe(){
-  const MAX_GAP = 80;   // ms between keys to count as scanner-speed (vs human)
-  const DIGITS  = 11;   // CXXXXXXXXXXX → 11 digits after the 'C'
-  let buf = '';         // sequence captured so far ('C' + digits)
-  let lastT = 0;        // timestamp of the previous captured key
-  let openedAt = 0;     // when the alert was shown (guards the trailing Enter)
-  const reset = () => { buf = ''; lastT = 0; };
+  const MAX_GAP = 80;    // ms between keys to count as scanner-speed (vs human)
+  const RESOLVE = 95;    // ms to hold a lone '2' before treating it as navigation
+  // Number-key → view map, mirroring the page-switch handler below.
+  const NAV = {'1':'flow','2':'wound','3':'interp','4':'abx','5':'plate','6':'bactid','7':'virology','8':'blood','9':'myco','0':'index'};
+  let buf = '';          // characters captured in the current fast sequence
+  let lastT = 0;         // timestamp of the previous captured key
+  let openedAt = 0;      // when the alert was shown (guards the trailing Enter)
+  let navTimer = 0;      // pending deferred-navigation timer for a lone '2'
+
+  const clearBuf = () => { buf = ''; lastT = 0; if(navTimer){ clearTimeout(navTimer); navTimer = 0; } };
+  const trap = e => { e.preventDefault(); e.stopImmediatePropagation(); };
+
+  // A finished barcode of either shape.
+  const isComplete = b => /^C\d{11}$/.test(b) || /^26[MSU]\d{8}$/.test(b);
+  // A string that is still a viable prefix of some barcode (more chars could
+  // complete it).
+  const isViable = b =>
+    /^C\d{0,11}$/.test(b) ||      // agar-plate, mid-build
+    /^2$/.test(b) ||
+    /^26[MSU]?$/.test(b) ||       // specimen, up to the section letter
+    /^26[MSU]\d{1,8}$/.test(b);   // specimen, mid-digits
 
   document.addEventListener('keydown', e => {
     // While the alert is up, trap keys so a second scan can't navigate behind
     // it. Escape always closes; Enter/Space close only after a short guard so
     // the triggering scan's own trailing Enter doesn't dismiss it instantly.
     if(isBarcodeAlertOpen()){
-      e.preventDefault();
-      e.stopImmediatePropagation();
+      trap(e);
       if(e.key === 'Escape'){ closeBarcodeAlert(); return; }
       if((e.key === 'Enter' || e.key === ' ') && performance.now() - openedAt > 250){ closeBarcodeAlert(); }
       return;
@@ -2917,46 +2935,39 @@ function closeBarcodeAlert(){
     // Scanning into a real input/textarea/select is the user's intent — let it
     // type normally and don't track a barcode there.
     const tag = document.activeElement && document.activeElement.tagName;
-    if(tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT'){ reset(); return; }
+    if(tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT'){ clearBuf(); return; }
 
     const now = performance.now();
-    if(now - lastT > MAX_GAP) buf = '';   // too slow for a scanner → start over
     const k = e.key;
 
-    // Idle: only the 'C' prefix opens a buffer. 'C' has no app shortcut, so we
-    // let it through untouched (single digit-key navigation still works because
-    // a lone digit never starts a buffer here).
-    if(buf === ''){
-      if(k === 'C' || k === 'c'){ buf = 'C'; lastT = now; }
+    // Continuing an in-progress scanner-speed sequence?
+    if(buf && now - lastT <= MAX_GAP){
+      const cand = buf + k;
+      if(isComplete(cand)){ clearBuf(); trap(e); openedAt = now; showBarcodeAlert(); return; }
+      if(isViable(cand)){ buf = cand; lastT = now; if(navTimer){ clearTimeout(navTimer); navTimer = 0; } trap(e); return; }
+      // Sequence broke — abandon it and let this key be handled fresh below.
+      clearBuf();
+    } else {
+      clearBuf();   // gap too large (or nothing buffered) → stale sequence
+    }
+
+    // Fresh start. 'C' has no page-switch shortcut, so just buffer it.
+    if(k === 'C' || k === 'c'){ buf = 'C'; lastT = now; return; }
+
+    // '2' both navigates and starts the specimen barcode — hold its navigation
+    // briefly; if no scanner-speed key follows, perform the navigation.
+    if(k === '2'){
+      buf = '2'; lastT = now; trap(e);
+      if(navTimer) clearTimeout(navTimer);
+      navTimer = setTimeout(() => {
+        const lone = buf === '2';
+        clearBuf();
+        if(lone) switchView(NAV['2']);
+      }, RESOLVE);
       return;
     }
 
-    // Mid-sequence: digits are part of the barcode — swallow them so they don't
-    // switch pages, and fire once the full 'C' + 11 digits has arrived.
-    if(/^[0-9]$/.test(k)){
-      buf += k;
-      lastT = now;
-      e.preventDefault();
-      e.stopImmediatePropagation();
-      if(buf.length === DIGITS + 1){ openedAt = now; showBarcodeAlert(); reset(); }
-      return;
-    }
-
-    // A terminating Enter that completes a barcode (fallback if a scanner sends
-    // a slightly different digit count but still the 'C' + 11 shape).
-    if(k === 'Enter'){
-      if(/^C\d{11}$/.test(buf)){
-        e.preventDefault();
-        e.stopImmediatePropagation();
-        openedAt = now;
-        showBarcodeAlert();
-      }
-      reset();
-      return;
-    }
-
-    // Anything else means it wasn't a barcode after all.
-    reset();
+    // Any other key isn't a barcode start — leave it for the normal handlers.
   }, true); // capture phase: run before the page-switch keydown handler
 })();
 
