@@ -1285,6 +1285,15 @@ html[data-theme="light"] .barcode-date-input{color-scheme:light}
 .sero-chip.active{color:var(--accent);border-color:var(--accent);background:var(--accent-dim)}
 .sero-toggle{display:inline-flex;align-items:center;gap:6px;font-size:11px;color:var(--text-dim);cursor:pointer;user-select:none}
 .sero-toggle input{accent-color:var(--accent);cursor:pointer}
+.sero-select-label{display:inline-flex;align-items:center;gap:7px;font-size:11px;color:var(--text-dim)}
+.sero-select-text{font-family:var(--font-mono);font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:var(--text-faint)}
+.sero-select{
+  font-family:var(--font-sans);font-size:11px;padding:6px 10px;cursor:pointer;
+  border-radius:var(--border-radius-md);border:1px solid var(--line);background:var(--bg-elev);color:var(--text-dim);
+  transition:color .15s,border-color .15s,background .15s
+}
+.sero-select:hover{color:var(--text);border-color:var(--line-strong)}
+.sero-select:focus{outline:none;color:var(--text);border-color:var(--accent);background:var(--accent-dim)}
 .sero-count{margin-left:auto;font-family:var(--font-mono);font-size:10px;color:var(--text-faint)}
 
 .sero-table-wrap{border:1px solid var(--line);border-radius:var(--border-radius-md);overflow-x:auto;overflow-y:hidden;-webkit-overflow-scrolling:touch;background:var(--bg-elev);scrollbar-width:thin;scrollbar-color:var(--line-strong) transparent}
@@ -1313,6 +1322,7 @@ html[data-theme="light"] .barcode-date-input{color-scheme:light}
 .sero-empty{padding:26px 12px;text-align:center;color:var(--text-faint);font-size:12px}
 
 .sero-ref{margin-top:18px}
+.sero-ref-top{margin-top:6px;margin-bottom:18px}
 .sero-ref-title{font-family:var(--font-sans);font-size:13px;font-weight:600;color:var(--text);display:flex;align-items:center;gap:7px;margin-bottom:8px}
 .sero-ref-title i{color:var(--accent)}
 .sero-profiles{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:10px}

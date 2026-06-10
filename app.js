@@ -1911,7 +1911,17 @@ renderNotesView();
 // ─── Serology directory (search / filter / reference) ───────────
 let serologyQuery = '';
 let serologyLocFilter = 'all';   // 'all' | 'in' | 'send'
+let serologySampleFilter = 'all'; // 'all' | sample-key abbreviation
 let serologyShowDisc = false;
+
+// Match a test's free-text sample against a sample-key abbreviation by
+// comparing whole tokens (so 'S' matches 'S/P' but not 'SST or EDTA').
+function serologySampleMatches(sample, abbr){
+  if(abbr === 'all') return true;
+  if(!sample) return false;
+  const want = abbr.toUpperCase();
+  return sample.split(/[^A-Za-z0-9]+/).some(tok => tok.toUpperCase() === want);
+}
 
 function serologyLocBadge(loc){
   return loc === 'in'
@@ -1926,6 +1936,7 @@ function renderSerology(){
   const rows = serologyTests.filter(t => {
     if(t.disc && !serologyShowDisc) return false;
     if(serologyLocFilter !== 'all' && t.loc !== serologyLocFilter) return false;
+    if(!serologySampleMatches(t.sample, serologySampleFilter)) return false;
     if(q){
       const hay = (t.code + ' ' + t.name + ' ' + t.sample + ' ' + (t.note || '') + ' ' + (t.analyser || '') + ' ' + (t.urgent ? 'urgent' : '')).toLowerCase();
       if(!hay.includes(q)) return false;
@@ -1971,6 +1982,11 @@ function setSerologyFilter(loc){
   renderSerology();
 }
 
+function setSerologySampleFilter(abbr){
+  serologySampleFilter = abbr || 'all';
+  renderSerology();
+}
+
 function toggleSerologyDisc(show){
   serologyShowDisc = !!show;
   renderSerology();
@@ -2008,6 +2024,12 @@ function renderSerologyReference(){
     keyEl.innerHTML = serologySampleKey.map(k =>
       `<div class="sero-key-row"><span class="sero-key-abbr">${k.abbr}</span><span class="sero-key-label">${k.label}</span></div>`
     ).join('');
+  }
+  const sampleSel = document.getElementById('serology-sample-filter');
+  if(sampleSel){
+    sampleSel.innerHTML = '<option value="all">All sample types</option>' +
+      serologySampleKey.map(k => `<option value="${k.abbr}">${k.abbr} — ${k.label}</option>`).join('');
+    sampleSel.value = serologySampleFilter;
   }
 }
 
