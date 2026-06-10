@@ -13,7 +13,7 @@
 <!-- HUD/0S favicon: teal reticle + central plate on dark, inline so there is no extra file dependency -->
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='10' fill='%2305070a'/%3E%3Cg fill='none' stroke='%2338e8d0' stroke-width='2.4'%3E%3Ccircle cx='32' cy='32' r='17'/%3E%3Cpath d='M32 6v9M32 49v9M6 32h9M49 32h9' stroke-linecap='round'/%3E%3C/g%3E%3Ccircle cx='32' cy='32' r='6' fill='%2338e8d0'/%3E%3Cg stroke='%2338e8d0' stroke-width='2' opacity='.5'%3E%3Cpath d='M11 11h7v2M53 11h-7v2M11 53h7v-2M53 53h-7v-2' fill='none' stroke-linecap='round'/%3E%3C/g%3E%3C/svg%3E">
 <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' fill='%2305070a'/%3E%3Cg fill='none' stroke='%2338e8d0' stroke-width='2.4'%3E%3Ccircle cx='32' cy='32' r='17'/%3E%3Cpath d='M32 6v9M32 49v9M6 32h9M49 32h9' stroke-linecap='round'/%3E%3C/g%3E%3Ccircle cx='32' cy='32' r='6' fill='%2338e8d0'/%3E%3C/svg%3E">
-<link rel="stylesheet" href="styles.css?v=20260622">
+<link rel="stylesheet" href="styles.css?v=20260623">
 </head>
 <body>
 <div class="fx-particles" aria-hidden="true"></div>
@@ -905,6 +905,11 @@
     <p class="sero-sub">Search serology &amp; referred tests by code or name. Shows sample type, whether it is run in-house or sent away, and the analyser used where known.</p>
   </div>
 
+  <section class="sero-ref sero-ref-top">
+    <h3 class="sero-ref-title"><i class="ti ti-key" aria-hidden="true"></i> Sample-type key</h3>
+    <div class="sero-key" id="serology-key"></div>
+  </section>
+
   <div class="sero-controls">
     <div class="sero-search-wrap">
       <i class="ti ti-search search-icon" aria-hidden="true"></i>
@@ -917,6 +922,12 @@
         <button class="sero-chip"        id="sero-chip-in"   type="button" onclick="setSerologyFilter('in')">In-house</button>
         <button class="sero-chip"        id="sero-chip-send" type="button" onclick="setSerologyFilter('send')">Sendaway</button>
       </div>
+      <label class="sero-select-label" for="serology-sample-filter">
+        <span class="sero-select-text">Sample</span>
+        <select class="sero-select" id="serology-sample-filter" onchange="setSerologySampleFilter(this.value)" aria-label="Filter by sample type">
+          <option value="all">All sample types</option>
+        </select>
+      </label>
       <label class="sero-toggle">
         <input type="checkbox" id="serology-show-disc" onchange="toggleSerologyDisc(this.checked)">
         <span>Show discontinued</span>
@@ -936,11 +947,6 @@
     <h3 class="sero-ref-title"><i class="ti ti-stack-2" aria-hidden="true"></i> Profiles &amp; screens</h3>
     <div class="sero-profiles" id="serology-profiles"></div>
   </section>
-
-  <section class="sero-ref">
-    <h3 class="sero-ref-title"><i class="ti ti-key" aria-hidden="true"></i> Sample-type key</h3>
-    <div class="sero-key" id="serology-key"></div>
-  </section>
 </div><!-- end view-serology -->
 </div><!-- end view-container -->
 
@@ -956,8 +962,8 @@
 </div>
 
 <!-- Scripts: load order matters — data.js defines the datasets that app.js uses. -->
-<script src="data.js?v=20260622"></script>
-<script src="app.js?v=20260622"></script>
+<script src="data.js?v=20260623"></script>
+<script src="app.js?v=20260623"></script>
 
 <!-- HUD/0S chrome: background particle field, theme toggle, custom reticle cursor.
      Self-contained; app.js owns search + keyboard handlers, so nothing here duplicates them. -->
