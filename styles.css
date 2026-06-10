@@ -1339,6 +1339,24 @@ html[data-theme="light"] .barcode-date-input{color-scheme:light}
 #view-notes .barcode-label{font-family:var(--font-mono);font-size:11px;padding:4px 8px;border-radius:var(--border-radius-sm);background:var(--bg-elev-2);border:1px solid var(--line);color:var(--accent);letter-spacing:.02em}
 #view-notes .barcode-action-cell{text-align:right;white-space:nowrap}
 
+/* Barcode failsafe alert (agar-plate barcode scanned into the app) */
+.barcode-alert{position:fixed;inset:0;z-index:100000;display:flex;align-items:center;justify-content:center;padding:24px;
+  background:color-mix(in srgb,var(--bg) 72%,rgba(0,0,0,.65));-webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px)}
+.barcode-alert[hidden]{display:none}
+.barcode-alert-box{max-width:380px;width:100%;text-align:center;padding:28px 26px 24px;border-radius:var(--border-radius-lg);
+  background:var(--bg-elev);border:1px solid var(--color-border-danger);box-shadow:0 24px 70px -20px rgba(0,0,0,.8),0 0 40px -18px var(--danger);
+  outline:none;animation:barcode-alert-pop .18s ease-out}
+@keyframes barcode-alert-pop{from{opacity:0;transform:translateY(8px) scale(.97)}to{opacity:1;transform:none}}
+.barcode-alert-icon{font-size:38px;line-height:1;color:var(--danger);margin-bottom:12px}
+.barcode-alert-title{font-family:var(--font-sans);font-size:17px;font-weight:700;color:var(--text);margin:0 0 8px}
+.barcode-alert-msg{font-size:13px;color:var(--text-dim);line-height:1.55;margin:0 0 20px}
+.barcode-alert-msg strong{color:var(--accent);font-weight:600}
+.barcode-alert-close{font-family:var(--font-sans);font-size:13px;font-weight:600;cursor:pointer;padding:9px 22px;
+  border-radius:var(--border-radius-md);border:1px solid var(--accent);background:var(--accent-dim);color:var(--accent);
+  transition:color .15s,border-color .15s,background .15s}
+.barcode-alert-close:hover{background:var(--accent);color:var(--accent-ink)}
+.barcode-alert-close:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
 /* ============================================================
    RESPONSIVE + PRINT
    ============================================================ */

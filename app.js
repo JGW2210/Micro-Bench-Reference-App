@@ -2868,6 +2868,98 @@ document.addEventListener('keydown',e=>{
   }
 });
 
+// ─── Barcode failsafe ──────────────────────────────────────────────────
+// Agar-plate barcodes are 'C' followed by 11 digits and are entered by a
+// scanner as a rapid keystroke burst (ending in Enter). Outside a text field
+// those digits would trigger the 1-9/0 page-switch shortcuts, flipping through
+// pages. We detect the scanner-speed 'C########### ' pattern, swallow the
+// digits so no navigation happens, and show a dismissible alert telling the
+// user to scan into Synapsys instead.
+
+function isBarcodeAlertOpen(){
+  const el = document.getElementById('barcode-alert');
+  return !!el && !el.hidden;
+}
+
+function showBarcodeAlert(){
+  const el = document.getElementById('barcode-alert');
+  if(!el) return;
+  el.hidden = false;
+  const box = el.querySelector('.barcode-alert-box');
+  if(box) box.focus();
+}
+
+function closeBarcodeAlert(){
+  const el = document.getElementById('barcode-alert');
+  if(el) el.hidden = true;
+}
+
+(function barcodeFailsafe(){
+  const MAX_GAP = 80;   // ms between keys to count as scanner-speed (vs human)
+  const DIGITS  = 11;   // CXXXXXXXXXXX → 11 digits after the 'C'
+  let buf = '';         // sequence captured so far ('C' + digits)
+  let lastT = 0;        // timestamp of the previous captured key
+  let openedAt = 0;     // when the alert was shown (guards the trailing Enter)
+  const reset = () => { buf = ''; lastT = 0; };
+
+  document.addEventListener('keydown', e => {
+    // While the alert is up, trap keys so a second scan can't navigate behind
+    // it. Escape always closes; Enter/Space close only after a short guard so
+    // the triggering scan's own trailing Enter doesn't dismiss it instantly.
+    if(isBarcodeAlertOpen()){
+      e.preventDefault();
+      e.stopImmediatePropagation();
+      if(e.key === 'Escape'){ closeBarcodeAlert(); return; }
+      if((e.key === 'Enter' || e.key === ' ') && performance.now() - openedAt > 250){ closeBarcodeAlert(); }
+      return;
+    }
+
+    // Scanning into a real input/textarea/select is the user's intent — let it
+    // type normally and don't track a barcode there.
+    const tag = document.activeElement && document.activeElement.tagName;
+    if(tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT'){ reset(); return; }
+
+    const now = performance.now();
+    if(now - lastT > MAX_GAP) buf = '';   // too slow for a scanner → start over
+    const k = e.key;
+
+    // Idle: only the 'C' prefix opens a buffer. 'C' has no app shortcut, so we
+    // let it through untouched (single digit-key navigation still works because
+    // a lone digit never starts a buffer here).
+    if(buf === ''){
+      if(k === 'C' || k === 'c'){ buf = 'C'; lastT = now; }
+      return;
+    }
+
+    // Mid-sequence: digits are part of the barcode — swallow them so they don't
+    // switch pages, and fire once the full 'C' + 11 digits has arrived.
+    if(/^[0-9]$/.test(k)){
+      buf += k;
+      lastT = now;
+      e.preventDefault();
+      e.stopImmediatePropagation();
+      if(buf.length === DIGITS + 1){ openedAt = now; showBarcodeAlert(); reset(); }
+      return;
+    }
+
+    // A terminating Enter that completes a barcode (fallback if a scanner sends
+    // a slightly different digit count but still the 'C' + 11 shape).
+    if(k === 'Enter'){
+      if(/^C\d{11}$/.test(buf)){
+        e.preventDefault();
+        e.stopImmediatePropagation();
+        openedAt = now;
+        showBarcodeAlert();
+      }
+      reset();
+      return;
+    }
+
+    // Anything else means it wasn't a barcode after all.
+    reset();
+  }, true); // capture phase: run before the page-switch keydown handler
+})();
+
 function updateSearchFocus(){
   document.querySelectorAll('.search-result').forEach((el,i)=>{
     el.classList.toggle('focus',i===searchFocusIdx);
