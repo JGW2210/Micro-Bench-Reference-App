@@ -213,7 +213,7 @@ h2.sr-only,.sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:
 
 /* ---- CUSTOM CURSOR (square reticle + teal trail; injected by script) ---- */
 html.cursor-custom,html.cursor-custom *{cursor:none!important}
-.cursor{position:fixed;left:0;top:0;width:0;height:0;z-index:10000;pointer-events:none;
+.cursor{position:fixed;left:0;top:0;width:0;height:0;z-index:2147483647;pointer-events:none;
   opacity:0;transition:opacity .2s var(--ease)}
 .cursor__box{position:absolute;left:-13px;top:-13px;width:26px;height:26px;color:var(--accent);
   filter:drop-shadow(0 0 5px var(--accent-glow));transition:transform .14s var(--ease)}
@@ -221,7 +221,7 @@ html.cursor-custom,html.cursor-custom *{cursor:none!important}
 .cursor--hot .cursor__box{transform:scale(1.5) rotate(45deg)}
 .cursor--down .cursor__box{transform:scale(.7)}
 .trace{position:fixed;width:6px;height:6px;margin:-3px 0 0 -3px;background:var(--accent);
-  pointer-events:none;z-index:9999;box-shadow:0 0 6px var(--accent-glow);
+  pointer-events:none;z-index:2147483646;box-shadow:0 0 6px var(--accent-glow);
   animation:trace .55s var(--ease) forwards}
 @keyframes trace{0%{opacity:.6;transform:scale(1)}100%{opacity:0;transform:scale(.25)}}
 @media (pointer:coarse){.cursor,.trace{display:none}}
