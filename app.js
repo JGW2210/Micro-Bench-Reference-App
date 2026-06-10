@@ -1934,6 +1934,8 @@ function serologySampleIsOther(sample){
 // Match a test's free-text sample against a filter value. Key abbreviations use
 // whole-token matching (so 'S' matches 'S/P' but not 'SST'), with U/F also
 // matching their spelled-out word; '__viral'/'__nt'/'__other' are composite groups.
+// 'S' (Serum) is treated as serum-only — S/P tests also accept plasma, so they
+// fall under the 'P' (Plasma) filter instead.
 function serologySampleMatches(sample, abbr){
   if(abbr === 'all') return true;
   if(abbr === '__other') return serologySampleIsOther(sample);
@@ -1941,6 +1943,7 @@ function serologySampleMatches(sample, abbr){
   if(abbr === '__viral') return /viral\s+swab/i.test(sample);
   if(abbr === '__nt')    return /nose|throat/i.test(sample);
   const toks = sample.split(/[^A-Za-z0-9]+/).map(t => t.toLowerCase());
+  if(abbr === 'S') return toks.includes('s') && !toks.includes('p');
   if(toks.includes(abbr.toLowerCase())) return true;
   const word = SERO_SAMPLE_WORDS[abbr];
   return word ? toks.includes(word) : false;
@@ -2051,7 +2054,10 @@ function renderSerologyReference(){
   const sampleSel = document.getElementById('serology-sample-filter');
   if(sampleSel){
     sampleSel.innerHTML = '<option value="all">All sample types</option>' +
-      serologySampleKey.map(k => `<option value="${k.abbr}">${k.abbr} — ${k.label}</option>`).join('') +
+      serologySampleKey.map(k => {
+        const label = k.abbr === 'S' ? `${k.abbr} — Serum only` : `${k.abbr} — ${k.label}`;
+        return `<option value="${k.abbr}">${label}</option>`;
+      }).join('') +
       serologySampleGroups.map(g => `<option value="${g.value}">${g.label}</option>`).join('');
     sampleSel.value = serologySampleFilter;
   }
