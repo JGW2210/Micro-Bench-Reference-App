@@ -2281,6 +2281,12 @@ bactIdOrganisms.forEach(o=>{
   }
 });
 
+bactIdOrganisms.forEach(o=>{
+  if(!Object.prototype.hasOwnProperty.call(o,'smi')){
+    o.smi = bactIdSmiMap[o.name] || [];
+  }
+});
+
 function bidVal(v){return Array.isArray(v)?v:[v];}
 function bidPretty(v){return bidVal(v).filter(x=>x && x !== 'not-recorded').map(x=>String(x).replace('GP','Gram +').replace('GN','Gram −').replace('GV','Gram variable').replace('co2','CO₂').replace('anaerobic','AnO₂').replace('facultative','facultative').replace('microaerophilic','microaerophilic').replace('fermentative','fermentative').replace('oxidative','oxidative').replace('asaccharolytic','asaccharolytic')).join(' / ');}
 function bidMatchesValue(orgVal, wanted){
