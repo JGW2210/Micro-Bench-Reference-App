@@ -10,10 +10,16 @@ content can be validated and cited for official usage.
   Test Procedure (`TP`) documents on GOV.UK.
 - **Prepared:** 2026-06-15.
 - **Embedded in code:** these citations are also held as structured data in
-  `data.js` as `smiCitations` (document catalogue + specimen/media/test maps +
-  `outOfScope`) and `bactIdSmiMap` (per-organism codes, attached to each
-  identification organism as `o.smi` at load time). This document is the
-  human-readable companion to that data.
+  `data.js` as `smiCitations` (document catalogue for B/S/ID/TP, specimen/media/test
+  maps, `withdrawn` lineage, `verifiedIssues`, `outOfScope`) and `bactIdSmiMap`
+  (per-organism codes, attached to each identification organism as `o.smi`).
+- **Rendered in the app:** the bacteriology views now show **numbered `[n]`
+  citations with validation footnotes** (`app.js` SMI citation engine + `styles.css`).
+  Each organism card in the Bench-ID finder carries inline `[n]` markers resolving to a
+  numbered UK SMI reference list (with issue/date); the Plate-media and organism-flow
+  views carry their own reference blocks; and the per-view governance badge
+  (`GUIDELINE_VERSIONS`) records the 2026-06-15 review against the committed issues.
+  This document is the human-readable companion to that data.
 
 > ## ⚠ Read this before relying on the citations
 >
@@ -36,7 +42,66 @@ content can be validated and cited for official usage.
 
 ---
 
+## 0. Status update — verified against the committed PDFs (2026-06-15)
+
+The current-issue UK SMI PDFs are now committed under **`SMIs/`** (B, S and V
+subfolders). The citation data in `data.js` has been reconciled to them. This
+section **supersedes any older code/issue references further down**.
+
+**Withdrawn technical B documents → now cited to their replacement Syndromic (S) doc**
+(per the UK SMI strategy of retiring technical SMIs as syndromic ones publish):
+
+| Withdrawn | When | App pathway | Now cite |
+|---|---|---|---|
+| B 1 (ear infections) | 2024-08-13 | ear | **S 13** Painful and/or discharging ear |
+| B 2 (eye infections) | 2024-08-13 | eye / chocolate-agar | **S 11** Red or painful eye |
+| B 28 (genital tract) | 2025-05-20 | genital / *Gardnerella* | **S 6** Genitourinary & reproductive |
+| B 30 (faecal enteric pathogens) | 2021-05-27 | XLD/TCBS/SMAC, enteric | **S 7** Gastroenteritis |
+| B 37 (blood cultures) | 2024-08-13 | blood culture | **S 12** Sepsis & systemic/disseminated infection |
+| B 19 (sinus aspirate) | 2014-12-30 | sinus | merged into **B 5** |
+| B 52 (intraocular/corneal) | 2014-12-30 | eye | merged into B 2 → now **S 11** |
+| B 47 (Legionella) | 2012-03-09 *(recalled)* | Legionella | no SMI replacement noted |
+
+These are encoded in `smiCitations.withdrawn` and the pathway/media/organism maps
+now point at the S docs.
+
+**Verified issue numbers/dates** (from the committed filenames + PDF headers, e.g.
+B 41 confirmed Issue 8.8, 05.12.25) are recorded in `smiCitations.verifiedIssues`
+(B 4 i7.3, B 5 i8.1, B 9 i9.1, B 10 i2, B 11 i6.6, B 14 i6.3, B 15 i7.1, B 17 i6.4,
+B 20 i6.2, B 22 i6.2, B 25 i6.1, B 26 i6.3, B 27 i6.2, B 29 i7.1, B 31 i5.2,
+B 38 i2.1, B 39 i3.2, B 40 i7.4, B 41 i8.8, B 42 i2.1, B 44 i2.2, B 51 i2.1,
+B 55 i7.1, B 57 i3.5, B 58 i3.2, B 59 i4.2, B 60 i3.2, B 61 i2.3, B 62 i1.1;
+S 1/2/5/12 Apr 2025, S 6 Feb 2025, S 7 Jan 2026, S 11/13 Mar 2026).
+
+**ID + TP series now supplied and verified** (committed under `SMIs/ID` and
+`SMIs/TP`). All 26 ID and 21 TP issue numbers/dates are recorded in
+`smiCitations.verifiedIssues` (85 documents total). Notable updates from these PDFs:
+- **ID 3** retitled to *Identification of Listeria species and other non-sporing
+  Gram-positive rods except Corynebacterium* — confirmed to cover *Cutibacterium*,
+  *Propionibacterium*, *Erysipelothrix* and *Lactobacillus*; the app's
+  *Cutibacterium acnes* citation moved **ID 1 → ID 3**.
+- **ID 22** retitled to *Identification of Shiga toxin-producing E. coli (STEC)*.
+- Dedicated TPs now exist for tests previously mapped only to ID flowcharts, and the
+  `tests` map was remapped accordingly: **DNase → TP 12**, **aesculin → TP 2**,
+  **motility → TP 21**, **O/F (Hugh–Leifson) → TP 27**, plus new entries for
+  **urease (TP 36)**, **ONPG (TP 24)**, **thermonuclease (TP 34)**, **KOH (TP 30)**,
+  **porphyrin/ALA (TP 29)** and the Salmonella agglutination/phase tests (TP 3/TP 32).
+
+**Content validation status:** an initial spot-check of `bactIdOrganisms` biochemical
+profiles against the ID docs found **no contradictions** (e.g. *Moraxella*
+oxidase+/DNase+/tributyrin+ vs ID 11; *Stenotrophomonas* oxidase− vs ID 17;
+*Aeromonas* oxidase+/string test vs ID 19; *Pasteurella* oxidase/indole/catalase vs
+ID 13; staph coagulase/DNase/novobiocin/thermonuclease vs ID 7). A full
+organism-by-organism and panel-by-panel prose pass is the remaining work. (PDF text
+is read here with a stdlib extractor since this environment has no `poppler`/network;
+it reconstructs running text well enough for term-level validation.)
+
+---
+
 ## 1. SMI document catalogue referenced by this app
+
+> ⚠ The tables in this section predate the §0 reconciliation. Where they list
+> B 1, B 2, B 28, B 30 or B 37 as live, use the **S-series replacement** from §0.
 
 ### Bacteriology (B) series — specimen processing / pathways
 | Code | Title |

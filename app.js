@@ -2287,6 +2287,57 @@ bactIdOrganisms.forEach(o=>{
   }
 });
 
+// ─── UK SMI numbered citations + validation footnotes ────────────────
+// Renders page-local [n] reference lists from smiCitations so each
+// bacteriology view shows the UK SMI document(s) its content was validated
+// against (issue/date as committed under SMIs/). Spot-validated 2026-06-15.
+const SMI_REVIEWED = '2026-06-15';
+function smiDocTitle(code){
+  if(typeof smiCitations==='undefined') return '';
+  const t=(smiCitations.documents[code.split(' ')[0]]||{})[code];
+  return typeof t==='string' ? t : (t&&t.title) || '';
+}
+function smiDocIssue(code){
+  return (typeof smiCitations!=='undefined' && smiCitations.verifiedIssues && smiCitations.verifiedIssues[code]) || '';
+}
+function smiOrderCodes(codes){
+  const rank={ID:0,TP:1,B:2,S:3};
+  return Array.from(new Set((codes||[]).filter(Boolean))).sort((a,b)=>{
+    const sa=a.split(' '), sb=b.split(' ');
+    const ra=rank[sa[0]]??9, rb=rank[sb[0]]??9;
+    return ra!==rb ? ra-rb : (parseInt(sa[1],10)-parseInt(sb[1],10));
+  });
+}
+function smiRefIndex(codes){
+  const ordered=smiOrderCodes(codes), num={};
+  ordered.forEach((c,i)=>num[c]=i+1);
+  return {ordered,num};
+}
+function smiCiteSup(codes, num){
+  const ns=smiOrderCodes(codes).map(c=>num[c]).filter(Boolean);
+  return ns.length ? `<sup class="smi-cite" title="UK SMI reference — see footnotes">[${ns.join(',')}]</sup>` : '';
+}
+function smiFootnotesHtml(idx, opts){
+  opts=opts||{};
+  const lis=idx.ordered.map((code,i)=>{
+    const iss=smiDocIssue(code);
+    return `<li><span class="smi-ref-n">[${i+1}]</span> <span class="smi-ref-code">${code}</span> ${smiDocTitle(code)}${iss?` <span class="smi-ref-iss">(${iss})</span>`:''}</li>`;
+  }).join('');
+  const note=opts.note ? `<p class="smi-ref-note">${opts.note}</p>` : '';
+  return `<section class="smi-refs-block" aria-label="UK SMI references">`
+    +`<h4 class="smi-refs-title">UK SMI references · validated ${SMI_REVIEWED}</h4>`
+    +`<ol class="smi-refs">${lis}</ol>`+note
+    +`<p class="smi-ref-foot">Each [n] marks the UK Standard for Microbiology Investigations the item was checked against (issue/date as committed under <code>SMIs/</code>). Guidance only — verify against the current issue before clinical use. AST panels/breakpoints are EUCAST, not SMI.</p>`
+    +`</section>`;
+}
+function appendSmiRefs(viewId, codes, opts){
+  const view=document.getElementById('view-'+viewId);
+  if(!view || view.querySelector(':scope > .smi-refs-block')) return;
+  view.insertAdjacentHTML('beforeend', smiFootnotesHtml(smiRefIndex(codes), opts));
+}
+// Stable numbered index for the bact-ID finder (does not renumber on filter).
+const BACTID_REFS = smiRefIndex(bactIdOrganisms.flatMap(o=>o.smi||[]));
+
 function bidVal(v){return Array.isArray(v)?v:[v];}
 function bidPretty(v){return bidVal(v).filter(x=>x && x !== 'not-recorded').map(x=>String(x).replace('GP','Gram +').replace('GN','Gram −').replace('GV','Gram variable').replace('co2','CO₂').replace('anaerobic','AnO₂').replace('facultative','facultative').replace('microaerophilic','microaerophilic').replace('fermentative','fermentative').replace('oxidative','oxidative').replace('asaccharolytic','asaccharolytic')).join(' / ');}
 function bidMatchesValue(orgVal, wanted){
@@ -2322,13 +2373,26 @@ function renderBactId(){
     const tag = (label,val) => { const pretty = bidPretty(val); return pretty ? `${label}${pretty}` : ''; };
     const tags = [bidPretty(o.gram), bidPretty(o.shape), tag('Ox ',o.oxidase), tag('Cat ',o.catalase), tag('Ind ',o.indole), tag('Ferment ',o.fermentation), tag('Haem ',o.haemolysis), tag('Atm ',o.atmosphere)].filter(Boolean);
     const extra = [tag('Coag ',o.coagulase),tag('Aesc ',o.aesculin),tag('PYR ',o.pyr),tag('Spores ',o.spores),tag('DNase ',o.dnase),tag('Tributyrin ',o.tributyrin),tag('H&L ',o.hughleifson),tag('MR ',o.mr),tag('VP ',o.vp),tag('Citrate ',o.citrate)].filter(Boolean);
-    return `<article class="bactid-card"><h3>${o.name}</h3><div class="bactid-meta">${o.group}</div><div class="bactid-tags">${tags.concat(extra).map(t=>`<span class="bactid-tag">${t}</span>`).join('')}</div><div class="bactid-note">${o.note}</div></article>`;
+    const cite = smiCiteSup(o.smi, BACTID_REFS.num);
+    return `<article class="bactid-card"><h3>${o.name}${cite}</h3><div class="bactid-meta">${o.group}</div><div class="bactid-tags">${tags.concat(extra).map(t=>`<span class="bactid-tag">${t}</span>`).join('')}</div><div class="bactid-note">${o.note}</div></article>`;
   }).join('');
+  // Numbered UK SMI footnotes for this view (rendered once, stable numbering).
+  if(!document.getElementById('bactid-refs')){
+    box.insertAdjacentHTML('afterend', `<div id="bactid-refs">`+smiFootnotesHtml(BACTID_REFS, {note:'Each organism is cited to its UK SMI identification (ID) document and the relevant test-procedure (TP) document(s). Spot-validated 2026-06-15 against ID 3/4/6/7/11/13/16/17/19/23 with no discrepancies found.'})+`</div>`);
+  }
 }
 
 renderBactId();
 renderMycology();
 renderParasitology();
+
+// UK SMI reference footnotes on the other bacteriology views.
+appendSmiRefs('plate', Object.values(smiCitations.mediaByKey).flat(),
+  {note:'Plate media are cited to the specimen-processing SMI for each context. Chromogenic/selective colour rules (Uriselect, Brilliance MRSA, XLD, TCBS, SMAC) are the manufacturer IFU, not SMI.'});
+appendSmiRefs('flow', ['B 41','ID 7','ID 4','ID 16','ID 17','TP 8','TP 10','TP 26','TP 25','TP 5'],
+  {note:'Urine specimen pathway and organism identification. The sensitivity panels shown in the flows are EUCAST clinical breakpoints, not SMI.'});
+appendSmiRefs('wound', ['B 11','B 14','B 17','B 42','B 44','ID 7','ID 4','ID 16','ID 17','ID 12','ID 25','ID 14'],
+  {note:'Wound / pus / deep-tissue specimen pathways and organism identification. The sensitivity panels shown in the flows are EUCAST clinical breakpoints, not SMI.'});
 renderBloodScience();
 
 // ─── Global search ─────────────────────────────
