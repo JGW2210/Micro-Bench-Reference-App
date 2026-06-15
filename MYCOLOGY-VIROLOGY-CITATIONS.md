@@ -36,6 +36,7 @@ serology test reference list, and parasitology.
 | Hologic Specimen Collection and Transfer Guide — GBR EN | GBR EN | `IFUs/Hologic/Specimen Сollection and Transfer Guide Information Sheet GBR EN.pdf` |
 | Cepheid Xpert® Xpress CoV-2/Flu/RSV plus IFU | 302-7085 Rev F, 2025-08 | `IFUs/Cepheid/Xpert Xpress CoV-2 FLU RSV plus CE-IVD ENGLISH IFU 302-7085 Rev F.pdf` |
 | Cepheid Xpert® MTB/RIF IFU | 303-0942 Rev B, 2024-05 | `IFUs/Cepheid/Xpert MTB-RIF ENGLISH IFU 303-0942 Rev B.pdf` |
+| Cepheid Xpert® Norovirus IFU (GI/GII) | 303-0938 Rev A, 2023-07 | `IFUs/Cepheid/Xpert Norovirus ENGLISH IFU 303-0938 Rev. A.pdf` |
 | Cepheid Xpert® GI Panel — Cartridge Preparation Card | CE-IVDR 303-7272 | `IFUs/Cepheid/cepheid-xpert-gi-panel-cartridge-preparation-card-ce-ivdr-303-7272-english.pdf` |
 | Cepheid Xpert® GI Panel — Technical Training Presentation | CE-IVDR 303-7273 | `IFUs/Cepheid/cepheid-xpert-gi-panel-technical-training-presentation-ce-ivdr-303-7273-english.pdf` |
 
@@ -130,30 +131,38 @@ Key checks:
 - **Culture is still required** for full DST, epidemiology, confirmation ✅
 - **Trace/very low detected** results require clinical correlation ✅
 
-### Cepheid GeneXpert — Norovirus GI/GII (`viro_gi_*`) — ⚠ PROVISIONAL
-- **Assay modelled:** standalone **Cepheid Xpert Norovirus** cartridge, detecting
-  norovirus **genogroup I (GI)** and **genogroup II (GII)** RNA from stool, with
-  split GI/GII genogroup reporting (lab's stated bench workflow).
-- **Chemistry:** closed-cartridge real-time RT-PCR (RNA virus → reverse transcription) ✅
+### Cepheid GeneXpert — Norovirus GI/GII (`viro_gi_*`)
+- **IFU:** Cepheid **Xpert Norovirus**, catalogue GXNOV-10, **303-0938 Rev A (2023-07)**
+  — committed at `IFUs/Cepheid/Xpert Norovirus ENGLISH IFU 303-0938 Rev. A.pdf`.
+- **Intended use:** qualitative identification and **differentiation of norovirus
+  genogroup I (GI) and genogroup II (GII)** RNA — confirms split GI/GII reporting ✅
+- **Chemistry:** automated real-time **RT-PCR** (RNA virus → reverse transcription) ✅
+- **Specimen (corrected to match IFU):** **raw or unpreserved UNFORMED stool** in a
+  clean preservative-free container, from patients with acute gastroenteritis.
+  Formed stool / preserved stool not validated. Store 2–8 °C, stable ≤ 2 days ✅
+- **Sample prep (added from IFU):** dry rayon swab briefly dipped in stool (do not
+  coat whole tip — too much stool causes errors/invalids); start test within 30 min
+  of adding sample reagent ✅
+- **Controls:** Sample Processing Control (SPC) + Probe Check Control (PCC) ✅
+- **Result categories (per IFU Table 1):** NORO GI detected / GII detected / both /
+  neither; plus **INVALID** (SPC fail), **ERROR** (PCC fail or pressure), **NO RESULT**
+  (insufficient data). Retest with a **new cartridge and new sample reagent bottle** ✅
 - **Clinical framing:** infection-prevention & control led — outbreak control, ward
   closure/cohorting, very low infectious dose, environmental persistence,
   soap-and-water > alcohol gel, chlorine disinfection, post-symptom RNA shedding,
   48-hour symptom-free clearance rule.
 - **No susceptibility from PCR** (viral) ✅
-- **⚠ TRACEABILITY GAP:** the standalone **Xpert Norovirus IFU is NOT yet committed**
-  to the repository. The content is based on the Cepheid Xpert Norovirus assay's
-  general characteristics, **not** verified against a committed source document.
-  The committed `IFUs/Cepheid/...gi-panel...` documents are the **broader Xpert GI
-  Panel** (13-target syndromic stool multiplex, in which norovirus is reported as a
-  single "Norovirus" call, **not** split GI/GII) — they validate a *different* assay.
-- **Action required to close the loop:** commit the Cepheid **Xpert Norovirus** IFU
-  (the one matching the cartridges actually run), then re-verify the `viro_gi_*`
-  panels against it and update `GUIDELINE_VERSIONS.virology` (remove the
-  "IFU pending commit — stream provisional" flag).
 
-No discrepancies found between the committed-IFU `viro_*` panels (Panther CT/NG,
-respiratory GeneXpert, TB) and their committed IFUs. The `viro_gi_*` Norovirus
-stream is **provisional pending its IFU** as noted above.
+**Corrections made during IFU verification (2026-06-15):** specimen tightened from
+generic "stool" to "raw/unpreserved unformed stool" across `viro_accept_gi`,
+`viro_gi_overview` and `viro_gi_sample`; added storage (2–8 °C, ≤ 2 days), swab
+transfer / 30-minute rule (`viro_gi_cartridge`), and the IFU's distinct
+INVALID/ERROR/NO RESULT definitions + new-cartridge-and-reagent retest rule
+(`viro_gi_invalid`). `GUIDELINE_VERSIONS.virology` now cites 303-0938 Rev A.
+
+No discrepancies remain between any `viro_*` panel and its committed IFU. The
+broader **Xpert GI Panel** (303-7272/303-7273) is a *different*, 13-target syndromic
+assay and is not modelled by this stream.
 
 ---
 
@@ -206,7 +215,7 @@ is marked accordingly with `version:'reference-only'`.
 | `fcPanels` (viro_* Panther) | Hologic Aptima Combo 2 GBR EN IFU |
 | `fcPanels` (viro_* GeneXpert resp) | Cepheid Xpert Xpress CoV-2/Flu/RSV plus 302-7085 Rev F (2025-08) |
 | `fcPanels` (viro_* GeneXpert TB) | Cepheid Xpert MTB/RIF 303-0942 Rev B (2024-05) |
-| `fcPanels` (viro_gi_* Norovirus GI/GII) | ⚠ Cepheid Xpert Norovirus — IFU pending commit (provisional) |
+| `fcPanels` (viro_gi_* Norovirus GI/GII) | Cepheid Xpert Norovirus 303-0938 Rev A (2023-07) — validated 2026-06-15 |
 | `serologyTests` | Local SOP — test code reference list |
 | `parasites` | CDC DPDx (accessed 2026-06-15) + WHO Bench Aids 2nd ed. (2019) |
 | `bloodDisciplines` / `bloodTubes` / `bloodTests` | Reference-only — not microbiology SMI scope |
@@ -226,16 +235,17 @@ is marked accordingly with `version:'reference-only'`.
 | Blood science marked reference-only in GUIDELINE_VERSIONS | ✅ Done 2026-06-15 |
 | All new GUIDELINE_VERSIONS entries populated | ✅ Done 2026-06-15 |
 | `npm test` data validation suite | ✅ Pass 2026-06-15 |
-| Norovirus GI/GII (`viro_gi_*`) molecular stream added | ✅ Done 2026-06-15 (provisional) |
+| Norovirus GI/GII (`viro_gi_*`) molecular stream added | ✅ Done 2026-06-15 |
+| `viro_gi_*` verified vs committed Xpert Norovirus IFU (303-0938 Rev A) | ✅ Done 2026-06-15 |
 | Local microbiologist sign-off | ☐ Required before bench use |
-| Commit standalone Xpert Norovirus IFU + re-verify `viro_gi_*` | ☐ **Required to make Norovirus stream traceable** |
 | Full Xpert GI Panel stream (13-target syndromic) | ☐ Optional — IFU committed; not yet built |
 
-> **Norovirus stream status:** a standalone Norovirus GI/GII molecular stream has
-> been added to the molecular view (`viro_gi_*` panels + HTML stream), with split
-> genogroup reporting, matching the cartridges the lab runs. It is **provisional**:
-> the standalone Cepheid Xpert Norovirus IFU is not yet committed, so the content is
-> not yet verified against a committed source. Commit that IFU to close the loop.
+> **Norovirus stream status:** the standalone Norovirus GI/GII molecular stream
+> (`viro_gi_*` panels + HTML stream, split genogroup reporting) has been **verified
+> against the committed Cepheid Xpert Norovirus IFU (303-0938 Rev A, 2023-07)**.
+> Specimen wording, sample prep, controls and result categories were tightened to
+> match the IFU during this verification (see section 3). Local microbiologist
+> sign-off against lab SOP is still required before bench use.
 >
 > **Xpert GI Panel (separate assay):** the committed `IFUs/Cepheid/...gi-panel...`
 > documents (CE-IVDR 303-7272/303-7273) describe the broader 13-target syndromic

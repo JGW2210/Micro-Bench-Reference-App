@@ -13,7 +13,7 @@
 <!-- HUD/0S favicon: teal reticle + central plate on dark, inline so there is no extra file dependency -->
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='10' fill='%2305070a'/%3E%3Cg fill='none' stroke='%2338e8d0' stroke-width='2.4'%3E%3Ccircle cx='32' cy='32' r='17'/%3E%3Cpath d='M32 6v9M32 49v9M6 32h9M49 32h9' stroke-linecap='round'/%3E%3C/g%3E%3Ccircle cx='32' cy='32' r='6' fill='%2338e8d0'/%3E%3Cg stroke='%2338e8d0' stroke-width='2' opacity='.5'%3E%3Cpath d='M11 11h7v2M53 11h-7v2M11 53h7v-2M53 53h-7v-2' fill='none' stroke-linecap='round'/%3E%3C/g%3E%3C/svg%3E">
 <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' fill='%2305070a'/%3E%3Cg fill='none' stroke='%2338e8d0' stroke-width='2.4'%3E%3Ccircle cx='32' cy='32' r='17'/%3E%3Cpath d='M32 6v9M32 49v9M6 32h9M49 32h9' stroke-linecap='round'/%3E%3C/g%3E%3Ccircle cx='32' cy='32' r='6' fill='%2338e8d0'/%3E%3C/svg%3E">
-<link rel="stylesheet" href="styles.css?v=20260615b">
+<link rel="stylesheet" href="styles.css?v=20260615c">
 </head>
 <body>
 <div class="fx-particles" aria-hidden="true"></div>
@@ -313,9 +313,9 @@
   </section>
 
   <section class="viro-flow">
-    <div class="viro-flow-title"><i class="ti ti-bug" aria-hidden="true"></i> Norovirus GI/GII PCR pathway — stool</div>
+    <div class="viro-flow-title"><i class="ti ti-bug" aria-hidden="true"></i> Norovirus GI/GII PCR pathway — unformed stool</div>
     <div class="viro-step-row">
-      <div class="viro-step" onclick="showDetail('viro_gi_sample')"><div class="viro-step-kicker">Specimen</div><div class="viro-step-name">Stool specimen</div><div class="viro-step-note">Check container, label, amount, leakage and norovirus request details.</div></div>
+      <div class="viro-step" onclick="showDetail('viro_gi_sample')"><div class="viro-step-kicker">Specimen</div><div class="viro-step-name">Unformed stool specimen</div><div class="viro-step-note">Raw/unpreserved unformed stool, preservative-free container; check label, amount and leakage.</div></div>
       <div class="viro-step" onclick="showDetail('viro_gi_cartridge')"><div class="viro-step-kicker">Cartridge</div><div class="viro-step-name">Cepheid Xpert Norovirus</div><div class="viro-step-note">Prepare stool per IFU, transfer to cartridge, scan and run.</div></div>
       <div class="viro-step" onclick="showDetail('viro_gi_result')"><div class="viro-step-kicker">Result</div><div class="viro-step-name">GI / GII call-out</div><div class="viro-step-note">Report each genogroup; feed positives into the IPC / outbreak pathway.</div></div>
     </div>
@@ -997,8 +997,8 @@
 </div>
 
 <!-- Scripts: load order matters — data.js defines the datasets that app.js uses. -->
-<script src="data.js?v=20260615b"></script>
-<script src="app.js?v=20260615b"></script>
+<script src="data.js?v=20260615c"></script>
+<script src="app.js?v=20260615c"></script>
 
 <!-- HUD/0S chrome: background particle field, theme toggle, custom reticle cursor.
      Self-contained; app.js owns search + keyboard handlers, so nothing here duplicates them. -->
