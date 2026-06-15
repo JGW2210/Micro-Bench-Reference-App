@@ -2272,7 +2272,7 @@ const bactIdSmiMap = {
   'Bacteroides fragilis group':['ID 25'],
   'Prevotella spp.':['ID 25'],
   'Fusobacterium spp.':['ID 25'],
-  'Gardnerella vaginalis':['B 28','ID 1']
+  'Gardnerella vaginalis':['S 6','ID 1']
 };
 
 const smiCitations = {
@@ -2285,26 +2285,23 @@ const smiCitations = {
   // (indexes live on uksmi.github.io).
   documents: {
     B: {
-      'B 1':'Investigation of ear infections and associated specimens',
-      'B 2':'Investigation of bacterial eye infections',
       'B 4':'Investigation of superficial mouth samples',
-      'B 5':'Investigation of nasal samples',
+      'B 5':'Investigation of samples from paranasal sinuses (formerly nasal samples; incorporates withdrawn B 19)',
       'B 6':'Investigation of whooping cough',
       'B 9':'Investigation of throat related specimens',
-      'B 10':'Processing of faeces for Clostridium difficile',
-      'B 11':'Swabs from skin and superficial soft tissue infections',
+      'B 10':'Investigation of faecal specimens for Clostridioides difficile',
+      'B 11':'Investigation of swabs from skin and superficial soft tissue infections',
       'B 14':'Investigation of pus and exudates',
       'B 15':'Investigation of bile',
       'B 17':'Tissues and biopsies from deep-seated sites and organs',
       'B 20':'Investigation of intravascular cannulae and associated specimens',
+      'B 22':'Investigation of cerebrospinal fluid shunts',
       'B 25':'Investigation of continuous ambulatory peritoneal dialysis fluid',
       'B 26':'Investigation of fluids from normally sterile sites',
       'B 27':'Investigation of cerebrospinal fluid',
-      'B 28':'Investigation of genital tract and associated specimens',
       'B 29':'Investigation of specimens for screening for MRSA',
-      'B 30':'Investigation of faecal specimens for enteric pathogens (verify code/issue against current host)',
       'B 31':'Investigation of specimens other than blood for parasites',
-      'B 37':'Investigation of blood cultures (for organisms other than Mycobacterium species)',
+      'B 38':'Investigation of bone marrow',
       'B 39':'Investigation of dermatological specimens for superficial mycoses',
       'B 40':'Investigation of specimens for Mycobacterium species',
       'B 41':'Investigation of urine',
@@ -2316,7 +2313,21 @@ const smiCitations = {
       'B 58':'Detection of carriage of group B streptococci',
       'B 59':'Detection of Enterobacteriaceae producing extended-spectrum β-lactamases (ESBL)',
       'B 60':'Detection of bacteria with carbapenem-hydrolysing β-lactamases (carbapenemases)',
-      'B 61':'Investigation of specimens for ectoparasites'
+      'B 61':'Investigation of specimens for ectoparasites',
+      'B 62':'Abdominal organ transport fluid testing'
+    },
+    // Syndromic (S) series — these replace several withdrawn technical B
+    // documents (see `withdrawn` map). The UK SMI strategy is to retire
+    // technical UK SMIs as the relevant syndromic document is published.
+    S: {
+      'S 1':'Acute infective hepatitis',
+      'S 2':'Pneumonia',
+      'S 5':'Meningoencephalitis',
+      'S 6':'Infectious syndromes affecting the genitourinary tract and reproductive organs',
+      'S 7':'Gastroenteritis',
+      'S 11':'Red or painful eye',
+      'S 12':'Sepsis and systemic or disseminated infections',
+      'S 13':'Painful and/or discharging ear'
     },
     ID: {
       'ID 1':'Introduction to the preliminary identification of medically important bacteria and fungi from culture',
@@ -2359,7 +2370,38 @@ const smiCitations = {
       'TP 40':{title:'MALDI-TOF MS test procedure',url:'https://www.gov.uk/government/publications/smi-tp-40-maldi-tof-ms-test-procedure'}
     }
   },
-  // Specimen / clinical context → SMI B-series processing document(s).
+  // Withdrawn / recalled documents and what replaced them (per UK SMI site).
+  // Cite the replacement, not the withdrawn code.
+  withdrawn: {
+    'B 1':'Withdrawn 2024-08-13 → replaced by S 13 (Painful and/or discharging ear)',
+    'B 2':'Withdrawn 2024-08-13 → replaced by S 11 (Red or painful eye)',
+    'B 19':'Withdrawn 2014-12-30 → contents merged into B 5',
+    'B 23':'Withdrawn 2012-03-01 → contents merged into B 37 (now S 12)',
+    'B 28':'Withdrawn 2025-05-20 → replaced by S 6 (genitourinary/reproductive)',
+    'B 30':'Withdrawn 2021-05-27 → replaced by S 7 (Gastroenteritis)',
+    'B 37':'Withdrawn 2024-08-13 → replaced by S 12 (Sepsis and systemic/disseminated infection)',
+    'B 47':'Recalled 2012-03-09 (Legionella reporting practice change in England)',
+    'B 52':'Withdrawn 2014-12-30 → contents merged into B 2 (now S 11)'
+  },
+  // Issue number + date VERIFIED against the PDFs committed under SMIs/.
+  // ⚠ ID and TP series are NOT among the committed PDFs — their citations
+  // remain UNVERIFIED until those documents are supplied.
+  verifiedIssues: {
+    'B 4':'i7.3 • Oct 2025',  'B 5':'i8.1 • Feb 2026',  'B 6':'i9 • May 2018',
+    'B 9':'i9.1 • Oct 2025',  'B 10':'i2 • Mar 2025',   'B 11':'i6.6 • Oct 2025',
+    'B 14':'i6.3 • Oct 2025', 'B 15':'i7.1 • Oct 2025', 'B 17':'i6.4 • Oct 2025',
+    'B 20':'i6.2 • Oct 2025', 'B 22':'i6.2 • Oct 2025', 'B 25':'i6.1 • Oct 2025',
+    'B 26':'i6.3 • Oct 2025', 'B 27':'i6.2 • Oct 2025', 'B 29':'i7.1 • Oct 2025',
+    'B 31':'i5.2 • Oct 2025', 'B 38':'i2.1 • Oct 2025', 'B 39':'i3.2 • Oct 2025',
+    'B 40':'i7.4 • Dec 2025', 'B 41':'i8.8 • Dec 2025', 'B 42':'i2.1 • Dec 2025',
+    'B 44':'i2.2 • Dec 2025', 'B 51':'i2.1 • Dec 2025', 'B 55':'i7.1 • Dec 2025',
+    'B 57':'i3.5 • May 2019', 'B 58':'i3.2 • Feb 2026', 'B 59':'i4.2 • Jun 2026',
+    'B 60':'i3.2 • Feb 2026', 'B 61':'i2.3 • Feb 2026', 'B 62':'i1.1 • Feb 2026',
+    'S 1':'Apr 2025',  'S 2':'Apr 2025',  'S 5':'Apr 2025',  'S 6':'Feb 2025',
+    'S 7':'Jan 2026',  'S 11':'Mar 2026', 'S 12':'Apr 2025', 'S 13':'Mar 2026'
+  },
+  // Specimen / clinical context → current SMI document(s). Withdrawn technical
+  // B codes are repointed to their replacement S (syndromic) document.
   specimenPathways: {
     urine:['B 41'],
     'skin / superficial soft tissue':['B 11'],
@@ -2367,20 +2409,20 @@ const smiCitations = {
     'deep tissue / biopsy':['B 17'],
     'bone / osteomyelitis':['B 42'],
     'orthopaedic implant':['B 44'],
-    'blood culture':['B 37'],
-    csf:['B 27'],
-    'genital tract':['B 28'],
-    ear:['B 1'],
-    eye:['B 2'],
+    'blood culture':['S 12'],
+    csf:['B 27','S 5'],
+    'genital tract':['S 6'],
+    ear:['S 13'],
+    eye:['S 11'],
     throat:['B 9'],
-    nasal:['B 5'],
+    'paranasal sinus / nasal':['B 5'],
     mouth:['B 4'],
-    'sputum / BAL / respiratory':['B 57'],
+    'sputum / BAL / respiratory':['B 57','S 2'],
     'sterile fluids':['B 26'],
     bile:['B 15'],
     'capd fluid':['B 25'],
     'intravascular cannula':['B 20'],
-    'faeces / enteric pathogens':['B 30'],
+    'faeces / enteric pathogens':['S 7'],
     'mrsa screen':['B 29'],
     'esbl detection':['B 59'],
     'carbapenemase detection':['B 60'],
@@ -2395,10 +2437,10 @@ const smiCitations = {
     uri:['B 41','ID 16'],
     blood:['B 11','B 14','B 26','B 57'],
     mrsa:['B 29','ID 7'],
-    xld:['B 30','ID 24','ID 20'],
-    tcbs:['B 30','ID 19'],
-    smac:['B 30','ID 22'],
-    choc:['B 2','B 27','B 51','B 57','ID 12','ID 6']
+    xld:['S 7','ID 24','ID 20'],
+    tcbs:['S 7','ID 19'],
+    smac:['S 7','ID 22'],
+    choc:['S 11','B 27','B 51','B 57','ID 12','ID 6']
   },
   // Bench test / reagent → SMI document. Tests without a dedicated TP are
   // described within the relevant ID document's flowchart.
@@ -2430,7 +2472,7 @@ const smiCitations = {
     mycology: { note:'SMI B 39 + Mycology series; app source = Adelaide mycology atlas', applies:['mycoFungi','mycoDiseases'] },
     parasitology: { note:'SMI B 31 / B 61 + Parasitology series; app source = CDC DPDx', applies:['parasites'] },
     virology_serology: { note:'SMI Virology series + assay IFUs/local SOP', applies:['serologyTests','serologyProfiles','viro fcPanels'] },
-    blood_science: { note:'General pathology / phlebotomy — not microbiology SMI (blood-culture bottles → B 37)', applies:['bloodDisciplines','bloodTubes','bloodTests'] },
+    blood_science: { note:'General pathology / phlebotomy — not microbiology SMI (blood-culture workflow → S 12)', applies:['bloodDisciplines','bloodTubes','bloodTests'] },
     mycobacteria: { note:'SMI B 40', applies:['TB / Mycobacteria PCR cards'] }
   },
   // Per-organism map (bactIdOrganisms name → SMI codes); attached as o.smi.

@@ -36,7 +36,54 @@ content can be validated and cited for official usage.
 
 ---
 
+## 0. Status update — verified against the committed PDFs (2026-06-15)
+
+The current-issue UK SMI PDFs are now committed under **`SMIs/`** (B, S and V
+subfolders). The citation data in `data.js` has been reconciled to them. This
+section **supersedes any older code/issue references further down**.
+
+**Withdrawn technical B documents → now cited to their replacement Syndromic (S) doc**
+(per the UK SMI strategy of retiring technical SMIs as syndromic ones publish):
+
+| Withdrawn | When | App pathway | Now cite |
+|---|---|---|---|
+| B 1 (ear infections) | 2024-08-13 | ear | **S 13** Painful and/or discharging ear |
+| B 2 (eye infections) | 2024-08-13 | eye / chocolate-agar | **S 11** Red or painful eye |
+| B 28 (genital tract) | 2025-05-20 | genital / *Gardnerella* | **S 6** Genitourinary & reproductive |
+| B 30 (faecal enteric pathogens) | 2021-05-27 | XLD/TCBS/SMAC, enteric | **S 7** Gastroenteritis |
+| B 37 (blood cultures) | 2024-08-13 | blood culture | **S 12** Sepsis & systemic/disseminated infection |
+| B 19 (sinus aspirate) | 2014-12-30 | sinus | merged into **B 5** |
+| B 52 (intraocular/corneal) | 2014-12-30 | eye | merged into B 2 → now **S 11** |
+| B 47 (Legionella) | 2012-03-09 *(recalled)* | Legionella | no SMI replacement noted |
+
+These are encoded in `smiCitations.withdrawn` and the pathway/media/organism maps
+now point at the S docs.
+
+**Verified issue numbers/dates** (from the committed filenames + PDF headers, e.g.
+B 41 confirmed Issue 8.8, 05.12.25) are recorded in `smiCitations.verifiedIssues`
+(B 4 i7.3, B 5 i8.1, B 9 i9.1, B 10 i2, B 11 i6.6, B 14 i6.3, B 15 i7.1, B 17 i6.4,
+B 20 i6.2, B 22 i6.2, B 25 i6.1, B 26 i6.3, B 27 i6.2, B 29 i7.1, B 31 i5.2,
+B 38 i2.1, B 39 i3.2, B 40 i7.4, B 41 i8.8, B 42 i2.1, B 44 i2.2, B 51 i2.1,
+B 55 i7.1, B 57 i3.5, B 58 i3.2, B 59 i4.2, B 60 i3.2, B 61 i2.3, B 62 i1.1;
+S 1/2/5/12 Apr 2025, S 6 Feb 2025, S 7 Jan 2026, S 11/13 Mar 2026).
+
+**Still outstanding:**
+- **No `ID` or `TP` PDFs were committed.** Every organism-identification (ID 1–26)
+  and bench-test (TP 5/8/10/19/25/26/38/39/40) citation therefore remains
+  **mapped but UNVERIFIED**. These drive most of the app's `bactIdOrganisms`,
+  `fcPanels` and `gramPatterns` content — they are the highest-value docs to supply next.
+- **Deep prose validation** (confirming app wording against PDF body text) is only
+  partially done: this environment has no `poppler`/network, so I am reading the
+  PDFs with a stdlib text extractor that reliably reads headers/issue data but
+  fragments running text. Page-accurate validation of method/breakpoint wording is
+  best done with the ID/TP docs in hand and a proper PDF text layer.
+
+---
+
 ## 1. SMI document catalogue referenced by this app
+
+> ⚠ The tables in this section predate the §0 reconciliation. Where they list
+> B 1, B 2, B 28, B 30 or B 37 as live, use the **S-series replacement** from §0.
 
 ### Bacteriology (B) series — specimen processing / pathways
 | Code | Title |
