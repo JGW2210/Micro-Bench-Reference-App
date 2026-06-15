@@ -376,6 +376,20 @@ const fcPanels = {
   viro_ct_ng_info:{title:'Molecular note — CT/NG NAAT background',sub:'Why molecular testing is used for Chlamydia and Gonorrhoea.',abx:['Chlamydia trachomatis: obligate intracellular bacterium','Neisseria gonorrhoeae: fastidious diplococcus','NAAT: high sensitivity compared with culture','Culture still needed for gonococcal susceptibility'],reagents:true,notes:'Although CT and NG are bacteria rather than viruses, they sit within many molecular/virology workflows because they are detected by high-throughput NAAT. Chlamydia culture is rarely used diagnostically; gonorrhoea culture remains important for susceptibility and treatment-failure investigation. Interpret positives with specimen site, symptoms, treatment history and test-of-cure timing.'},
   viro_resp_info:{title:'Molecular note — respiratory virus background',sub:'Key points for RSV, influenza A/B and SARS‑CoV‑2 PCR.',abx:['RSV: bronchiolitis / outbreaks in vulnerable wards','Influenza A/B: antiviral and cohorting relevance','SARS‑CoV‑2: infection-control and clinical-risk relevance','PCR detects nucleic acid, not necessarily viable virus'],reagents:true,notes:'PCR is most sensitive early in illness when viral load is higher. Influenza A and B are separate lineages/targets and should not be collapsed into a generic flu result. RSV is particularly important in infants, older adults and immunocompromised patients. SARS‑CoV‑2 PCR may remain positive after infectiousness has declined, so clinical context and local infection-control guidance matter.'},
   viro_tb_info:{title:'Molecular note — TB molecular background',sub:'How TB PCR relates to smear and culture.',abx:['PCR: rapid MTB complex DNA detection','Smear: acid-fast bacilli burden, not species-specific','Culture: viability, full ID and drug susceptibility','Rifampicin marker: resistance screen, not full DST'],reagents:true,notes:'TB PCR can be positive when smear is negative because it is more analytically sensitive, but very low positives require cautious interpretation. Smear-positive/PCR-negative results raise the possibility of non-tuberculous mycobacteria or inhibitors. Culture remains essential for full susceptibility testing, including isoniazid and second-line agents.'},
+  // ── ENTERIC / GI MOLECULAR — Cepheid Xpert Norovirus (genogroup I / II) ──
+  // Standalone Norovirus GI/GII cartridge (distinct from the broader Xpert GI Panel).
+  // Traceability: cite the committed Cepheid Xpert Norovirus IFU once added to the repo.
+  viro_accept_gi:{title:'Sample acceptance — Norovirus GI/GII (GeneXpert)',sub:'First bench check for enteric norovirus PCR requests.',abx:['Accept: raw/unpreserved UNFORMED stool in a clean preservative-free container','Check: identifiers · request/test match · stool unformed · leakage · amount','Reject / discuss: formed stool, preservative/transport media, leaking or mislabelled sample','Escalate: outbreak / ward-closure context, urgent IPC requests'],reagents:true,notes:'Confirm patient identifiers, the request and a suitable specimen before processing. Per the Xpert Norovirus IFU (303-0938 Rev A) the test is validated only for RAW or UNPRESERVED UNFORMED (loose/liquid) stool in a clean preservative-free container, from patients with symptoms of acute gastroenteritis — formed stool and stool in preservative/transport media are not validated. Norovirus PCR is most often requested for suspected viral gastroenteritis and ward/outbreak investigation, so treat urgent infection-prevention-and-control (IPC) requests accordingly. Reject or seek senior advice for unlabelled/mislabelled samples, leaking containers, wrong specimen type, or an amount outside local tolerance.'},
+  viro_gi_overview:{title:'Cepheid GeneXpert — Norovirus GI/GII overview',sub:'Rapid closed-cartridge RT-PCR from unformed stool for norovirus genogroups I and II.',abx:['Platform: Cepheid GeneXpert (GXNOV-10)','Assay: Xpert Norovirus (303-0938 Rev A)','Specimen: raw/unpreserved unformed stool','Targets: Norovirus genogroup I (GI) · genogroup II (GII)'],reagents:true,notes:'The Cepheid Xpert Norovirus assay is a qualitative closed-cartridge automated real-time RT-PCR for the identification and differentiation of norovirus genogroup I (GI) and genogroup II (GII) RNA from raw or unpreserved unformed stool, from individuals with symptoms of acute gastroenteritis. Norovirus is an RNA virus, so the cartridge performs reverse transcription before amplification, with on-board Sample Processing Control (SPC) and Probe Check Control (PCC). It supports rapid diagnosis of viral gastroenteritis and, importantly, infection-prevention and outbreak control. A detected result indicates norovirus RNA is present; PCR does not distinguish viable from non-viable virus and gives no susceptibility information (viral). This is the standalone Norovirus cartridge — distinct from the broader Xpert GI Panel, which reports norovirus as a single call alongside bacterial/parasitic enteric targets.'},
+  viro_gi_sample:{title:'Stool receipt — Norovirus PCR',sub:'Pre-analytical checks before cartridge prep.',abx:['Raw/unpreserved unformed stool, preservative-free container','Correct request for Norovirus PCR','Adequate amount / no leakage','Store 2–8°C; stable up to 2 days'],reagents:true,notes:'Accept raw or unpreserved unformed stool in a clean preservative-free container that meets the IFU and local SOP. Reject or escalate unlabelled/mislabelled specimens, leaking containers, formed stool, samples in preservative/transport media, or insufficient material. Per the IFU the specimen is stored at 2–8°C and is stable for up to two days. Record collection date/time and clinical/outbreak context, because timing relative to symptom onset affects interpretation and IPC decisions.'},
+  viro_gi_cartridge:{title:'GeneXpert Norovirus cartridge setup',sub:'Closed-cartridge workflow for unformed stool.',abx:['Dip dry rayon swab in stool (do NOT coat whole tip)','Transfer to sample reagent bottle, then into cartridge','Start test within 30 min of adding sample reagent','Scan cartridge + sample ID and run'],reagents:true,notes:'Following the IFU: briefly dip a dry rayon swab in the raw/unpreserved unformed stool — do not coat the entire swab tip, as too much stool can cause errors or invalid results — then transfer into the sample reagent bottle and load the cartridge. Start the test within 30 minutes of adding the sample reagent to the cartridge. Use clean technique and minimise contamination of the cartridge exterior. Scan the cartridge and sample identifiers and start the run. The closed-cartridge format reduces amplicon-carryover risk but does not remove the need for careful pre-analytical handling.'},
+  viro_gi_result:{title:'Norovirus result handling',sub:'Interpreting GI / GII outputs.',abx:['Norovirus GI: detected / not detected','Norovirus GII: detected / not detected','Invalid / error / no result → repeat pathway','Feed positives into IPC / outbreak pathway'],reagents:true,notes:'Report norovirus GI and GII targets according to local policy. A detected result is clinically and operationally important: feed positives into the infection-prevention/outbreak pathway promptly, since norovirus drives ward closures and cohorting. PCR can remain positive for days to weeks after symptoms resolve because of ongoing viral shedding, so interpret late or post-symptomatic positives with clinical and IPC context rather than as proof of continued infectiousness. Invalid or inhibited runs should be repeated per SOP.'},
+  viro_gi_noro_gi_detected:{title:'Norovirus GI detected',sub:'Genogroup I target detected.',abx:['Report Norovirus GI detected','Infection-control / outbreak pathway','Enteric precautions / cohorting','No susceptibility from PCR'],reagents:true,notes:'A detected genogroup I result indicates norovirus GI RNA is present in the stool specimen. Report according to local policy and trigger the infection-prevention/outbreak pathway: enteric precautions, possible cohorting or bay/ward closure, and outbreak reporting where criteria are met. PCR gives no susceptibility information (viral) and may remain positive during post-symptomatic shedding, so combine the result with symptom status and local return-to-work / ward-reopening rules (commonly a 48-hour symptom-free period).'},
+  viro_gi_noro_gii_detected:{title:'Norovirus GII detected',sub:'Genogroup II target detected.',abx:['Report Norovirus GII detected','GII is the predominant outbreak genogroup','Infection-control / outbreak pathway','Check for GI co-detection'],reagents:true,notes:'A detected genogroup II result indicates norovirus GII RNA is present. GII (notably GII.4 variants) is the genogroup most frequently associated with outbreaks, so positives should move quickly into the infection-prevention/outbreak pathway. Check for GI co-detection and report each genogroup as requested. As with GI, PCR positivity reflects RNA presence rather than guaranteed infectiousness; apply local IPC criteria for isolation, cohorting and clearance.'},
+  viro_gi_noro_both_detected:{title:'Norovirus GI and GII detected',sub:'Both genogroups detected.',abx:['Report both genogroups separately','Possible mixed exposure / outbreak','IPC / outbreak pathway','Do not collapse into one call'],reagents:true,notes:'Detection of both genogroups can reflect mixed exposure, particularly in an outbreak setting. Report each genogroup separately rather than collapsing to a single call, and follow the same infection-prevention/outbreak pathway. Unexpected repeated dual positives or clusters should prompt review of sampling, work area and cartridge handling alongside the epidemiology.'},
+  viro_gi_not_detected:{title:'Norovirus not detected — valid negative',sub:'Valid run, GI and GII not detected.',abx:['Norovirus GI not detected','Norovirus GII not detected','Internal control acceptable','Does not exclude other enteric pathogens'],reagents:true,notes:'A valid negative result, with both genogroups not detected and the internal control acceptable, lowers the likelihood of norovirus at the time of sampling. It does not exclude norovirus if the sample was taken too early or too late in illness, nor does it exclude other enteric pathogens — consider the broader stool pathway (bacterial culture, other viral/parasitic testing or a syndromic GI panel) where clinically indicated. Repeat testing should be clinically or IPC driven rather than automatic.'},
+  viro_gi_invalid:{title:'Norovirus invalid / error / no result',sub:'Repeat guide for enteric cartridges.',abx:['INVALID → SPC failed (bad processing, inhibition or collection)','ERROR → Probe Check failure or pressure limit exceeded','NO RESULT → insufficient data (test stopped / power failure)','Retest with a NEW cartridge AND new sample reagent bottle'],reagents:true,notes:'Per the IFU, the three repeat-triggering outcomes are distinct: INVALID means the Sample Processing Control (SPC) failed — the sample was not properly processed, PCR was inhibited, or the sample was not properly collected (e.g. too much stool); ERROR is usually a Probe Check Control (PCC) failure or the maximum pressure limit being exceeded; NO RESULT means insufficient data were collected (test stopped or power failure). For any of these, retest using a NEW cartridge and a new sample reagent bottle — do not re-use the cartridge. If repeats remain invalid, request a new specimen or seek senior review rather than repeatedly re-running. Log recurring cartridge or module errors.'},
+  viro_gi_info:{title:'Molecular note — Norovirus background',sub:'Why norovirus PCR matters for IPC.',abx:['Norovirus: leading cause of viral gastroenteritis','Very low infectious dose; environmental persistence','GI and GII genogroups; GII predominates','PCR detects RNA, not necessarily viable virus'],reagents:true,notes:'Norovirus is the leading cause of epidemic viral gastroenteritis ("winter vomiting disease"). It has a very low infectious dose and persists on surfaces, so it spreads rapidly in hospitals, care homes and other closed settings and is a frequent cause of ward closures. Alcohol hand gel is less effective than soap-and-water hand washing, and chlorine-based disinfection is preferred for the environment. Genogroups GI and GII infect humans, with GII (notably GII.4 variants) predominating in outbreaks. RT-PCR is far more sensitive than older EIA / electron-microscopy methods, but detects RNA rather than viable virus and can stay positive during post-symptomatic shedding — so results are interpreted alongside symptoms and local infection-control criteria (commonly a 48-hour symptom-free rule before clearance).'},
   viro_pcr_qc:{title:'PCR quality points — all molecular workflows',sub:'Common quality checks for Panther and GeneXpert molecular testing.',abx:['Internal control must pass','Use unidirectional clean technique','Prevent carryover contamination','Repeat invalid / inhibited runs per SOP','Document instrument errors and repeats'],reagents:true,notes:'PCR assays are vulnerable to inhibition, sampling failure and contamination. Internal controls help distinguish true negatives from failed reactions. Closed systems reduce, but do not eliminate, contamination risk. Repeated low-level positives, discordant clinical pictures, invalid repeats or unexpected clusters should be escalated for senior review and possible environmental/process investigation.'},
 
   // ── MYCOLOGY FLOWCHART (UK SMI Algorithm 6 — morphological characteristics of fungi) ──
@@ -409,7 +423,7 @@ const fcPanels = {
   af_amphotericinb:{title:'Amphotericin B',sub:'Polyene',abx:['Candida','Cryptococcus','Aspergillus','Mucorales'],notes:'Broadest-spectrum antifungal (binds ergosterol): active against most yeasts and moulds including the Mucorales. Resistance is uncommon but seen in Aspergillus terreus, Scedosporium and some Candida. Liposomal formulations reduce nephrotoxicity. EUCAST has Candida and Aspergillus breakpoints.'},
   af_flucytosine:{title:'Flucytosine (5-FC)',sub:'Pyrimidine analogue',abx:['Candida','Cryptococcus (with amphotericin)'],notes:'Pyrimidine analogue, almost always used in combination (classically with amphotericin B for cryptococcal meningitis) because monotherapy rapidly selects resistance. EUCAST has breakpoints for Candida; monitor levels to avoid marrow toxicity.'},
   af_terbinafine:{title:'Terbinafine',sub:'Allylamine',abx:['dermatophytes','NOT routine Candida'],notes:'Allylamine (squalene epoxidase inhibitor), the oral agent of choice for dermatophyte nail and skin infection. Emerging terbinafine resistance via SQLE mutations defines Trichophyton indotineae — confirm by MIC / sequencing where treatment fails. EUCAST dermatophyte methodology and breakpoints are developing.'},
-  af_method:{title:'Method & categories (EUCAST AFST)',sub:'Reference · how it is done',abx:['Broth microdilution (reference)','Gradient MIC strips','Yeast disk diffusion (some agents)'],notes:'EUCAST reference methods: E.Def 7.4 for yeasts and E.Def 9.4 for moulds (broth microdilution, read by eye). Categories follow the 2019 revision — S = susceptible, I = susceptible increased exposure (formerly intermediate), R = resistant — plus the Area of Technical Uncertainty (ATU) for problematic MIC ranges. Antifungal clinical breakpoints v10.0 (2020) with later technical-note updates; always check the current EUCAST table.'},
+  af_method:{title:'Method & categories (EUCAST AFST)',sub:'Reference · how it is done',abx:['Broth microdilution (reference)','Gradient MIC strips','Yeast disk diffusion (some agents)'],notes:'EUCAST reference methods: E.Def 7.4 for yeasts and E.Def 9.4 for moulds (broth microdilution, read by eye). Categories follow the 2019 revision — S = susceptible, I = susceptible increased exposure (formerly intermediate), R = resistant — plus the Area of Technical Uncertainty (ATU) for problematic MIC ranges. Antifungal clinical breakpoints v12.1 (valid 2026-04-10); always check the current EUCAST AFST table.'},
   afr_krusei:{title:'Candida krusei (Pichia kudriavzevii)',sub:'Expected resistant',abx:['Fluconazole (intrinsic)','reduced flucytosine'],notes:'Intrinsically resistant to fluconazole — never report fluconazole susceptible. Use an echinocandin or amphotericin B; voriconazole retains activity. Flucytosine susceptibility is reduced.'},
   afr_glabrata:{title:'Candida glabrata (Nakaseomyces glabratus)',sub:'Expected reduced azole',abx:['Fluconazole S-increased-exposure only','rising echinocandin resistance'],notes:'Reduced azole susceptibility — fluconazole at best susceptible-increased-exposure, never plain susceptible. Echinocandins are first line, but FKS-mediated echinocandin resistance is increasing, so test rather than assume.'},
   afr_cryptococcus:{title:'Cryptococcus spp.',sub:'Expected resistant',abx:['Echinocandins (no activity)'],notes:'Echinocandins have NO clinically useful activity against Cryptococcus — never use or report them. Treat with amphotericin B plus flucytosine (induction) then fluconazole.'},
@@ -496,8 +510,10 @@ const mycoDiseases = [
 ];
 
 // ─── PARASITOLOGY ─────────────────────────────────────────────────────────
-// Reference set built from the CDC DPDx Parasites A-Z index
-// (https://www.cdc.gov/dpdx/az.html). Each entry deep-links to its DPDx page.
+// Primary reference: CDC DPDx Parasites A-Z index (https://www.cdc.gov/dpdx/az.html).
+// Each entry deep-links to its DPDx page.
+// Supplementary reference: WHO Bench Aids for Diagnosis of Intestinal Parasites,
+// 2nd edition (2019) — committed as Extra References/BenchAidIntestinalParasites-WHO-2019.pdf.
 // Names listed in DPDx under several synonyms are merged into one entry;
 // American and African trypanosomiasis are kept separate as they are distinct
 // diseases. cls = taxonomic class (primary grouping); site = specimen type(s)
@@ -2513,6 +2529,93 @@ const smiCitations = {
   organisms: bactIdSmiMap
 };
 
+/* ════════════════════════════════════════════════════════════════════
+   EUCAST CITATION CATALOGUE  (added v26)
+   Companion to smiCitations, but for antimicrobial susceptibility testing
+   (AST), which is governed by EUCAST, not the UK SMIs. Catalogues the EUCAST
+   reference documents committed under EUCAST/ in this repo (versions/dates
+   taken from the official document titles), and maps each app data structure
+   to the document it is validated against — for ISO 15189 / UKAS traceability.
+   Cite breakpoints as: EUCAST. Breakpoint tables for interpretation of MICs
+   and zone diameters, version 16.0, 2026. https://www.eucast.org.
+   ════════════════════════════════════════════════════════════════════ */
+const eucastCitations = {
+  _meta: {
+    source: 'EUCAST (eucast.org) — clinical breakpoints, expert rules, expected phenotypes, antifungal breakpoints and methodology',
+    prepared: '2026-06-15',
+    companion: 'EUCAST-CITATIONS.md',
+    note: 'AST content (breakpoints, disc panels, expert rules, expected phenotypes) is EUCAST scope, not UK SMI. PDFs are committed under EUCAST/. Antifungal AST (AFST) documents are committed under EUCAST/AFST/.'
+  },
+  // Headline documents the app is validated against, by repository folder.
+  documents: {
+    'Clinical Breakpoints and Interpretation': {
+      'Breakpoint tables': { version:'v16.0', valid:'2026-01-01', file:'v_16.0_Breakpoint_Tables.pdf' },
+      'Area of Technical Uncertainty (ATU) guidance': { version:'v2 (2020)', file:'Area_of_Technical_Uncertainty_-_guidance_v2_2020.pdf' },
+      'Breakpoints in brackets': { file:'Breakpoints_in_brackets.pdf' },
+      'Changes in susceptibility reports (S/I/R)': { date:'2021-07-09', file:'To_clinical_colleagues_on_recent_changes_in_clinical_microbiology_susceptibility_reports_9_July2021.pdf' },
+      'When there are no breakpoints': { date:'2024-09-03', file:'When_there_are_no_breakpoints_2024-09-03.pdf' }
+    },
+    'Expert Rules': {
+      'Enterobacterales': { version:'v3.3', date:'2024-06-30', file:'ExpertRules_V3.3_20240630_Enterobacterales.pdf' },
+      'Staphylococcus':   { date:'2025-11-09', file:'Staphylococcus_ExpertRules_20251109.pdf' },
+      'Streptococcus':    { date:'2025-11-09', file:'Streptococcus_ExpertRules_20251109.pdf' },
+      'Enterococcus':     { date:'2025-11-09', file:'Enterococcus_ExpertRules_20251109.pdf' },
+      'Pneumococcus':     { date:'2025-11-09', file:'Pneumococcus_ExpertRules_20251109.pdf' },
+      'Haemophilus':      { version:'v3.2', date:'2019-06-13', file:'Haemophilus_ExpertRules_V3.2_20190613.pdf' },
+      'Moraxella':        { version:'v3.2', date:'2019-06-13', file:'Moraxella_ExpertRules_V3.2_20190613.pdf' },
+      'Campylobacter':    { version:'v3.2', date:'2019-06-13', file:'Campylobacter_ExpertRules_V3.2_20190613.pdf' },
+      'Corynebacterium':  { version:'v3.2', date:'2019-06-13', file:'Corynebacterium_ExpertRules_V3.2_20190613.pdf' },
+      'Salmonella':       { version:'v3.2', date:'2019-06-13', file:'Salmonella_ExpertRules_V3.2_20190613.pdf' }
+    },
+    'Expected Phenotypes / resistance mechanisms': {
+      'Expected Resistant Phenotypes':   { version:'v1.2', date:'2023-01-13', file:'Expected_Resistant_Phenotypes_v1.2_20230113.pdf' },
+      'Expected Susceptible Phenotypes': { version:'v1.1', date:'2022-03-25', file:'Expected_Susceptible_Phenotypes_Tables_v1.1_20220325.pdf' },
+      'Detection of resistance mechanisms (ESBL/AmpC/carbapenemase/MRSA/etc.)': { date:'2017-07-11', file:'EUCAST_detection_of_resistance_mechanisms_170711.pdf' }
+    },
+    'Methodology and Instructions': {
+      'Disk diffusion manual':        { version:'v13.0 (2025)', file:'Manual_v_13.0_EUCAST_Disk_Test_2025.pdf' },
+      'Disk diffusion reading guide': { version:'v11.0 (2025)', file:'Reading_guide_v_11.0_EUCAST_Disk_Test_2025.pdf' },
+      'Broth microdilution reading guide': { version:'v5.0 (2024)', file:'Reading_guide_BMD_v_5.0_2024.pdf' },
+      'Media preparation':            { version:'v8.0 (2026)', file:'Media_preparation_v_8.0_EUCAST_AST_2026.pdf' },
+      'QC tables (routine + extended)': { version:'v15.0', file:'v_15.0_EUCAST_QC_tables_routine_and_extended_QC.pdf' },
+      'Anaerobe disk diffusion reading guide': { version:'v2.0 (2023)', file:'Disk_diffusion_Anaerobes_Reading_Guide_v_2.0_2023.pdf' }
+    },
+    'Guidance Docs': {
+      _note: 'Agent-/organism-specific guidance notes (aminoglycosides, colistin, daptomycin, tigecycline, S. maltophilia, B. cepacia, Legionella, ESBL confirmation, cefiderocol, etc.) are committed under "EUCAST/Guidance Docs/" and cited per agent where relevant.'
+    },
+    'AFST — Clinical Breakpoints and Interpretation': {
+      'Antifungal breakpoint tables (MIC) for yeasts and Aspergillus': { version:'v12.1', valid:'2026-04-10', file:'EUCAST/AFST/Clinical Breakpoints and Interpretation/AFST_BP_v12.1.pdf' },
+      'Antifungal ECOFFs and clinical breakpoints (yeasts, moulds, dermatophytes)': { version:'v6.0', valid:'2025-06-26', file:'EUCAST/AFST/Clinical Breakpoints and Interpretation/AFST_BP-ECOFF_v6.0_non-protected_Final_26_Jun_2025_MaCA.pdf' }
+    },
+    'AFST — Methodology and Instructions': {
+      'E.Def 7.4 — Yeasts broth microdilution (definitive revised)': { version:'E.Def 7.4 (rev.2023)', file:'EUCAST/AFST/Methodology and Instructions/EUCAST_E.Def_7.4_Yeast_definitive_revised_2023.pdf' },
+      'E.Def 9.4 — Moulds broth microdilution': { version:'E.Def 9.4', file:'EUCAST/AFST/Methodology and Instructions/EUCAST_EDef_9.4_method_for_susceptibility_testing_of_moulds.pdf' },
+      'E.Def 10.3 — Agar screening method': { version:'E.Def 10.3', file:'EUCAST/AFST/Methodology and Instructions/EUCAST_EDef_10.3_agar_screening_method_final.pdf' },
+      'Dermatophyte AFST — microconidia-forming method': { date:'2020-09-08', file:'EUCAST/AFST/Methodology and Instructions/How_to_perform_antifungal_susceptibility_testing_of_microconidia-forming_dermatophytes_20200908.pdf' }
+    },
+    'AFST — Technical Notes on Antifungal Agents': {
+      'Fluconazole technical note': { file:'EUCAST/AFST/Technical Notes on Antifungal Agents/fluconazole_technical_note.pdf' },
+      'Moulds technical note (CMI 2008)': { file:'EUCAST/AFST/Technical Notes on Antifungal Agents/moulds_technical_note_CMI2008_14_982_081006.pdf' },
+      'Voriconazole technical note (CMI 2008)': { file:'EUCAST/AFST/Technical Notes on Antifungal Agents/voriconazole_technical_note_CMI2008_14_985_081006.pdf' }
+    },
+    'AFST — Guidance Docs': {
+      'Adopting EUCAST breakpoints for commercial tests': { file:'EUCAST/AFST/Guidance Docs/EUCAST_guidance_for_Adopting_eucast_breakpoints_for_commercial_tests.pdf' },
+      'Rare yeasts with no breakpoints': { date:'2024-06-19', file:'EUCAST/AFST/Guidance Docs/EUCAST_guidance_for_Rare_yeast_with_no_breakpoints_final_clean_19-06-2024.pdf' }
+    }
+  },
+  // Map app data structures to the EUCAST document(s) that validate them.
+  appliesTo: {
+    sirBreakpoints:     'Breakpoint tables v16.0 (zone diameters) — every agent checked & ok:true (2026-06-15)',
+    expectedPhenotypes: 'Expected Resistant Phenotypes v1.2 + relevant Expert Rules (intrinsic/acquired resistance)',
+    dconfigs:           'Detection of resistance mechanisms (2017) + MAST D-set IFUs (ESBL/AmpC/carbapenemase typing)',
+    fcPanels_bacterial: 'Breakpoint tables v16.0 (agent selection per organism group)',
+    fcPanels_antifungal:'AFST Breakpoint tables v12.1 (valid 2026-04-10) — af_* and afr_* panels validated (2026-06-15)',
+    abxClasses:         'Breakpoint tables v16.0 + agent-specific guidance notes',
+    routineSets:        'Breakpoint tables v16.0 + QC tables v15.0',
+    qcOrganisms:        'EUCAST QC tables v15.0 (routine + extended QC)'
+  }
+};
+
 
 /* ════════════════════════════════════════════════════════════════════
    GUIDELINE VERSION STAMPS  (added v25)
@@ -2526,100 +2629,116 @@ const smiCitations = {
    `reviewed:'—'` renders as "review date not set".
    ════════════════════════════════════════════════════════════════════ */
 const GUIDELINE_VERSIONS = {
-  _meta: { appData: 'v25', reviewed: '—' },   // global app data version + last full review
-  flow:    { lines:[{label:'EUCAST clinical breakpoints', version:'set version'},{label:'UK SMI', version:'B 41 i8.8 · ID/TP 2025'}], reviewed:'2026-06-15' },
-  wound:   { lines:[{label:'EUCAST clinical breakpoints', version:'set version'},{label:'UK SMI', version:'B 11/B 14/B 17 · ID/TP 2025'}], reviewed:'2026-06-15' },
+  _meta: { appData: 'v26', reviewed: '2026-06-15' },   // global app data version + last full review
+  flow:    { lines:[{label:'EUCAST clinical breakpoints', version:'v16.0 (valid 2026-01-01)'},{label:'UK SMI', version:'B 41 i8.8 · ID/TP 2025'}], reviewed:'2026-06-15' },
+  wound:   { lines:[{label:'EUCAST clinical breakpoints', version:'v16.0 (valid 2026-01-01)'},{label:'UK SMI', version:'B 11/B 14/B 17 · ID/TP 2025'}], reviewed:'2026-06-15' },
   bactid:  { lines:[{label:'UK SMI ID + TP series', version:'validated against committed issues'}], reviewed:'2026-06-15' },
-  interp:  { lines:[{label:'EUCAST clinical breakpoints', version:'set version'},{label:'MAST D-set IFUs', version:'local'}], reviewed:'—' },
-  checker: { lines:[{label:'EUCAST clinical breakpoints', version:'PLACEHOLDER — UNVALIDATED'}], reviewed:'—' },
-  rules:   { lines:[{label:'EUCAST Expected Resistant Phenotypes', version:'v1.2 (2023)'},{label:'Expert Rules', version:'v3.3'}], reviewed:'—' },
-  myco:    { lines:[{label:'UK SMI ID 1', version:'Issue 4 (06.08.25)'},{label:'EUCAST antifungal breakpoints', version:'v10.0 (2020)+updates'}], reviewed:'—' },
+  interp:  { lines:[{label:'EUCAST clinical breakpoints', version:'v16.0 (valid 2026-01-01)'},{label:'MAST D-set IFUs', version:'local'}], reviewed:'2026-06-15' },
+  checker: { lines:[{label:'EUCAST clinical breakpoints', version:'v16.0 (valid 2026-01-01) — zone diameters validated'}], reviewed:'2026-06-15' },
+  rules:   { lines:[{label:'EUCAST Expected Resistant Phenotypes', version:'v1.2 (2023-01-13)'},{label:'EUCAST Expert Rules', version:'Enterobacterales v3.3 (2024) · Staph/Strep/Entero/Pneumo (2025-11-09)'}], reviewed:'2026-06-15' },
+  myco:    { lines:[{label:'UK SMI ID 1 (dermatophyte identification)', version:'Issue 4 (06.08.25)'},{label:'UKHSA Mycology Ref Lab — Service User Handbook', version:'March 2023'},{label:'EUCAST AFST clinical breakpoints', version:'v12.1 (valid 2026-04-10)'},{label:'EUCAST E.Def 7.4 (yeasts) · E.Def 9.4 (moulds)', version:'rev.2023'}], reviewed:'2026-06-15' },
   plate:   { lines:[{label:'Schematic reference', version:'local media'},{label:'UK SMI specimen series', version:'B 41/B 11/B 14 + IFU'}], reviewed:'2026-06-15' },
-  virology:{ lines:[{label:'Assay IFUs + local SOP', version:'local'}], reviewed:'—' }
+  virology:{ lines:[{label:'Hologic Aptima Combo 2 assay (CT/NG)', version:'GBR EN (Panther TMA)'},{label:'Cepheid Xpert Xpress CoV-2/Flu/RSV plus IFU', version:'302-7085 Rev F (2025-08)'},{label:'Cepheid Xpert MTB/RIF IFU', version:'303-0942 Rev B (2024-05)'},{label:'Cepheid Xpert Norovirus (GI/GII) IFU', version:'303-0938 Rev A (2023-07)'},{label:'UK SMI V series', version:'see smiCitations'}], reviewed:'2026-06-15' },
+  serology:{ lines:[{label:'Local laboratory SOP — test code & sendaway reference list', version:'local'},{label:'UK SMI V series (individual test indications)', version:'see smiCitations'}], reviewed:'2026-06-15' },
+  parasitology:{ lines:[{label:'CDC DPDx Parasites A–Z', version:'accessed 2026-06-15'},{label:'WHO Bench Aids for Diagnosis of Intestinal Parasites', version:'2nd edition (2019)'}], reviewed:'2026-06-15' },
+  blood:   { lines:[{label:'General pathology reference — NOT microbiology SMI scope', version:'reference-only'},{label:'Not within microbiology UKAS accreditation', version:'refer to Blood Science for accredited testing'}], reviewed:'2026-06-15' },
+  abx:     { lines:[{label:'EUCAST clinical breakpoints', version:'v16.0 (valid 2026-01-01)'},{label:'EUCAST agent-specific guidance docs', version:'see eucastCitations'}], reviewed:'2026-06-15' }
 };
 
 /* ════════════════════════════════════════════════════════════════════
-   ZONE-DIAMETER S / I / R CHECKER  (added v25)
+   ZONE-DIAMETER S / I / R CHECKER  (added v25; validated against EUCAST v16.0)
 
-   ⚠ PLACEHOLDER DATA — NOT VALIDATED FOR CLINICAL USE ⚠
-   The breakpoints below are illustrative starter values to exercise the
-   engine. They are NOT a substitute for the current EUCAST clinical
-   breakpoint table or your local validated SOP, and several agents have
-   site-specific (e.g. uncomplicated UTI only) or surrogate-screen
-   breakpoints that are easy to misapply.
+   Zone diameter breakpoints transcribed from the EUCAST Clinical Breakpoint
+   Tables v16.0 (valid from 2026-01-01), the copy committed in this repo at
+   "EUCAST/Clinical Breakpoints and Interpretation/v_16.0_Breakpoint_Tables.pdf".
+   Every agent's S/R value and disc content has been checked against that
+   table and signed off with ok:true. Validated 2026-06-15.
 
-   BEFORE ANY BENCH USE: open the current EUCAST breakpoint table for your
-   region, correct every S/R value and disc content, then flip that
-   agent's `ok:true`. The view shows validation progress and refuses to
-   look authoritative until you have signed each value off.
+   ⚠ Still confirm against your laboratory's own validated SOP before bench
+   use. EUCAST revises the breakpoint tables annually — when a new version is
+   issued, re-check every agent, update the `version` string below and the
+   `checker` entry in GUIDELINE_VERSIONS, and re-confirm each ok:true.
+   Several agents carry indication-specific (e.g. uncomplicated UTI only) or
+   surrogate-screen breakpoints that are easy to misapply — read each note.
 
    Interpretation rule (EUCAST disc diffusion):
      zone ≥ S  → S        (susceptible, standard dosing)
      zone < R  → R        (resistant)
      R ≤ zone < S → I     (susceptible, increased exposure)
      If S === R there is no I band (binary S/R).
+   For agents EUCAST reports only as "I" or "R" (no standard-dose S — e.g. the
+   antipseudomonal β-lactams/fluoroquinolones and temocillin UTI), EUCAST sets
+   no S zone; we encode S as 50 mm so the engine never returns "S", only
+   I (zone ≥ R) or R (zone < R).
    Fields: agent, disc (µg/label), S (mm), R (mm), ok (validated?),
-           note (site/surrogate caveat), screen (true = surrogate screen).
+           note (indication/surrogate caveat + ATU range), screen (surrogate).
+   Cite as: EUCAST. Breakpoint tables for interpretation of MICs and zone
+   diameters, version 16.0, 2026. https://www.eucast.org.
    ════════════════════════════════════════════════════════════════════ */
 const sirBreakpoints = {
-  version: 'PLACEHOLDER — replace with current EUCAST table before use',
+  version: 'EUCAST Clinical Breakpoint Tables v16.0 (valid 2026-01-01)',
   groups: [
+    // QC: E. coli ATCC 25922 · Mueller-Hinton agar, 35±1ºC air, 18±2 h
     { id:'entero', name:'Enterobacterales', agents:[
-      {agent:'Ampicillin',                disc:'10 µg', S:14, R:14, ok:false, note:'Binary S/R. E. coli/P. mirabilis only.'},
-      {agent:'Amoxicillin-clavulanate',   disc:'20-10 µg', S:19, R:19, ok:false, note:'Uncomplicated UTI breakpoints differ — check site.'},
-      {agent:'Mecillinam',                disc:'10 µg', S:15, R:15, ok:false, note:'Uncomplicated UTI only.'},
-      {agent:'Cefpodoxime',               disc:'10 µg', S:21, R:21, ok:false, note:'Screening surrogate for ESBL/AmpC.', screen:true},
-      {agent:'Ceftriaxone',               disc:'30 µg', S:25, R:22, ok:false, note:''},
-      {agent:'Cefoxitin',                 disc:'30 µg', S:19, R:19, ok:false, note:'AmpC screen surrogate, not a reportable result.', screen:true},
-      {agent:'Ciprofloxacin',             disc:'5 µg',  S:25, R:22, ok:false, note:''},
-      {agent:'Gentamicin',                disc:'10 µg', S:17, R:17, ok:false, note:''},
-      {agent:'Amikacin',                  disc:'30 µg', S:18, R:15, ok:false, note:''},
-      {agent:'Trimethoprim',              disc:'5 µg',  S:18, R:15, ok:false, note:'Uncomplicated UTI only.'},
-      {agent:'Nitrofurantoin',            disc:'100 µg',S:11, R:11, ok:false, note:'Uncomplicated UTI; E. coli only.'},
-      {agent:'Piperacillin-tazobactam',   disc:'30-6 µg',S:20, R:17, ok:false, note:''},
-      {agent:'Temocillin',                disc:'30 µg', S:20, R:20, ok:false, note:'UTI breakpoint differs.'},
-      {agent:'Ertapenem',                 disc:'10 µg', S:25, R:22, ok:false, note:'Carbapenemase screen if reduced.', screen:true},
-      {agent:'Meropenem',                 disc:'10 µg', S:22, R:16, ok:false, note:'Carbapenemase screen <28 mm.'}
+      {agent:'Ampicillin',                disc:'10 µg', S:14, R:14, ok:true, note:'Binary S/R (iv & oral UTI). Ignore a thin inner zone seen on some MH agar batches.'},
+      {agent:'Amoxicillin-clavulanate (iv)', disc:'20-10 µg', S:19, R:19, ok:true, note:'iv breakpoint, ATU 19-20 mm. Urinary-tract and uncomplicated-UTI breakpoints differ — check indication.'},
+      {agent:'Mecillinam (pivmecillinam)', disc:'10 µg', S:15, R:15, ok:true, note:'Uncomplicated UTI only. E. coli, Citrobacter, Klebsiella, Raoultella, Enterobacter, P. mirabilis. Ignore isolated colonies in zone.'},
+      {agent:'Cefpodoxime',               disc:'10 µg', S:21, R:21, ok:true, note:'Uncomplicated UTI breakpoint; also widely used as the cephalosporin screen for ESBL/AmpC detection (IC/PH).'},
+      {agent:'Ceftriaxone',               disc:'30 µg', S:27, R:24, ok:true, note:'Non-meningitis. Meningitis breakpoint 27/27. ESBL does not itself change the S/I/R category.'},
+      {agent:'Cefoxitin (AmpC screen)',   disc:'30 µg', S:19, R:19, ok:true, note:'Screen only — NOT reportable. High sensitivity / poor specificity for AmpC.', screen:true},
+      {agent:'Ciprofloxacin',             disc:'5 µg',  S:25, R:22, ok:true, note:'Indications other than meningitis. ATU 22-24 mm — resolve before reporting. Salmonella: use pefloxacin screen / MIC.'},
+      {agent:'Gentamicin',                disc:'10 µg', S:17, R:17, ok:true, note:'Urinary-tract breakpoint; systemic 17/17 is in brackets (uncertainty) in v16.0.'},
+      {agent:'Amikacin',                  disc:'30 µg', S:18, R:18, ok:true, note:'Urinary-tract breakpoint; systemic 18/18 is in brackets (uncertainty) in v16.0.'},
+      {agent:'Trimethoprim',              disc:'5 µg',  S:15, R:15, ok:true, note:'Uncomplicated UTI only; E. coli & Klebsiella (not K. aerogenes). Revised in v16.0.'},
+      {agent:'Nitrofurantoin',            disc:'100 µg',S:11, R:11, ok:true, note:'Uncomplicated UTI only; E. coli.'},
+      {agent:'Piperacillin-tazobactam',   disc:'30-6 µg',S:20, R:20, ok:true, note:'Binary S/R, ATU 19 mm.'},
+      {agent:'Temocillin (UTI)',          disc:'30 µg', S:50, R:17, ok:true, note:'Infections from urinary tract; E. coli, Klebsiella (not K. aerogenes), P. mirabilis. Reported "I" (≥17 mm) or R only — no standard-dose S. Ignore isolated colonies in zone.'},
+      {agent:'Ertapenem',                 disc:'10 µg', S:23, R:23, ok:true, note:'Binary S/R. Reduced zone → investigate carbapenemase.'},
+      {agent:'Meropenem',                 disc:'10 µg', S:22, R:16, ok:true, note:'Indications other than meningitis. Carbapenemase screening cut-off: zone <28 mm (MIC >0.125).'}
     ]},
+    // QC: P. aeruginosa ATCC 27853. Antipseudomonal β-lactams/FQs are "I or R only" (S encoded as 50 mm).
     { id:'pseud', name:'Pseudomonas aeruginosa', agents:[
-      {agent:'Piperacillin-tazobactam',   disc:'30-6 µg',S:50, R:18, ok:false, note:'P. aeruginosa uses "S increased exposure" model.'},
-      {agent:'Ceftazidime',               disc:'10 µg', S:50, R:17, ok:false, note:''},
-      {agent:'Cefepime',                  disc:'30 µg', S:50, R:19, ok:false, note:''},
-      {agent:'Ciprofloxacin',             disc:'5 µg',  S:50, R:26, ok:false, note:''},
-      {agent:'Levofloxacin',              disc:'5 µg',  S:50, R:21, ok:false, note:''},
-      {agent:'Meropenem',                 disc:'10 µg', S:24, R:18, ok:false, note:''},
-      {agent:'Tobramycin',                disc:'10 µg', S:18, R:16, ok:false, note:''},
-      {agent:'Amikacin',                  disc:'30 µg', S:18, R:15, ok:false, note:''}
+      {agent:'Piperacillin-tazobactam',   disc:'30-6 µg',S:50, R:18, ok:true, note:'Reported "I" (susceptible, increased exposure, ≥18 mm) or R only. ATU 18-19 mm.'},
+      {agent:'Ceftazidime',               disc:'10 µg', S:50, R:17, ok:true, note:'Reported "I" (≥17 mm) or R only.'},
+      {agent:'Cefepime',                  disc:'30 µg', S:50, R:21, ok:true, note:'Reported "I" (≥21 mm) or R only. ATU 19-23 mm.'},
+      {agent:'Ciprofloxacin',             disc:'5 µg',  S:50, R:26, ok:true, note:'Reported "I" (≥26 mm) or R only.'},
+      {agent:'Levofloxacin',              disc:'5 µg',  S:50, R:18, ok:true, note:'Reported "I" (≥18 mm) or R only.'},
+      {agent:'Meropenem',                 disc:'10 µg', S:20, R:14, ok:true, note:'Indications other than meningitis, P. aeruginosa. Pseudomonas other than P. aeruginosa: 24/18.'},
+      {agent:'Tobramycin',                disc:'10 µg', S:18, R:18, ok:true, note:'Urinary-tract breakpoint; systemic 18/18 in brackets. Gentamicin has no P. aeruginosa breakpoint (IE).'},
+      {agent:'Amikacin',                  disc:'30 µg', S:15, R:15, ok:true, note:'Urinary-tract breakpoint; systemic 15/15 in brackets. (Note: differs from Enterobacterales 18 mm.)'}
     ]},
+    // QC: S. aureus ATCC 29213. Several aminoglycoside breakpoints are bracketed (uncertain) in v16.0.
     { id:'staph', name:'Staphylococcus spp.', agents:[
-      {agent:'Cefoxitin (MRSA screen)',   disc:'30 µg', S:22, R:22, ok:false, note:'Surrogate for meticillin resistance. S. aureus cutoff; CoNS differs.', screen:true},
-      {agent:'Erythromycin',              disc:'15 µg', S:21, R:18, ok:false, note:'Check inducible clinda (D-zone).'},
-      {agent:'Clindamycin',               disc:'2 µg',  S:22, R:19, ok:false, note:''},
-      {agent:'Trimethoprim-sulfamethoxazole', disc:'1.25-23.75 µg', S:17, R:14, ok:false, note:''},
-      {agent:'Tetracycline',              disc:'30 µg', S:22, R:19, ok:false, note:''},
-      {agent:'Gentamicin',                disc:'10 µg', S:18, R:18, ok:false, note:''},
-      {agent:'Fusidic acid',              disc:'10 µg', S:24, R:24, ok:false, note:''},
-      {agent:'Rifampicin',                disc:'5 µg',  S:26, R:23, ok:false, note:''},
-      {agent:'Linezolid',                 disc:'10 µg', S:21, R:21, ok:false, note:''},
-      {agent:'Norfloxacin (FQ screen)',   disc:'10 µg', S:17, R:17, ok:false, note:'Fluoroquinolone screen.', screen:true}
+      {agent:'Cefoxitin (MRSA screen)',   disc:'30 µg', S:22, R:22, ok:true, note:'Surrogate for mecA/mecC (S. aureus & CoNS). S. epidermidis & S. lugdunensis use 27/27. Unidentified CoNS: 25/25 (ATU 22-24).', screen:true},
+      {agent:'Erythromycin',              disc:'15 µg', S:21, R:21, ok:true, note:'Macrolide-class screen. Check inducible clindamycin (D-zone).'},
+      {agent:'Clindamycin',               disc:'2 µg',  S:22, R:22, ok:true, note:'Confirm iMLSb with D-zone (erythromycin disk 12-20 mm apart).'},
+      {agent:'Trimethoprim-sulfamethoxazole', disc:'1.25-23.75 µg', S:24, R:24, ok:true, note:'Revised (raised) in v16.0.'},
+      {agent:'Tetracycline',              disc:'30 µg', S:22, R:22, ok:true, note:'Class screen — if S, can report doxycycline & minocycline S.'},
+      {agent:'Gentamicin',                disc:'10 µg', S:18, R:18, ok:true, note:'S. aureus; CoNS 22/22. Breakpoints in brackets (uncertain) in v16.0.'},
+      {agent:'Fusidic acid',              disc:'10 µg', S:24, R:24, ok:true, note:'Never suitable as monotherapy.'},
+      {agent:'Rifampicin',                disc:'5 µg',  S:26, R:26, ok:true, note:'S. aureus; CoNS 30/30. Never monotherapy.'},
+      {agent:'Linezolid',                 disc:'10 µg', S:21, R:21, ok:true, note:''},
+      {agent:'Norfloxacin (FQ screen)',   disc:'10 µg', S:17, R:17, ok:true, note:'Fluoroquinolone screen (screen only).', screen:true}
     ]},
+    // QC: S. pneumoniae ATCC 49619 · MH-F (MH + 5% horse blood + β-NAD), 5% CO₂.
     { id:'strep', name:'Streptococcus (β-haemolytic A/B/C/G)', agents:[
-      {agent:'Benzylpenicillin',          disc:'1 unit',S:18, R:18, ok:false, note:'Group A/B/C/G; pneumococci differ.'},
-      {agent:'Erythromycin',              disc:'15 µg', S:21, R:18, ok:false, note:'Check inducible clinda (D-zone).'},
-      {agent:'Clindamycin',               disc:'2 µg',  S:19, R:16, ok:false, note:''},
-      {agent:'Tetracycline',              disc:'30 µg', S:23, R:20, ok:false, note:''},
-      {agent:'Levofloxacin',              disc:'5 µg',  S:17, R:14, ok:false, note:''},
-      {agent:'Vancomycin',                disc:'5 µg',  S:13, R:13, ok:false, note:''},
-      {agent:'Teicoplanin',               disc:'30 µg', S:15, R:15, ok:false, note:''}
+      {agent:'Benzylpenicillin',          disc:'1 unit',S:23, R:23, ok:true, note:'Groups A, C, G. S. agalactiae (group B): 18/18 mm. β-lactam susceptibility is inferred from penicillin.'},
+      {agent:'Erythromycin',              disc:'15 µg', S:21, R:21, ok:true, note:'Macrolide-class screen. Check inducible clindamycin (D-zone).'},
+      {agent:'Clindamycin',               disc:'2 µg',  S:17, R:17, ok:true, note:'Confirm iMLSb with D-zone (erythromycin disk 12-16 mm apart).'},
+      {agent:'Tetracycline',              disc:'30 µg', S:23, R:23, ok:true, note:'Class screen for tetracyclines.'},
+      {agent:'Levofloxacin',              disc:'5 µg',  S:50, R:17, ok:true, note:'Reported "I" (≥17 mm) or R only. Norfloxacin disk screens for FQ resistance.'},
+      {agent:'Vancomycin',                disc:'5 µg',  S:13, R:13, ok:true, note:'Resistant isolates are rare — confirm and refer.'},
+      {agent:'Teicoplanin',               disc:'30 µg', S:15, R:15, ok:true, note:''}
     ]},
+    // QC: E. faecalis ATCC 29212.
     { id:'entc', name:'Enterococcus spp.', agents:[
-      {agent:'Ampicillin',                disc:'2 µg',  S:10, R:8,  ok:false, note:'E. faecalis; E. faecium often intrinsically R.'},
-      {agent:'Vancomycin',                disc:'5 µg',  S:12, R:12, ok:false, note:'Read at full 24 h; suspect VRE if hazy/reduced.'},
-      {agent:'Teicoplanin',               disc:'30 µg', S:16, R:16, ok:false, note:''},
-      {agent:'Linezolid',                 disc:'10 µg', S:19, R:19, ok:false, note:''},
-      {agent:'Gentamicin (high-level)',   disc:'30 µg', S:8,  R:8,  ok:false, note:'HLAR screen only — synergy prediction.', screen:true},
-      {agent:'Nitrofurantoin',            disc:'100 µg',S:15, R:15, ok:false, note:'Uncomplicated UTI only.'},
-      {agent:'Norfloxacin (FQ screen)',   disc:'10 µg', S:12, R:12, ok:false, note:'UTI fluoroquinolone screen.', screen:true}
+      {agent:'Ampicillin (iv)',           disc:'2 µg',  S:10, R:10, ok:true, note:'E. faecalis usually S; E. faecium often R (PBP5) — confirm. If R by disk, confirm with MIC.'},
+      {agent:'Vancomycin',                disc:'5 µg',  S:12, R:12, ok:true, note:'E. faecalis & E. faecium. Read at full 24 h; fuzzy edge or colonies in zone → PCR or report R even if ≥12 mm. Other enterococci: 15/15.'},
+      {agent:'Teicoplanin',               disc:'30 µg', S:16, R:16, ok:true, note:''},
+      {agent:'Linezolid',                 disc:'10 µg', S:20, R:20, ok:true, note:''},
+      {agent:'Gentamicin (high-level)',   disc:'30 µg', S:8,  R:8,  ok:true, note:'HLAR synergy screen: zone <8 mm (MIC >128) = no synergy with cell-wall agents. Screen streptomycin separately.', screen:true},
+      {agent:'Nitrofurantoin',            disc:'100 µg',S:15, R:15, ok:true, note:'Uncomplicated UTI only; E. faecalis.'},
+      {agent:'Norfloxacin (FQ screen)',   disc:'10 µg', S:12, R:12, ok:true, note:'UTI fluoroquinolone screen → infers ciprofloxacin/levofloxacin.', screen:true}
     ]}
   ]
 };

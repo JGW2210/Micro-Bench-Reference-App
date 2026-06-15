@@ -306,7 +306,7 @@ These app sections are **not** citable to SMI bacteriology documents:
 
 | App data | Correct authority (not SMI bacteriology) |
 |---|---|
-| `abxClasses`, `fcPanels` disc panels, `routineSets`, `rareSets`, `oxoidDiscCodes`, `abxAliasGroups`, `d73mmDiscs`, `dconfigs`, `anaerobeMICs`, `sirBreakpoints`, `expectedPhenotypes` | **EUCAST** clinical breakpoint tables, EUCAST Expected Resistant Phenotypes, EUCAST Expert Rules; disc contents per EUCAST methodology. (`sirBreakpoints` is explicitly flagged in-code as *PLACEHOLDER — UNVALIDATED*.) MAST D-set / carbapenemase disc logic = manufacturer IFU. |
+| `abxClasses`, `fcPanels` disc panels, `routineSets`, `rareSets`, `oxoidDiscCodes`, `abxAliasGroups`, `d73mmDiscs`, `dconfigs`, `anaerobeMICs`, `sirBreakpoints`, `expectedPhenotypes` | **EUCAST** clinical breakpoint tables, EUCAST Expected Resistant Phenotypes, EUCAST Expert Rules; disc contents per EUCAST methodology. (`sirBreakpoints` zone diameters are now validated against the committed **EUCAST Breakpoint Tables v16.0** — see `EUCAST-CITATIONS.md`.) MAST D-set / carbapenemase disc logic = manufacturer IFU. |
 | `mycoFungi`, `mycoDiseases` (dermatophytes) | SMI **B 39** (dermatological specimens for superficial mycoses) + the SMI **Mycology** series; the app's stated source is the Adelaide mycology atlas. |
 | `parasites` | SMI **B 31** (parasites, non-blood) and **B 61** (ectoparasites) + SMI **Parasitology** series; the app's stated source is **CDC DPDx**. |
 | `serologyTests`, `serologyProfiles`, viro `fcPanels` (Panther/GeneXpert), `mycoFungi` antifungals | SMI **Virology** series + assay IFUs/local SOP. Bacterial-serology items (ASOT, *Helicobacter* Ag, *Bordetella*, *Brucella*, *Leptospira*, *Legionella* urinary Ag, syphilis, meningococcal Ab) relate to B 6, B 55, B 51 but are serology/molecular, not culture SMIs. |
@@ -332,8 +332,10 @@ rendered as **"not-recorded"** instead of the intended *fermentative*:
 `node --check data.js` and the data-validation test both pass after the fix.
 
 ### Items to review (not auto-changed — need a microbiologist sign-off)
-- **`sirBreakpoints`** is explicitly placeholder/unvalidated in-code and must be
-  replaced with the current EUCAST table before any bench use (already flagged in the file).
+- **`sirBreakpoints`** zone diameters have now been transcribed and validated
+  against the committed **EUCAST Breakpoint Tables v16.0** (all agents `ok:true`);
+  see `EUCAST-CITATIONS.md`. A local microbiologist should still confirm against
+  the laboratory's validated SOP and re-check on each annual EUCAST release.
 - **Chromogenic media colour claims** (`plateMedia`/`organisms` for Uriselect &
   Brilliance MRSA) should be checked against the **current manufacturer IFU**, not SMI.
 - **Issue numbers/dates** in `GUIDELINE_VERSIONS` (e.g. "UK SMI ID 1, Issue 4")

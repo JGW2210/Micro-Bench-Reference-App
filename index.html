@@ -13,7 +13,7 @@
 <!-- HUD/0S favicon: teal reticle + central plate on dark, inline so there is no extra file dependency -->
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='10' fill='%2305070a'/%3E%3Cg fill='none' stroke='%2338e8d0' stroke-width='2.4'%3E%3Ccircle cx='32' cy='32' r='17'/%3E%3Cpath d='M32 6v9M32 49v9M6 32h9M49 32h9' stroke-linecap='round'/%3E%3C/g%3E%3Ccircle cx='32' cy='32' r='6' fill='%2338e8d0'/%3E%3Cg stroke='%2338e8d0' stroke-width='2' opacity='.5'%3E%3Cpath d='M11 11h7v2M53 11h-7v2M11 53h7v-2M53 53h-7v-2' fill='none' stroke-linecap='round'/%3E%3C/g%3E%3C/svg%3E">
 <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' fill='%2305070a'/%3E%3Cg fill='none' stroke='%2338e8d0' stroke-width='2.4'%3E%3Ccircle cx='32' cy='32' r='17'/%3E%3Cpath d='M32 6v9M32 49v9M6 32h9M49 32h9' stroke-linecap='round'/%3E%3C/g%3E%3Ccircle cx='32' cy='32' r='6' fill='%2338e8d0'/%3E%3C/svg%3E">
-<link rel="stylesheet" href="styles.css?v=20260629">
+<link rel="stylesheet" href="styles.css?v=20260615c">
 </head>
 <body>
 <div class="fx-particles" aria-hidden="true"></div>
@@ -263,7 +263,7 @@
 <div class="view hidden" id="view-virology">
   <div class="viro-hero">
     <h2><i class="ti ti-virus" aria-hidden="true"></i> Molecular workflow</h2>
-    <p>Bench-side molecular workflow for Aptima CT/NG NAAT testing on the Hologic Panther, combined respiratory virus PCR on Cepheid GeneXpert, and TB PCR from sputum prepared in the CL3 laboratory. Click any step or information card for the same expandable detail panel used elsewhere in the guide.</p>
+    <p>Bench-side molecular workflow for Aptima CT/NG NAAT testing on the Hologic Panther, combined respiratory virus PCR on Cepheid GeneXpert, Norovirus GI/GII PCR from stool, and TB PCR from sputum prepared in the CL3 laboratory. Click any step or information card for the same expandable detail panel used elsewhere in the guide.</p>
   </div>
 
   <section class="viro-flow">
@@ -272,6 +272,7 @@
       <div class="viro-step" onclick="showDetail('viro_accept_aptima')"><div class="viro-step-kicker">Panther</div><div class="viro-step-name">Aptima CT/NG acceptance</div><div class="viro-step-note">Correct Aptima container, identifiers, site/request match, volume, expiry and leakage check.</div></div>
       <div class="viro-step" onclick="showDetail('viro_accept_resp')"><div class="viro-step-kicker">GeneXpert</div><div class="viro-step-name">Respiratory PCR acceptance</div><div class="viro-step-note">Universal viral swab container, sufficient medium, clear ID and acute respiratory request.</div></div>
       <div class="viro-step" onclick="showDetail('viro_accept_tb')"><div class="viro-step-kicker">CL3</div><div class="viro-step-name">TB sputum acceptance</div><div class="viro-step-note">Leak-proof sputum pot, TB request, transport safety and CL3 handover before opening.</div></div>
+      <div class="viro-step" onclick="showDetail('viro_accept_gi')"><div class="viro-step-kicker">Enteric</div><div class="viro-step-name">Norovirus stool acceptance</div><div class="viro-step-note">Suitable stool container, norovirus request, identifiers and IPC/outbreak context.</div></div>
     </div>
   </section>
 
@@ -279,6 +280,7 @@
     <div class="card purple" onclick="showDetail('viro_panther_overview')"><div class="name">Hologic Panther</div><div class="desc">Aptima NAAT workflow</div><div class="abx">Chlamydia trachomatis · Neisseria gonorrhoeae · Aptima swabs</div></div>
     <div class="card blue" onclick="showDetail('viro_genexpert_resp_overview')"><div class="name">Cepheid GeneXpert</div><div class="desc">Respiratory multiplex PCR</div><div class="abx">RSV · Flu A/B · SARS‑CoV‑2 · Universal viral swab</div></div>
     <div class="card amber" onclick="showDetail('viro_tb_overview')"><div class="name">TB PCR</div><div class="desc">CL3-prepared sputum</div><div class="abx">M. tuberculosis complex · rifampicin-resistance marker · aerosol risk</div></div>
+    <div class="card green" onclick="showDetail('viro_gi_overview')"><div class="name">Norovirus PCR</div><div class="desc">Enteric GI/GII from stool</div><div class="abx">Genogroup I · genogroup II · infection-control / outbreak focus</div></div>
   </div>
 
   <section class="viro-flow">
@@ -307,6 +309,15 @@
       <div class="viro-step" onclick="showDetail('viro_tb_cl3')"><div class="viro-step-kicker">Containment</div><div class="viro-step-name">CL3 sputum preparation</div><div class="viro-step-note">Open and manipulate sputum only in CL3 with local SOP controls.</div></div>
       <div class="viro-step" onclick="showDetail('viro_tb_cartridge')"><div class="viro-step-kicker">PCR</div><div class="viro-step-name">GeneXpert TB cartridge</div><div class="viro-step-note">Prepared/inactivated material loaded according to cartridge IFU.</div></div>
       <div class="viro-step" onclick="showDetail('viro_tb_result')"><div class="viro-step-kicker">Result</div><div class="viro-step-name">MTB and rifampicin marker</div><div class="viro-step-note">Detected calls require urgent clinical and infection-control communication.</div></div>
+    </div>
+  </section>
+
+  <section class="viro-flow">
+    <div class="viro-flow-title"><i class="ti ti-bug" aria-hidden="true"></i> Norovirus GI/GII PCR pathway — unformed stool</div>
+    <div class="viro-step-row">
+      <div class="viro-step" onclick="showDetail('viro_gi_sample')"><div class="viro-step-kicker">Specimen</div><div class="viro-step-name">Unformed stool specimen</div><div class="viro-step-note">Raw/unpreserved unformed stool, preservative-free container; check label, amount and leakage.</div></div>
+      <div class="viro-step" onclick="showDetail('viro_gi_cartridge')"><div class="viro-step-kicker">Cartridge</div><div class="viro-step-name">Cepheid Xpert Norovirus</div><div class="viro-step-note">Prepare stool per IFU, transfer to cartridge, scan and run.</div></div>
+      <div class="viro-step" onclick="showDetail('viro_gi_result')"><div class="viro-step-kicker">Result</div><div class="viro-step-name">GI / GII call-out</div><div class="viro-step-note">Report each genogroup; feed positives into the IPC / outbreak pathway.</div></div>
     </div>
   </section>
 
@@ -350,6 +361,17 @@
   </section>
 
   <section class="viro-flow">
+    <div class="viro-flow-title"><i class="ti ti-bug" aria-hidden="true"></i> Norovirus GI/GII result calls</div>
+    <div class="viro-result-grid">
+      <div class="viro-result-card positive" onclick="showDetail('viro_gi_noro_gi_detected')"><div class="viro-result-name">Norovirus GI detected</div><div class="viro-result-note">Report genogroup I; trigger enteric precautions and the IPC/outbreak pathway.</div></div>
+      <div class="viro-result-card positive" onclick="showDetail('viro_gi_noro_gii_detected')"><div class="viro-result-name">Norovirus GII detected</div><div class="viro-result-note">Predominant outbreak genogroup; move quickly into the IPC/outbreak pathway.</div></div>
+      <div class="viro-result-card positive" onclick="showDetail('viro_gi_noro_both_detected')"><div class="viro-result-name">GI + GII detected</div><div class="viro-result-note">Possible mixed exposure; report each genogroup separately.</div></div>
+      <div class="viro-result-card success" onclick="showDetail('viro_gi_not_detected')"><div class="viro-result-name">Norovirus not detected</div><div class="viro-result-note">Valid negative; does not exclude other enteric pathogens or wrong-timing sampling.</div></div>
+      <div class="viro-result-card warn" onclick="showDetail('viro_gi_invalid')"><div class="viro-result-name">Invalid / error / no result</div><div class="viro-result-note">Repeat with a fresh cartridge if material allows; persistent invalids need new sample/senior review.</div></div>
+    </div>
+  </section>
+
+  <section class="viro-flow">
     <div class="viro-flow-title"><i class="ti ti-repeat" aria-hidden="true"></i> Invalid / error / repeat decision guide</div>
     <div class="viro-table-wrap">
       <table class="viro-table">
@@ -386,6 +408,7 @@
     <div class="viro-info-card" onclick="showDetail('viro_ct_ng_info')"><h3>CT/NG background</h3><p>Why NAAT is used for Chlamydia and Gonorrhoea, and what a positive molecular result means.</p></div>
     <div class="viro-info-card" onclick="showDetail('viro_resp_info')"><h3>Respiratory virus background</h3><p>Influenza, RSV and SARS‑CoV‑2 targets, seasonality and co-detection notes.</p></div>
     <div class="viro-info-card" onclick="showDetail('viro_tb_info')"><h3>TB molecular background</h3><p>MTB complex PCR, smear/culture relationship and rifampicin-resistance screening.</p></div>
+    <div class="viro-info-card" onclick="showDetail('viro_gi_info')"><h3>Norovirus background</h3><p>Genogroups GI/GII, very low infectious dose, outbreak control and post-symptom shedding.</p></div>
     <div class="viro-info-card" onclick="showDetail('viro_pcr_qc')"><h3>PCR quality points</h3><p>Internal controls, inhibitors, contamination prevention and repeat criteria.</p></div>
   </div>
 </div><!-- end view-virology -->
@@ -752,7 +775,7 @@
   <div class="checker-banner" id="checker-banner" role="alert">
     <i class="ti ti-alert-triangle" aria-hidden="true"></i>
     <div>
-      <strong>Unvalidated placeholder breakpoints.</strong> The values loaded here are illustrative only and must <strong>not</strong> be used to release results. Open the current EUCAST breakpoint table (or your local SOP), correct each S/R value, and sign it off (it turns the agent green and ticks the progress meter). <span class="checker-banner-progress" id="checker-progress">0 / 0 agents validated</span>
+      <strong>Validated against EUCAST v16.0 (valid 2026-01-01).</strong> Every zone-diameter breakpoint and disc content below has been checked against the committed EUCAST Clinical Breakpoint Tables v16.0. Still confirm against your laboratory's own validated SOP before releasing results, and re-check each agent when EUCAST issues a new table. <span class="checker-banner-progress" id="checker-progress">0 / 0 agents validated</span>
     </div>
   </div>
 
@@ -974,8 +997,8 @@
 </div>
 
 <!-- Scripts: load order matters — data.js defines the datasets that app.js uses. -->
-<script src="data.js?v=20260629"></script>
-<script src="app.js?v=20260629"></script>
+<script src="data.js?v=20260615c"></script>
+<script src="app.js?v=20260615c"></script>
 
 <!-- HUD/0S chrome: background particle field, theme toggle, custom reticle cursor.
      Self-contained; app.js owns search + keyboard handlers, so nothing here duplicates them. -->
