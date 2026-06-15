@@ -9,6 +9,11 @@ content can be validated and cited for official usage.
   and <https://uksmi.github.io/Standards-for-Microbiology-Investigations/identification.html>;
   Test Procedure (`TP`) documents on GOV.UK.
 - **Prepared:** 2026-06-15.
+- **Embedded in code:** these citations are also held as structured data in
+  `data.js` as `smiCitations` (document catalogue + specimen/media/test maps +
+  `outOfScope`) and `bactIdSmiMap` (per-organism codes, attached to each
+  identification organism as `o.smi` at load time). This document is the
+  human-readable companion to that data.
 
 > ## ⚠ Read this before relying on the citations
 >

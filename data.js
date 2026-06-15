@@ -2206,6 +2206,237 @@ const bactIdHughLeifsonMap = {
   'Gardnerella vaginalis':'fermentative'
 };
 
+/* ════════════════════════════════════════════════════════════════════
+   UK SMI CITATIONS  (bacteriology)
+
+   Maps the bacteriology reference data in this file to the relevant UK
+   Standards for Microbiology Investigations (UK SMI) so the content can be
+   validated/cited for official usage. Companion document: SMI-CITATIONS.md.
+
+   ⚠ Scope / status notes:
+   • A citation says WHICH SMI covers a topic — it does not certify the app
+     wording matches the current issue. Verify against the current issue
+     before bench/clinical use (record code + issue no. + date checked).
+   • UK SMIs were withdrawn from GOV.UK as a live collection; maintenance moved
+     to RCPath / the UK SMI working groups. Re-verify issue numbers/dates.
+   • Antimicrobial susceptibility testing (disc panels, breakpoints, expected
+     phenotypes, expert rules, MICs) is EUCAST content, NOT SMI — see
+     `outOfScope` below.
+   • Mycology / parasitology / virology / blood-science content belongs to
+     other SMI series or non-SMI sources — see `outOfScope` below.
+   ════════════════════════════════════════════════════════════════════ */
+
+// Per-organism SMI codes, keyed to match bactIdOrganisms `name` exactly.
+// Attached to each organism as `o.smi` at load time (see app.js).
+const bactIdSmiMap = {
+  'Staphylococcus aureus':['ID 7','TP 8','TP 10','TP 39'],
+  'Coagulase-negative staphylococci':['ID 7','TP 8','TP 10'],
+  'Streptococcus pyogenes / Group A strep':['ID 4','TP 39'],
+  'Streptococcus agalactiae / Group B strep':['ID 4','B 58'],
+  'Streptococcus pneumoniae':['ID 4','TP 5','TP 25'],
+  'Viridans streptococci / anginosus group':['ID 4','TP 25'],
+  'Enterococcus faecalis':['ID 4'],
+  'Enterococcus faecium':['ID 4'],
+  'Listeria monocytogenes':['ID 3'],
+  'Corynebacterium spp.':['ID 2'],
+  'Bacillus spp.':['ID 9'],
+  'Clostridium spp.':['ID 8'],
+  'Actinomyces spp.':['ID 15'],
+  'Cutibacterium acnes':['ID 1'],
+  'Escherichia coli':['ID 16','TP 19'],
+  'Klebsiella pneumoniae / oxytoca':['ID 16'],
+  'Enterobacter cloacae complex':['ID 16'],
+  'Citrobacter freundii complex':['ID 16'],
+  'Proteus mirabilis':['ID 16','TP 19'],
+  'Proteus vulgaris group':['ID 16','TP 19'],
+  'Morganella morganii':['ID 16'],
+  'Providencia spp.':['ID 16'],
+  'Serratia marcescens':['ID 16'],
+  'Salmonella spp.':['ID 24'],
+  'Shigella spp.':['ID 20'],
+  'Yersinia enterocolitica':['ID 21'],
+  'Pseudomonas aeruginosa':['ID 17','TP 26'],
+  'Acinetobacter baumannii complex':['ID 17','TP 26'],
+  'Stenotrophomonas maltophilia':['ID 17','TP 26'],
+  'Burkholderia cepacia complex':['ID 17','TP 26'],
+  'Aeromonas spp.':['ID 19','TP 26','TP 19'],
+  'Vibrio spp.':['ID 19','TP 26'],
+  'Campylobacter jejuni/coli':['ID 23','TP 26'],
+  'Helicobacter pylori':['ID 26','TP 26'],
+  'Haemophilus influenzae':['ID 12','TP 38'],
+  'Moraxella catarrhalis':['ID 11','TP 26'],
+  'Neisseria gonorrhoeae':['ID 6','TP 26'],
+  'Neisseria meningitidis':['ID 6','TP 26','B 51'],
+  'Kingella kingae':['ID 12','TP 26'],
+  'Pasteurella multocida':['ID 13','TP 26','TP 19'],
+  'Bacteroides fragilis group':['ID 25'],
+  'Prevotella spp.':['ID 25'],
+  'Fusobacterium spp.':['ID 25'],
+  'Gardnerella vaginalis':['B 28','ID 1']
+};
+
+const smiCitations = {
+  _meta: {
+    source: 'UK SMI (uksmi.github.io) — Bacteriology (B) & Identification (ID) lists; Test Procedures (TP) on GOV.UK',
+    prepared: '2026-06-15',
+    companion: 'SMI-CITATIONS.md'
+  },
+  // Document catalogue. TP entries carry the GOV.UK URL; B/ID titles only
+  // (indexes live on uksmi.github.io).
+  documents: {
+    B: {
+      'B 1':'Investigation of ear infections and associated specimens',
+      'B 2':'Investigation of bacterial eye infections',
+      'B 4':'Investigation of superficial mouth samples',
+      'B 5':'Investigation of nasal samples',
+      'B 6':'Investigation of whooping cough',
+      'B 9':'Investigation of throat related specimens',
+      'B 10':'Processing of faeces for Clostridium difficile',
+      'B 11':'Swabs from skin and superficial soft tissue infections',
+      'B 14':'Investigation of pus and exudates',
+      'B 15':'Investigation of bile',
+      'B 17':'Tissues and biopsies from deep-seated sites and organs',
+      'B 20':'Investigation of intravascular cannulae and associated specimens',
+      'B 25':'Investigation of continuous ambulatory peritoneal dialysis fluid',
+      'B 26':'Investigation of fluids from normally sterile sites',
+      'B 27':'Investigation of cerebrospinal fluid',
+      'B 28':'Investigation of genital tract and associated specimens',
+      'B 29':'Investigation of specimens for screening for MRSA',
+      'B 30':'Investigation of faecal specimens for enteric pathogens (verify code/issue against current host)',
+      'B 31':'Investigation of specimens other than blood for parasites',
+      'B 37':'Investigation of blood cultures (for organisms other than Mycobacterium species)',
+      'B 39':'Investigation of dermatological specimens for superficial mycoses',
+      'B 40':'Investigation of specimens for Mycobacterium species',
+      'B 41':'Investigation of urine',
+      'B 42':'Investigation of bone and soft tissue associated with osteomyelitis',
+      'B 44':'Investigation of orthopaedic implant associated infections',
+      'B 51':'Screening for Neisseria meningitidis',
+      'B 55':'Investigation of infectious causes of dyspepsia',
+      'B 57':'Investigation of bronchoalveolar lavage, sputum and associated specimens',
+      'B 58':'Detection of carriage of group B streptococci',
+      'B 59':'Detection of Enterobacteriaceae producing extended-spectrum β-lactamases (ESBL)',
+      'B 60':'Detection of bacteria with carbapenem-hydrolysing β-lactamases (carbapenemases)',
+      'B 61':'Investigation of specimens for ectoparasites'
+    },
+    ID: {
+      'ID 1':'Introduction to the preliminary identification of medically important bacteria and fungi from culture',
+      'ID 2':'Identification of Corynebacterium species',
+      'ID 3':'Identification of Listeria species',
+      'ID 4':'Identification of Streptococcus species, Enterococcus species and morphologically similar organisms',
+      'ID 5':'Identification of Bordetella species',
+      'ID 6':'Identification of Neisseria species',
+      'ID 7':'Identification of Staphylococcus species, Micrococcus species and Rothia species',
+      'ID 8':'Identification of Clostridium species',
+      'ID 9':'Identification of Bacillus species',
+      'ID 10':'Identification of aerobic actinomycetes',
+      'ID 11':'Identification of Moraxella species and morphologically similar organisms',
+      'ID 12':'Identification of Haemophilus species and the HACEK group of organisms',
+      'ID 13':'Identification of Pasteurella species and morphologically similar bacteria',
+      'ID 14':'Identification of anaerobic cocci',
+      'ID 15':'Identification of anaerobic Actinomyces species',
+      'ID 16':'Identification of Enterobacteriaceae',
+      'ID 17':'Identification of Pseudomonas species and other non-glucose fermenters',
+      'ID 18':'Identification of Legionella species',
+      'ID 19':'Identification of Vibrio and Aeromonas species',
+      'ID 20':'Identification of Shigella species',
+      'ID 21':'Identification of Yersinia species',
+      'ID 22':'Identification of VTEC including Escherichia coli O157',
+      'ID 23':'Identification of Campylobacter species',
+      'ID 24':'Identification of Salmonella species',
+      'ID 25':'Identification of anaerobic Gram-negative rods',
+      'ID 26':'Identification of Helicobacter species'
+    },
+    TP: {
+      'TP 1':{title:'Example reference strains for UK SMI test procedures',url:'https://www.gov.uk/government/publications/smi-tp-1-example-reference-strains-for-uk-smi-test-procedures'},
+      'TP 5':{title:'Bile solubility test',url:'https://www.gov.uk/government/publications/smi-tp-5-bile-solubility-test'},
+      'TP 8':{title:'Catalase test',url:'https://www.gov.uk/government/publications/smi-tp-8-catalase-test'},
+      'TP 10':{title:'Coagulase test',url:'https://www.gov.uk/government/publications/smi-tp-10-coagulase-test'},
+      'TP 19':{title:'Indole test',url:'https://www.gov.uk/government/publications/smi-tp-19-indole-test'},
+      'TP 25':{title:'Optochin test',url:'https://www.gov.uk/government/publications/smi-tp-25-optochin-test'},
+      'TP 26':{title:'Oxidase test',url:'https://www.gov.uk/government/publications/smi-tp-26-oxidase-test'},
+      'TP 38':{title:'X and V factor test',url:'https://www.gov.uk/government/publications/smi-tp-38-x-and-v-factor-test'},
+      'TP 39':{title:'Staining procedures (Gram, Ziehl-Neelsen)',url:'https://www.gov.uk/government/publications/smi-tp-39-staining-procedures'},
+      'TP 40':{title:'MALDI-TOF MS test procedure',url:'https://www.gov.uk/government/publications/smi-tp-40-maldi-tof-ms-test-procedure'}
+    }
+  },
+  // Specimen / clinical context → SMI B-series processing document(s).
+  specimenPathways: {
+    urine:['B 41'],
+    'skin / superficial soft tissue':['B 11'],
+    'pus / exudate':['B 14'],
+    'deep tissue / biopsy':['B 17'],
+    'bone / osteomyelitis':['B 42'],
+    'orthopaedic implant':['B 44'],
+    'blood culture':['B 37'],
+    csf:['B 27'],
+    'genital tract':['B 28'],
+    ear:['B 1'],
+    eye:['B 2'],
+    throat:['B 9'],
+    nasal:['B 5'],
+    mouth:['B 4'],
+    'sputum / BAL / respiratory':['B 57'],
+    'sterile fluids':['B 26'],
+    bile:['B 15'],
+    'capd fluid':['B 25'],
+    'intravascular cannula':['B 20'],
+    'faeces / enteric pathogens':['B 30'],
+    'mrsa screen':['B 29'],
+    'esbl detection':['B 59'],
+    'carbapenemase detection':['B 60'],
+    'group b strep carriage':['B 58'],
+    'whooping cough':['B 6'],
+    'meningococcal screen':['B 51'],
+    dyspepsia:['B 55']
+  },
+  // plateMedia key → SMI document(s). Chromogenic colour rules = manufacturer
+  // IFU (BioRad Uriselect, Oxoid Brilliance), not SMI.
+  mediaByKey: {
+    uri:['B 41','ID 16'],
+    blood:['B 11','B 14','B 26','B 57'],
+    mrsa:['B 29','ID 7'],
+    xld:['B 30','ID 24','ID 20'],
+    tcbs:['B 30','ID 19'],
+    smac:['B 30','ID 22'],
+    choc:['B 2','B 27','B 51','B 57','ID 12','ID 6']
+  },
+  // Bench test / reagent → SMI document. Tests without a dedicated TP are
+  // described within the relevant ID document's flowchart.
+  tests: {
+    'gram stain':['TP 39'],
+    catalase:['TP 8'],
+    coagulase:['TP 10','ID 7'],
+    'staph latex':['TP 10','ID 7'],
+    dnase:['ID 7','ID 11'],
+    oxidase:['TP 26'],
+    indole:['TP 19'],
+    optochin:['TP 25','ID 4'],
+    'bile solubility':['TP 5','ID 4'],
+    'x and v factors':['TP 38','ID 12'],
+    'maldi-tof':['TP 40'],
+    pyr:['ID 4'],
+    'bile-aesculin':['ID 4'],
+    camp:['ID 4'],
+    novobiocin:['ID 7'],
+    tributyrin:['ID 11'],
+    'hugh-leifson':['ID 17','ID 1'],
+    motility:['ID 3'],
+    'beta-lactamase (nitrocefin)':['ID 12','ID 11'],
+    'reference / qc strains':['TP 1']
+  },
+  // Sections of this app that are NOT citable to SMI bacteriology.
+  outOfScope: {
+    ast: { note:'EUCAST (and historically BSAC), not SMI', applies:['abxClasses','fcPanels disc panels','routineSets','rareSets','oxoidDiscCodes','abxAliasGroups','d73mmDiscs','dconfigs','anaerobeMICs','sirBreakpoints','expectedPhenotypes'] },
+    mycology: { note:'SMI B 39 + Mycology series; app source = Adelaide mycology atlas', applies:['mycoFungi','mycoDiseases'] },
+    parasitology: { note:'SMI B 31 / B 61 + Parasitology series; app source = CDC DPDx', applies:['parasites'] },
+    virology_serology: { note:'SMI Virology series + assay IFUs/local SOP', applies:['serologyTests','serologyProfiles','viro fcPanels'] },
+    blood_science: { note:'General pathology / phlebotomy — not microbiology SMI (blood-culture bottles → B 37)', applies:['bloodDisciplines','bloodTubes','bloodTests'] },
+    mycobacteria: { note:'SMI B 40', applies:['TB / Mycobacteria PCR cards'] }
+  },
+  // Per-organism map (bactIdOrganisms name → SMI codes); attached as o.smi.
+  organisms: bactIdSmiMap
+};
+
 
 /* ════════════════════════════════════════════════════════════════════
    GUIDELINE VERSION STAMPS  (added v25)
