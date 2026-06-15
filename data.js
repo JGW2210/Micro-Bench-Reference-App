@@ -2527,13 +2527,14 @@ const smiCitations = {
    ════════════════════════════════════════════════════════════════════ */
 const GUIDELINE_VERSIONS = {
   _meta: { appData: 'v25', reviewed: '—' },   // global app data version + last full review
-  flow:    { lines:[{label:'EUCAST clinical breakpoints', version:'set version'}], reviewed:'—' },
-  wound:   { lines:[{label:'EUCAST clinical breakpoints', version:'set version'}], reviewed:'—' },
+  flow:    { lines:[{label:'EUCAST clinical breakpoints', version:'set version'},{label:'UK SMI', version:'B 41 i8.8 · ID/TP 2025'}], reviewed:'2026-06-15' },
+  wound:   { lines:[{label:'EUCAST clinical breakpoints', version:'set version'},{label:'UK SMI', version:'B 11/B 14/B 17 · ID/TP 2025'}], reviewed:'2026-06-15' },
+  bactid:  { lines:[{label:'UK SMI ID + TP series', version:'validated against committed issues'}], reviewed:'2026-06-15' },
   interp:  { lines:[{label:'EUCAST clinical breakpoints', version:'set version'},{label:'MAST D-set IFUs', version:'local'}], reviewed:'—' },
   checker: { lines:[{label:'EUCAST clinical breakpoints', version:'PLACEHOLDER — UNVALIDATED'}], reviewed:'—' },
   rules:   { lines:[{label:'EUCAST Expected Resistant Phenotypes', version:'v1.2 (2023)'},{label:'Expert Rules', version:'v3.3'}], reviewed:'—' },
   myco:    { lines:[{label:'UK SMI ID 1', version:'Issue 4 (06.08.25)'},{label:'EUCAST antifungal breakpoints', version:'v10.0 (2020)+updates'}], reviewed:'—' },
-  plate:   { lines:[{label:'Schematic reference', version:'local media'}], reviewed:'—' },
+  plate:   { lines:[{label:'Schematic reference', version:'local media'},{label:'UK SMI specimen series', version:'B 41/B 11/B 14 + IFU'}], reviewed:'2026-06-15' },
   virology:{ lines:[{label:'Assay IFUs + local SOP', version:'local'}], reviewed:'—' }
 };
 

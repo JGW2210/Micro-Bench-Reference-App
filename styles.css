@@ -1521,4 +1521,20 @@ html[data-theme="light"] .barcode-date-input{color-scheme:light}
   .sir-input input{border:1px solid #888 !important;color:#000 !important;background:#fff !important}
   .sir-badge,.sir-tag,.sir-agent-name,.sir-agent-meta,.sir-note,.gs-label,.gs-ver,.gs-guidance,.checker-banner-progress{color:#000 !important}
   a,button{color:#000 !important}
+  .smi-refs-block{break-inside:avoid;border:1px solid #888 !important;background:#fff !important;color:#000 !important}
+  .smi-cite,.smi-ref-n,.smi-refs-title,.smi-refs li,.smi-ref-code{color:#000 !important}
 }
+
+/* ─── UK SMI numbered citations + validation footnotes ─── */
+.smi-cite{font-size:.6em;font-weight:600;color:var(--accent);vertical-align:super;margin-left:2px;cursor:help;font-family:var(--font-mono);}
+.smi-refs-block{margin:22px 0 6px;padding:14px 16px;border:1px solid var(--line);border-radius:12px;background:var(--bg-elev-2);font-size:13px;color:var(--text-dim);}
+.smi-refs-title{margin:0 0 10px;font-size:12px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--accent);font-family:var(--font-mono);}
+.smi-refs{margin:0;padding-left:0;list-style:none;}
+.smi-refs li{margin:3px 0;line-height:1.45;color:var(--text);}
+.smi-ref-n{color:var(--accent);font-weight:600;margin-right:5px;font-family:var(--font-mono);}
+.smi-ref-code{font-weight:700;color:var(--text);}
+.smi-ref-iss{color:var(--text-faint);}
+.smi-ref-note,.smi-ref-foot{margin:10px 0 0;font-size:12px;line-height:1.5;}
+.smi-ref-note{color:var(--text-dim);}
+.smi-ref-foot{color:var(--text-faint);}
+.smi-ref-foot code,.smi-ref-note code{font-family:var(--font-mono);color:var(--text-dim);}

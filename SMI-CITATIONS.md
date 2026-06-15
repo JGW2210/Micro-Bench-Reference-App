@@ -10,10 +10,16 @@ content can be validated and cited for official usage.
   Test Procedure (`TP`) documents on GOV.UK.
 - **Prepared:** 2026-06-15.
 - **Embedded in code:** these citations are also held as structured data in
-  `data.js` as `smiCitations` (document catalogue + specimen/media/test maps +
-  `outOfScope`) and `bactIdSmiMap` (per-organism codes, attached to each
-  identification organism as `o.smi` at load time). This document is the
-  human-readable companion to that data.
+  `data.js` as `smiCitations` (document catalogue for B/S/ID/TP, specimen/media/test
+  maps, `withdrawn` lineage, `verifiedIssues`, `outOfScope`) and `bactIdSmiMap`
+  (per-organism codes, attached to each identification organism as `o.smi`).
+- **Rendered in the app:** the bacteriology views now show **numbered `[n]`
+  citations with validation footnotes** (`app.js` SMI citation engine + `styles.css`).
+  Each organism card in the Bench-ID finder carries inline `[n]` markers resolving to a
+  numbered UK SMI reference list (with issue/date); the Plate-media and organism-flow
+  views carry their own reference blocks; and the per-view governance badge
+  (`GUIDELINE_VERSIONS`) records the 2026-06-15 review against the committed issues.
+  This document is the human-readable companion to that data.
 
 > ## ⚠ Read this before relying on the citations
 >
