@@ -2242,7 +2242,7 @@ const bactIdSmiMap = {
   'Bacillus spp.':['ID 9'],
   'Clostridium spp.':['ID 8'],
   'Actinomyces spp.':['ID 15'],
-  'Cutibacterium acnes':['ID 1'],
+  'Cutibacterium acnes':['ID 3'],
   'Escherichia coli':['ID 16','TP 19'],
   'Klebsiella pneumoniae / oxytoca':['ID 16'],
   'Enterobacter cloacae complex':['ID 16'],
@@ -2332,7 +2332,7 @@ const smiCitations = {
     ID: {
       'ID 1':'Introduction to the preliminary identification of medically important bacteria and fungi from culture',
       'ID 2':'Identification of Corynebacterium species',
-      'ID 3':'Identification of Listeria species',
+      'ID 3':'Identification of Listeria species and other non-sporing Gram-positive rods except Corynebacterium',
       'ID 4':'Identification of Streptococcus species, Enterococcus species and morphologically similar organisms',
       'ID 5':'Identification of Bordetella species',
       'ID 6':'Identification of Neisseria species',
@@ -2351,23 +2351,34 @@ const smiCitations = {
       'ID 19':'Identification of Vibrio and Aeromonas species',
       'ID 20':'Identification of Shigella species',
       'ID 21':'Identification of Yersinia species',
-      'ID 22':'Identification of VTEC including Escherichia coli O157',
+      'ID 22':'Identification of Shiga toxin-producing Escherichia coli (STEC)',
       'ID 23':'Identification of Campylobacter species',
       'ID 24':'Identification of Salmonella species',
       'ID 25':'Identification of anaerobic Gram-negative rods',
       'ID 26':'Identification of Helicobacter species'
     },
     TP: {
-      'TP 1':{title:'Example reference strains for UK SMI test procedures',url:'https://www.gov.uk/government/publications/smi-tp-1-example-reference-strains-for-uk-smi-test-procedures'},
-      'TP 5':{title:'Bile solubility test',url:'https://www.gov.uk/government/publications/smi-tp-5-bile-solubility-test'},
-      'TP 8':{title:'Catalase test',url:'https://www.gov.uk/government/publications/smi-tp-8-catalase-test'},
-      'TP 10':{title:'Coagulase test',url:'https://www.gov.uk/government/publications/smi-tp-10-coagulase-test'},
-      'TP 19':{title:'Indole test',url:'https://www.gov.uk/government/publications/smi-tp-19-indole-test'},
-      'TP 25':{title:'Optochin test',url:'https://www.gov.uk/government/publications/smi-tp-25-optochin-test'},
-      'TP 26':{title:'Oxidase test',url:'https://www.gov.uk/government/publications/smi-tp-26-oxidase-test'},
-      'TP 38':{title:'X and V factor test',url:'https://www.gov.uk/government/publications/smi-tp-38-x-and-v-factor-test'},
-      'TP 39':{title:'Staining procedures (Gram, Ziehl-Neelsen)',url:'https://www.gov.uk/government/publications/smi-tp-39-staining-procedures'},
-      'TP 40':{title:'MALDI-TOF MS test procedure',url:'https://www.gov.uk/government/publications/smi-tp-40-maldi-tof-ms-test-procedure'}
+      'TP 1':{title:'Example reference strains for UK SMI test procedures'},
+      'TP 2':{title:'Aesculin hydrolysis test'},
+      'TP 3':{title:'Agglutination test for Salmonella'},
+      'TP 5':{title:'Bile solubility test'},
+      'TP 8':{title:'Catalase test'},
+      'TP 10':{title:'Coagulase test'},
+      'TP 12':{title:'Deoxyribonuclease (DNase) test'},
+      'TP 19':{title:'Indole test'},
+      'TP 21':{title:'Motility test'},
+      'TP 24':{title:'ONPG (beta-galactosidase) test'},
+      'TP 25':{title:'Optochin test'},
+      'TP 26':{title:'Oxidase test'},
+      'TP 27':{title:'Oxidation-fermentation of glucose test (O/F; Hugh-Leifson)'},
+      'TP 29':{title:'Porphyrin synthesis (ALA) test'},
+      'TP 30':{title:'Potassium hydroxide (KOH) test'},
+      'TP 32':{title:'Changing the phase of Salmonella'},
+      'TP 34':{title:'Thermonuclease test'},
+      'TP 36':{title:'Urease test'},
+      'TP 38':{title:'X and V factor test'},
+      'TP 39':{title:'Staining procedures (Gram, Ziehl-Neelsen)'},
+      'TP 40':{title:'MALDI-TOF MS test procedure'}
     }
   },
   // Withdrawn / recalled documents and what replaced them (per UK SMI site).
@@ -2383,9 +2394,9 @@ const smiCitations = {
     'B 47':'Recalled 2012-03-09 (Legionella reporting practice change in England)',
     'B 52':'Withdrawn 2014-12-30 → contents merged into B 2 (now S 11)'
   },
-  // Issue number + date VERIFIED against the PDFs committed under SMIs/.
-  // ⚠ ID and TP series are NOT among the committed PDFs — their citations
-  // remain UNVERIFIED until those documents are supplied.
+  // Issue number + date VERIFIED against the PDFs committed under SMIs/
+  // (B, S, ID and TP series all supplied). Note several retitles captured in
+  // the catalogue (ID 3, ID 22, B 5, B 10).
   verifiedIssues: {
     'B 4':'i7.3 • Oct 2025',  'B 5':'i8.1 • Feb 2026',  'B 6':'i9 • May 2018',
     'B 9':'i9.1 • Oct 2025',  'B 10':'i2 • Mar 2025',   'B 11':'i6.6 • Oct 2025',
@@ -2398,7 +2409,23 @@ const smiCitations = {
     'B 57':'i3.5 • May 2019', 'B 58':'i3.2 • Feb 2026', 'B 59':'i4.2 • Jun 2026',
     'B 60':'i3.2 • Feb 2026', 'B 61':'i2.3 • Feb 2026', 'B 62':'i1.1 • Feb 2026',
     'S 1':'Apr 2025',  'S 2':'Apr 2025',  'S 5':'Apr 2025',  'S 6':'Feb 2025',
-    'S 7':'Jan 2026',  'S 11':'Mar 2026', 'S 12':'Apr 2025', 'S 13':'Mar 2026'
+    'S 7':'Jan 2026',  'S 11':'Mar 2026', 'S 12':'Apr 2025', 'S 13':'Mar 2026',
+    'ID 1':'i4 • Aug 2025',   'ID 2':'i5.1 • Jul 2025', 'ID 3':'i4.2 • Jul 2025',
+    'ID 4':'i4 • Sep 2021',   'ID 5':'i4 • Aug 2020',   'ID 6':'i4.1 • Jul 2025',
+    'ID 7':'i4 • May 2020',   'ID 8':'i4.2 • Jul 2025', 'ID 9':'i3.2 • Jul 2025',
+    'ID 10':'i2.3 • Jul 2025','ID 11':'i3 • Feb 2015',  'ID 12':'i5.1 • Jul 2025',
+    'ID 13':'i3.1 • Jul 2025','ID 14':'i3.1 • Jul 2025','ID 15':'i3.2 • Jul 2025',
+    'ID 16':'i4 • Apr 2015',  'ID 17':'i4.1 • Jul 2025','ID 18':'i3 • Apr 2015',
+    'ID 19':'i3.1 • Jul 2025','ID 20':'i4.1 • Jul 2025','ID 21':'i3.1 • Jul 2025',
+    'ID 22':'i5.1 • Aug 2025','ID 23':'i3.2 • Jul 2025','ID 24':'i4.1 • Sep 2025',
+    'ID 25':'i2.1 • Sep 2025','ID 26':'i3.1 • Sep 2025',
+    'TP 1':'i3 • Feb 2025',  'TP 2':'i4.1 • Feb 2025','TP 3':'i4 • Feb 2025',
+    'TP 5':'i4 • Feb 2025',  'TP 8':'i4.1 • Feb 2025','TP 10':'i6.1 • Feb 2025',
+    'TP 12':'i4.1 • Feb 2025','TP 19':'i4.1 • Feb 2025','TP 21':'i4.1 • Feb 2025',
+    'TP 24':'i4.1 • Feb 2025','TP 25':'i4 • Mar 2025', 'TP 26':'i4 • Mar 2025',
+    'TP 27':'i4 • Mar 2025', 'TP 29':'i4 • Mar 2025', 'TP 30':'i4 • Mar 2025',
+    'TP 32':'i4.1 • Mar 2025','TP 34':'i4 • Mar 2025','TP 36':'i4.1 • Mar 2025',
+    'TP 38':'i4.2 • Mar 2025','TP 39':'i3 • Mar 2025','TP 40':'i1.1 • Mar 2025'
   },
   // Specimen / clinical context → current SMI document(s). Withdrawn technical
   // B codes are repointed to their replacement S (syndromic) document.
@@ -2446,23 +2473,30 @@ const smiCitations = {
   // described within the relevant ID document's flowchart.
   tests: {
     'gram stain':['TP 39'],
+    'koh test':['TP 30'],
     catalase:['TP 8'],
     coagulase:['TP 10','ID 7'],
     'staph latex':['TP 10','ID 7'],
-    dnase:['ID 7','ID 11'],
+    dnase:['TP 12','ID 7'],
+    thermonuclease:['TP 34','ID 7'],
     oxidase:['TP 26'],
     indole:['TP 19'],
+    urease:['TP 36'],
+    onpg:['TP 24'],
+    'oxidation-fermentation (hugh-leifson)':['TP 27','ID 17'],
     optochin:['TP 25','ID 4'],
     'bile solubility':['TP 5','ID 4'],
+    'bile-aesculin / aesculin hydrolysis':['TP 2','ID 4'],
+    motility:['TP 21','ID 3'],
     'x and v factors':['TP 38','ID 12'],
+    'porphyrin (ala) test':['TP 29','ID 12'],
+    'salmonella agglutination':['TP 3','ID 24'],
+    'salmonella phase change':['TP 32','ID 24'],
     'maldi-tof':['TP 40'],
     pyr:['ID 4'],
-    'bile-aesculin':['ID 4'],
     camp:['ID 4'],
     novobiocin:['ID 7'],
     tributyrin:['ID 11'],
-    'hugh-leifson':['ID 17','ID 1'],
-    motility:['ID 3'],
     'beta-lactamase (nitrocefin)':['ID 12','ID 11'],
     'reference / qc strains':['TP 1']
   },

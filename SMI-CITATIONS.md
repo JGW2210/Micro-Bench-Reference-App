@@ -67,16 +67,28 @@ B 38 i2.1, B 39 i3.2, B 40 i7.4, B 41 i8.8, B 42 i2.1, B 44 i2.2, B 51 i2.1,
 B 55 i7.1, B 57 i3.5, B 58 i3.2, B 59 i4.2, B 60 i3.2, B 61 i2.3, B 62 i1.1;
 S 1/2/5/12 Apr 2025, S 6 Feb 2025, S 7 Jan 2026, S 11/13 Mar 2026).
 
-**Still outstanding:**
-- **No `ID` or `TP` PDFs were committed.** Every organism-identification (ID 1–26)
-  and bench-test (TP 5/8/10/19/25/26/38/39/40) citation therefore remains
-  **mapped but UNVERIFIED**. These drive most of the app's `bactIdOrganisms`,
-  `fcPanels` and `gramPatterns` content — they are the highest-value docs to supply next.
-- **Deep prose validation** (confirming app wording against PDF body text) is only
-  partially done: this environment has no `poppler`/network, so I am reading the
-  PDFs with a stdlib text extractor that reliably reads headers/issue data but
-  fragments running text. Page-accurate validation of method/breakpoint wording is
-  best done with the ID/TP docs in hand and a proper PDF text layer.
+**ID + TP series now supplied and verified** (committed under `SMIs/ID` and
+`SMIs/TP`). All 26 ID and 21 TP issue numbers/dates are recorded in
+`smiCitations.verifiedIssues` (85 documents total). Notable updates from these PDFs:
+- **ID 3** retitled to *Identification of Listeria species and other non-sporing
+  Gram-positive rods except Corynebacterium* — confirmed to cover *Cutibacterium*,
+  *Propionibacterium*, *Erysipelothrix* and *Lactobacillus*; the app's
+  *Cutibacterium acnes* citation moved **ID 1 → ID 3**.
+- **ID 22** retitled to *Identification of Shiga toxin-producing E. coli (STEC)*.
+- Dedicated TPs now exist for tests previously mapped only to ID flowcharts, and the
+  `tests` map was remapped accordingly: **DNase → TP 12**, **aesculin → TP 2**,
+  **motility → TP 21**, **O/F (Hugh–Leifson) → TP 27**, plus new entries for
+  **urease (TP 36)**, **ONPG (TP 24)**, **thermonuclease (TP 34)**, **KOH (TP 30)**,
+  **porphyrin/ALA (TP 29)** and the Salmonella agglutination/phase tests (TP 3/TP 32).
+
+**Content validation status:** an initial spot-check of `bactIdOrganisms` biochemical
+profiles against the ID docs found **no contradictions** (e.g. *Moraxella*
+oxidase+/DNase+/tributyrin+ vs ID 11; *Stenotrophomonas* oxidase− vs ID 17;
+*Aeromonas* oxidase+/string test vs ID 19; *Pasteurella* oxidase/indole/catalase vs
+ID 13; staph coagulase/DNase/novobiocin/thermonuclease vs ID 7). A full
+organism-by-organism and panel-by-panel prose pass is the remaining work. (PDF text
+is read here with a stdlib extractor since this environment has no `poppler`/network;
+it reconstructs running text well enough for term-level validation.)
 
 ---
 
