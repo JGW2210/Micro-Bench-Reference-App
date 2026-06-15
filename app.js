@@ -890,8 +890,10 @@ function renderOrgFlowGeneric(opts){
   if(!flow)return;
   const el=document.getElementById(opts.targetId);
   const ncols=flow.cols.length;
+  const labelCite = (opts.refsNum && typeof smiCiteSup==='function')
+    ? smiCiteSup(opts.labelCodes||[], opts.refsNum) : '';
   let html=`<div style="border-top:0.5px solid var(--color-border-tertiary);margin-top:10px;padding-top:10px">`;
-  html+=`<div style="font-size:11px;font-weight:500;color:var(--color-text-secondary);margin-bottom:8px">${flow.label}</div>`;
+  html+=`<div style="font-size:11px;font-weight:500;color:var(--color-text-secondary);margin-bottom:8px">${flow.label}${labelCite}</div>`;
   if(ncols>1){
     html+=`<div style="display:flex;align-items:center;padding:0 ${Math.floor(100/ncols/2)}%;margin-bottom:0">`;
     for(let i=0;i<ncols;i++){
@@ -927,13 +929,13 @@ function clearOrgGeneric(opts){
 }
 
 function showOrgFlow(){
-  renderOrgFlowGeneric({selectId:'org-select',flows:orgFlows,targetId:'org-flow',btnId:'org-go-btn',minWidth:110});
+  renderOrgFlowGeneric({selectId:'org-select',flows:orgFlows,targetId:'org-flow',btnId:'org-go-btn',minWidth:110,refsNum:flowRefs().num,labelCodes:['B 41']});
 }
 function clearOrg(){
   clearOrgGeneric({selectId:'org-select',targetId:'org-flow',btnId:'org-go-btn'});
 }
 function showOrgFlowWound(){
-  renderOrgFlowGeneric({selectId:'org-select-wound',flows:orgFlowsWound,targetId:'org-flow-wound',btnId:'org-go-btn-wound',minWidth:130});
+  renderOrgFlowGeneric({selectId:'org-select-wound',flows:orgFlowsWound,targetId:'org-flow-wound',btnId:'org-go-btn-wound',minWidth:130,refsNum:woundRefs().num,labelCodes:['B 11','B 14','B 17']});
 }
 function clearOrgWound(){
   clearOrgGeneric({selectId:'org-select-wound',targetId:'org-flow-wound',btnId:'org-go-btn-wound'});
@@ -1115,7 +1117,9 @@ function renderOrganismInfo(orgKey){
       org.features.map(f=>`<span class="org-feature">${f}</span>`).join('')+
       '</div>';
   }
-  info.innerHTML=`<h3>${org.name}</h3>${features}<p>${org.description}</p>`;
+  const cite = (typeof smiCiteSup==='function')
+    ? smiCiteSup(smiCitations.mediaByKey[org.medium]||[], plateRefs().num) : '';
+  info.innerHTML=`<h3>${org.name}${cite}</h3>${features}<p>${org.description}</p>`;
 }
 
 function renderOrganismToggleRow(){
@@ -1127,7 +1131,9 @@ function renderOrganismToggleRow(){
     const isActive=k===curOrganism?' active':'';
     return `<button class="org-pill${isActive}" id="opill-${k}" onclick="setPlateOrganism('${k}')"><span class="pill-swatch" style="background:${swatch}"></span>${o.name}</button>`;
   }).join('');
-  note.textContent=plateMedia[curMedium].note;
+  const mcite = (typeof smiCiteSup==='function')
+    ? smiCiteSup(smiCitations.mediaByKey[curMedium]||[], plateRefs().num) : '';
+  note.innerHTML = plateMedia[curMedium].note + mcite;
 }
 
 function setPlateOrganism(key){
@@ -2330,6 +2336,19 @@ function smiFootnotesHtml(idx, opts){
     +`<p class="smi-ref-foot">Each [n] marks the UK Standard for Microbiology Investigations the item was checked against (issue/date as committed under <code>SMIs/</code>). Guidance only — verify against the current issue before clinical use. AST panels/breakpoints are EUCAST, not SMI.</p>`
     +`</section>`;
 }
+function appendSmiRefs(viewId, idx, opts){
+  const view=document.getElementById('view-'+viewId);
+  if(!view || view.querySelector(':scope > .smi-refs-block')) return;
+  view.insertAdjacentHTML('beforeend', smiFootnotesHtml(idx, opts));
+}
+// Stable numbered index for the bact-ID finder (does not renumber on filter).
+const BACTID_REFS = smiRefIndex(bactIdOrganisms.flatMap(o=>o.smi||[]));
+// Per-view reference indices — shared by the inline [n] markers AND the
+// footnote list on each view so the numbers line up. Hoisted, lazily cached
+// functions so they are safe to call from the plate render that runs earlier.
+function plateRefs(){ return plateRefs._ || (plateRefs._ = smiRefIndex(Object.values(smiCitations.mediaByKey).flat())); }
+function flowRefs(){ return flowRefs._ || (flowRefs._ = smiRefIndex(['B 41','ID 7','ID 4','ID 16','ID 17','TP 8','TP 10','TP 26','TP 25','TP 5'])); }
+function woundRefs(){ return woundRefs._ || (woundRefs._ = smiRefIndex(['B 11','B 14','B 17','B 42','B 44','ID 7','ID 4','ID 16','ID 17','ID 12','ID 25','ID 14'])); }
 function appendSmiRefs(viewId, codes, opts){
   const view=document.getElementById('view-'+viewId);
   if(!view || view.querySelector(':scope > .smi-refs-block')) return;
@@ -2386,6 +2405,13 @@ renderBactId();
 renderMycology();
 renderParasitology();
 
+// UK SMI reference footnotes on the other bacteriology views (shared indices).
+appendSmiRefs('plate', plateRefs(),
+  {note:'Each plate/organism is marked [n] against the specimen-processing SMI for its context. Chromogenic/selective colour rules (Uriselect, Brilliance MRSA, XLD, TCBS, SMAC) are the manufacturer IFU, not SMI.'});
+appendSmiRefs('flow', flowRefs(),
+  {note:'Each pathway title is marked [n] against the urine specimen SMI. The sensitivity panels shown in the flows are EUCAST clinical breakpoints, not SMI.'});
+appendSmiRefs('wound', woundRefs(),
+  {note:'Each pathway title is marked [n] against the wound/pus/deep-tissue specimen SMIs. The sensitivity panels shown in the flows are EUCAST clinical breakpoints, not SMI.'});
 // UK SMI reference footnotes on the other bacteriology views.
 appendSmiRefs('plate', Object.values(smiCitations.mediaByKey).flat(),
   {note:'Plate media are cited to the specimen-processing SMI for each context. Chromogenic/selective colour rules (Uriselect, Brilliance MRSA, XLD, TCBS, SMAC) are the manufacturer IFU, not SMI.'});
