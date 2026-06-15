@@ -1527,7 +1527,6 @@ html[data-theme="light"] .barcode-date-input{color-scheme:light}
 
 /* ─── UK SMI numbered citations + validation footnotes ─── */
 .smi-cite{display:inline-block;font-size:.64em;font-weight:600;color:var(--accent);background:var(--accent-dim);border:1px solid var(--line-strong);border-radius:5px;padding:0 4px;vertical-align:super;margin-left:4px;cursor:help;font-family:var(--font-mono);line-height:1.6;letter-spacing:.02em;white-space:nowrap;}
-.smi-cite{font-size:.6em;font-weight:600;color:var(--accent);vertical-align:super;margin-left:2px;cursor:help;font-family:var(--font-mono);}
 .smi-refs-block{margin:22px 0 6px;padding:14px 16px;border:1px solid var(--line);border-radius:12px;background:var(--bg-elev-2);font-size:13px;color:var(--text-dim);}
 .smi-refs-title{margin:0 0 10px;font-size:12px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--accent);font-family:var(--font-mono);}
 .smi-refs{margin:0;padding-left:0;list-style:none;}
