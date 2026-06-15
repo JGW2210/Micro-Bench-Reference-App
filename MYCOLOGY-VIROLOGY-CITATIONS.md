@@ -130,7 +130,30 @@ Key checks:
 - **Culture is still required** for full DST, epidemiology, confirmation ✅
 - **Trace/very low detected** results require clinical correlation ✅
 
-No discrepancies found between the `viro_*` panel content and the committed IFUs.
+### Cepheid GeneXpert — Norovirus GI/GII (`viro_gi_*`) — ⚠ PROVISIONAL
+- **Assay modelled:** standalone **Cepheid Xpert Norovirus** cartridge, detecting
+  norovirus **genogroup I (GI)** and **genogroup II (GII)** RNA from stool, with
+  split GI/GII genogroup reporting (lab's stated bench workflow).
+- **Chemistry:** closed-cartridge real-time RT-PCR (RNA virus → reverse transcription) ✅
+- **Clinical framing:** infection-prevention & control led — outbreak control, ward
+  closure/cohorting, very low infectious dose, environmental persistence,
+  soap-and-water > alcohol gel, chlorine disinfection, post-symptom RNA shedding,
+  48-hour symptom-free clearance rule.
+- **No susceptibility from PCR** (viral) ✅
+- **⚠ TRACEABILITY GAP:** the standalone **Xpert Norovirus IFU is NOT yet committed**
+  to the repository. The content is based on the Cepheid Xpert Norovirus assay's
+  general characteristics, **not** verified against a committed source document.
+  The committed `IFUs/Cepheid/...gi-panel...` documents are the **broader Xpert GI
+  Panel** (13-target syndromic stool multiplex, in which norovirus is reported as a
+  single "Norovirus" call, **not** split GI/GII) — they validate a *different* assay.
+- **Action required to close the loop:** commit the Cepheid **Xpert Norovirus** IFU
+  (the one matching the cartridges actually run), then re-verify the `viro_gi_*`
+  panels against it and update `GUIDELINE_VERSIONS.virology` (remove the
+  "IFU pending commit — stream provisional" flag).
+
+No discrepancies found between the committed-IFU `viro_*` panels (Panther CT/NG,
+respiratory GeneXpert, TB) and their committed IFUs. The `viro_gi_*` Norovirus
+stream is **provisional pending its IFU** as noted above.
 
 ---
 
@@ -183,6 +206,7 @@ is marked accordingly with `version:'reference-only'`.
 | `fcPanels` (viro_* Panther) | Hologic Aptima Combo 2 GBR EN IFU |
 | `fcPanels` (viro_* GeneXpert resp) | Cepheid Xpert Xpress CoV-2/Flu/RSV plus 302-7085 Rev F (2025-08) |
 | `fcPanels` (viro_* GeneXpert TB) | Cepheid Xpert MTB/RIF 303-0942 Rev B (2024-05) |
+| `fcPanels` (viro_gi_* Norovirus GI/GII) | ⚠ Cepheid Xpert Norovirus — IFU pending commit (provisional) |
 | `serologyTests` | Local SOP — test code reference list |
 | `parasites` | CDC DPDx (accessed 2026-06-15) + WHO Bench Aids 2nd ed. (2019) |
 | `bloodDisciplines` / `bloodTubes` / `bloodTests` | Reference-only — not microbiology SMI scope |
@@ -202,9 +226,20 @@ is marked accordingly with `version:'reference-only'`.
 | Blood science marked reference-only in GUIDELINE_VERSIONS | ✅ Done 2026-06-15 |
 | All new GUIDELINE_VERSIONS entries populated | ✅ Done 2026-06-15 |
 | `npm test` data validation suite | ✅ Pass 2026-06-15 |
+| Norovirus GI/GII (`viro_gi_*`) molecular stream added | ✅ Done 2026-06-15 (provisional) |
 | Local microbiologist sign-off | ☐ Required before bench use |
-| GI panel (`viro_gi_*`) content to be added | ☐ IFU committed; panels not yet implemented |
+| Commit standalone Xpert Norovirus IFU + re-verify `viro_gi_*` | ☐ **Required to make Norovirus stream traceable** |
+| Full Xpert GI Panel stream (13-target syndromic) | ☐ Optional — IFU committed; not yet built |
 
-> The GI panel IFU (Cepheid Xpert GI Panel, CE-IVDR 303-7272/303-7273) is
-> committed to the repository but no `viro_gi_*` panels exist in the app.
-> Add these in a subsequent update once local GI PCR workflow is confirmed.
+> **Norovirus stream status:** a standalone Norovirus GI/GII molecular stream has
+> been added to the molecular view (`viro_gi_*` panels + HTML stream), with split
+> genogroup reporting, matching the cartridges the lab runs. It is **provisional**:
+> the standalone Cepheid Xpert Norovirus IFU is not yet committed, so the content is
+> not yet verified against a committed source. Commit that IFU to close the loop.
+>
+> **Xpert GI Panel (separate assay):** the committed `IFUs/Cepheid/...gi-panel...`
+> documents (CE-IVDR 303-7272/303-7273) describe the broader 13-target syndromic
+> stool panel (Campylobacter, Salmonella, Shigella/EIEC, Yersinia, V. cholerae,
+> V. parahaemolyticus, STEC stx1/stx2, Giardia, Cryptosporidium, Norovirus). No
+> `viro_*` panels model this full panel yet — add a second enteric stream in a
+> later update if the lab adopts it.
