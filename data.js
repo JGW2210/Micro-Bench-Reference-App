@@ -2513,6 +2513,73 @@ const smiCitations = {
   organisms: bactIdSmiMap
 };
 
+/* ════════════════════════════════════════════════════════════════════
+   EUCAST CITATION CATALOGUE  (added v26)
+   Companion to smiCitations, but for antimicrobial susceptibility testing
+   (AST), which is governed by EUCAST, not the UK SMIs. Catalogues the EUCAST
+   reference documents committed under EUCAST/ in this repo (versions/dates
+   taken from the official document titles), and maps each app data structure
+   to the document it is validated against — for ISO 15189 / UKAS traceability.
+   Cite breakpoints as: EUCAST. Breakpoint tables for interpretation of MICs
+   and zone diameters, version 16.0, 2026. https://www.eucast.org.
+   ════════════════════════════════════════════════════════════════════ */
+const eucastCitations = {
+  _meta: {
+    source: 'EUCAST (eucast.org) — clinical breakpoints, expert rules, expected phenotypes and methodology',
+    prepared: '2026-06-15',
+    companion: 'EUCAST-CITATIONS.md',
+    note: 'AST content (breakpoints, disc panels, expert rules, expected phenotypes) is EUCAST scope, not UK SMI. PDFs are committed under EUCAST/.'
+  },
+  // Headline documents the app is validated against, by repository folder.
+  documents: {
+    'Clinical Breakpoints and Interpretation': {
+      'Breakpoint tables': { version:'v16.0', valid:'2026-01-01', file:'v_16.0_Breakpoint_Tables.pdf' },
+      'Area of Technical Uncertainty (ATU) guidance': { version:'v2 (2020)', file:'Area_of_Technical_Uncertainty_-_guidance_v2_2020.pdf' },
+      'Breakpoints in brackets': { file:'Breakpoints_in_brackets.pdf' },
+      'Changes in susceptibility reports (S/I/R)': { date:'2021-07-09', file:'To_clinical_colleagues_on_recent_changes_in_clinical_microbiology_susceptibility_reports_9_July2021.pdf' },
+      'When there are no breakpoints': { date:'2024-09-03', file:'When_there_are_no_breakpoints_2024-09-03.pdf' }
+    },
+    'Expert Rules': {
+      'Enterobacterales': { version:'v3.3', date:'2024-06-30', file:'ExpertRules_V3.3_20240630_Enterobacterales.pdf' },
+      'Staphylococcus':   { date:'2025-11-09', file:'Staphylococcus_ExpertRules_20251109.pdf' },
+      'Streptococcus':    { date:'2025-11-09', file:'Streptococcus_ExpertRules_20251109.pdf' },
+      'Enterococcus':     { date:'2025-11-09', file:'Enterococcus_ExpertRules_20251109.pdf' },
+      'Pneumococcus':     { date:'2025-11-09', file:'Pneumococcus_ExpertRules_20251109.pdf' },
+      'Haemophilus':      { version:'v3.2', date:'2019-06-13', file:'Haemophilus_ExpertRules_V3.2_20190613.pdf' },
+      'Moraxella':        { version:'v3.2', date:'2019-06-13', file:'Moraxella_ExpertRules_V3.2_20190613.pdf' },
+      'Campylobacter':    { version:'v3.2', date:'2019-06-13', file:'Campylobacter_ExpertRules_V3.2_20190613.pdf' },
+      'Corynebacterium':  { version:'v3.2', date:'2019-06-13', file:'Corynebacterium_ExpertRules_V3.2_20190613.pdf' },
+      'Salmonella':       { version:'v3.2', date:'2019-06-13', file:'Salmonella_ExpertRules_V3.2_20190613.pdf' }
+    },
+    'Expected Phenotypes / resistance mechanisms': {
+      'Expected Resistant Phenotypes':   { version:'v1.2', date:'2023-01-13', file:'Expected_Resistant_Phenotypes_v1.2_20230113.pdf' },
+      'Expected Susceptible Phenotypes': { version:'v1.1', date:'2022-03-25', file:'Expected_Susceptible_Phenotypes_Tables_v1.1_20220325.pdf' },
+      'Detection of resistance mechanisms (ESBL/AmpC/carbapenemase/MRSA/etc.)': { date:'2017-07-11', file:'EUCAST_detection_of_resistance_mechanisms_170711.pdf' }
+    },
+    'Methodology and Instructions': {
+      'Disk diffusion manual':        { version:'v13.0 (2025)', file:'Manual_v_13.0_EUCAST_Disk_Test_2025.pdf' },
+      'Disk diffusion reading guide': { version:'v11.0 (2025)', file:'Reading_guide_v_11.0_EUCAST_Disk_Test_2025.pdf' },
+      'Broth microdilution reading guide': { version:'v5.0 (2024)', file:'Reading_guide_BMD_v_5.0_2024.pdf' },
+      'Media preparation':            { version:'v8.0 (2026)', file:'Media_preparation_v_8.0_EUCAST_AST_2026.pdf' },
+      'QC tables (routine + extended)': { version:'v15.0', file:'v_15.0_EUCAST_QC_tables_routine_and_extended_QC.pdf' },
+      'Anaerobe disk diffusion reading guide': { version:'v2.0 (2023)', file:'Disk_diffusion_Anaerobes_Reading_Guide_v_2.0_2023.pdf' }
+    },
+    'Guidance Docs': {
+      _note: 'Agent-/organism-specific guidance notes (aminoglycosides, colistin, daptomycin, tigecycline, S. maltophilia, B. cepacia, Legionella, ESBL confirmation, cefiderocol, etc.) are committed under "EUCAST/Guidance Docs/" and cited per agent where relevant.'
+    }
+  },
+  // Map app data structures to the EUCAST document(s) that validate them.
+  appliesTo: {
+    sirBreakpoints:     'Breakpoint tables v16.0 (zone diameters) — every agent checked & ok:true (2026-06-15)',
+    expectedPhenotypes: 'Expected Resistant Phenotypes v1.2 + relevant Expert Rules (intrinsic/acquired resistance)',
+    dconfigs:           'Detection of resistance mechanisms (2017) + MAST D-set IFUs (ESBL/AmpC/carbapenemase typing)',
+    fcPanels:           'Breakpoint tables v16.0 (agent selection per organism group)',
+    abxClasses:         'Breakpoint tables v16.0 + agent-specific guidance notes',
+    routineSets:        'Breakpoint tables v16.0 + QC tables v15.0',
+    qcOrganisms:        'EUCAST QC tables v15.0 (routine + extended QC)'
+  }
+};
+
 
 /* ════════════════════════════════════════════════════════════════════
    GUIDELINE VERSION STAMPS  (added v25)
@@ -2526,100 +2593,112 @@ const smiCitations = {
    `reviewed:'—'` renders as "review date not set".
    ════════════════════════════════════════════════════════════════════ */
 const GUIDELINE_VERSIONS = {
-  _meta: { appData: 'v25', reviewed: '—' },   // global app data version + last full review
-  flow:    { lines:[{label:'EUCAST clinical breakpoints', version:'set version'},{label:'UK SMI', version:'B 41 i8.8 · ID/TP 2025'}], reviewed:'2026-06-15' },
-  wound:   { lines:[{label:'EUCAST clinical breakpoints', version:'set version'},{label:'UK SMI', version:'B 11/B 14/B 17 · ID/TP 2025'}], reviewed:'2026-06-15' },
+  _meta: { appData: 'v25', reviewed: '2026-06-15' },   // global app data version + last full review
+  flow:    { lines:[{label:'EUCAST clinical breakpoints', version:'v16.0 (valid 2026-01-01)'},{label:'UK SMI', version:'B 41 i8.8 · ID/TP 2025'}], reviewed:'2026-06-15' },
+  wound:   { lines:[{label:'EUCAST clinical breakpoints', version:'v16.0 (valid 2026-01-01)'},{label:'UK SMI', version:'B 11/B 14/B 17 · ID/TP 2025'}], reviewed:'2026-06-15' },
   bactid:  { lines:[{label:'UK SMI ID + TP series', version:'validated against committed issues'}], reviewed:'2026-06-15' },
-  interp:  { lines:[{label:'EUCAST clinical breakpoints', version:'set version'},{label:'MAST D-set IFUs', version:'local'}], reviewed:'—' },
-  checker: { lines:[{label:'EUCAST clinical breakpoints', version:'PLACEHOLDER — UNVALIDATED'}], reviewed:'—' },
-  rules:   { lines:[{label:'EUCAST Expected Resistant Phenotypes', version:'v1.2 (2023)'},{label:'Expert Rules', version:'v3.3'}], reviewed:'—' },
+  interp:  { lines:[{label:'EUCAST clinical breakpoints', version:'v16.0 (valid 2026-01-01)'},{label:'MAST D-set IFUs', version:'local'}], reviewed:'2026-06-15' },
+  checker: { lines:[{label:'EUCAST clinical breakpoints', version:'v16.0 (valid 2026-01-01) — zone diameters validated'}], reviewed:'2026-06-15' },
+  rules:   { lines:[{label:'EUCAST Expected Resistant Phenotypes', version:'v1.2 (2023-01-13)'},{label:'EUCAST Expert Rules', version:'Enterobacterales v3.3 (2024) · Staph/Strep/Entero/Pneumo (2025-11-09)'}], reviewed:'2026-06-15' },
   myco:    { lines:[{label:'UK SMI ID 1', version:'Issue 4 (06.08.25)'},{label:'EUCAST antifungal breakpoints', version:'v10.0 (2020)+updates'}], reviewed:'—' },
   plate:   { lines:[{label:'Schematic reference', version:'local media'},{label:'UK SMI specimen series', version:'B 41/B 11/B 14 + IFU'}], reviewed:'2026-06-15' },
   virology:{ lines:[{label:'Assay IFUs + local SOP', version:'local'}], reviewed:'—' }
 };
 
 /* ════════════════════════════════════════════════════════════════════
-   ZONE-DIAMETER S / I / R CHECKER  (added v25)
+   ZONE-DIAMETER S / I / R CHECKER  (added v25; validated against EUCAST v16.0)
 
-   ⚠ PLACEHOLDER DATA — NOT VALIDATED FOR CLINICAL USE ⚠
-   The breakpoints below are illustrative starter values to exercise the
-   engine. They are NOT a substitute for the current EUCAST clinical
-   breakpoint table or your local validated SOP, and several agents have
-   site-specific (e.g. uncomplicated UTI only) or surrogate-screen
-   breakpoints that are easy to misapply.
+   Zone diameter breakpoints transcribed from the EUCAST Clinical Breakpoint
+   Tables v16.0 (valid from 2026-01-01), the copy committed in this repo at
+   "EUCAST/Clinical Breakpoints and Interpretation/v_16.0_Breakpoint_Tables.pdf".
+   Every agent's S/R value and disc content has been checked against that
+   table and signed off with ok:true. Validated 2026-06-15.
 
-   BEFORE ANY BENCH USE: open the current EUCAST breakpoint table for your
-   region, correct every S/R value and disc content, then flip that
-   agent's `ok:true`. The view shows validation progress and refuses to
-   look authoritative until you have signed each value off.
+   ⚠ Still confirm against your laboratory's own validated SOP before bench
+   use. EUCAST revises the breakpoint tables annually — when a new version is
+   issued, re-check every agent, update the `version` string below and the
+   `checker` entry in GUIDELINE_VERSIONS, and re-confirm each ok:true.
+   Several agents carry indication-specific (e.g. uncomplicated UTI only) or
+   surrogate-screen breakpoints that are easy to misapply — read each note.
 
    Interpretation rule (EUCAST disc diffusion):
      zone ≥ S  → S        (susceptible, standard dosing)
      zone < R  → R        (resistant)
      R ≤ zone < S → I     (susceptible, increased exposure)
      If S === R there is no I band (binary S/R).
+   For agents EUCAST reports only as "I" or "R" (no standard-dose S — e.g. the
+   antipseudomonal β-lactams/fluoroquinolones and temocillin UTI), EUCAST sets
+   no S zone; we encode S as 50 mm so the engine never returns "S", only
+   I (zone ≥ R) or R (zone < R).
    Fields: agent, disc (µg/label), S (mm), R (mm), ok (validated?),
-           note (site/surrogate caveat), screen (true = surrogate screen).
+           note (indication/surrogate caveat + ATU range), screen (surrogate).
+   Cite as: EUCAST. Breakpoint tables for interpretation of MICs and zone
+   diameters, version 16.0, 2026. https://www.eucast.org.
    ════════════════════════════════════════════════════════════════════ */
 const sirBreakpoints = {
-  version: 'PLACEHOLDER — replace with current EUCAST table before use',
+  version: 'EUCAST Clinical Breakpoint Tables v16.0 (valid 2026-01-01)',
   groups: [
+    // QC: E. coli ATCC 25922 · Mueller-Hinton agar, 35±1ºC air, 18±2 h
     { id:'entero', name:'Enterobacterales', agents:[
-      {agent:'Ampicillin',                disc:'10 µg', S:14, R:14, ok:false, note:'Binary S/R. E. coli/P. mirabilis only.'},
-      {agent:'Amoxicillin-clavulanate',   disc:'20-10 µg', S:19, R:19, ok:false, note:'Uncomplicated UTI breakpoints differ — check site.'},
-      {agent:'Mecillinam',                disc:'10 µg', S:15, R:15, ok:false, note:'Uncomplicated UTI only.'},
-      {agent:'Cefpodoxime',               disc:'10 µg', S:21, R:21, ok:false, note:'Screening surrogate for ESBL/AmpC.', screen:true},
-      {agent:'Ceftriaxone',               disc:'30 µg', S:25, R:22, ok:false, note:''},
-      {agent:'Cefoxitin',                 disc:'30 µg', S:19, R:19, ok:false, note:'AmpC screen surrogate, not a reportable result.', screen:true},
-      {agent:'Ciprofloxacin',             disc:'5 µg',  S:25, R:22, ok:false, note:''},
-      {agent:'Gentamicin',                disc:'10 µg', S:17, R:17, ok:false, note:''},
-      {agent:'Amikacin',                  disc:'30 µg', S:18, R:15, ok:false, note:''},
-      {agent:'Trimethoprim',              disc:'5 µg',  S:18, R:15, ok:false, note:'Uncomplicated UTI only.'},
-      {agent:'Nitrofurantoin',            disc:'100 µg',S:11, R:11, ok:false, note:'Uncomplicated UTI; E. coli only.'},
-      {agent:'Piperacillin-tazobactam',   disc:'30-6 µg',S:20, R:17, ok:false, note:''},
-      {agent:'Temocillin',                disc:'30 µg', S:20, R:20, ok:false, note:'UTI breakpoint differs.'},
-      {agent:'Ertapenem',                 disc:'10 µg', S:25, R:22, ok:false, note:'Carbapenemase screen if reduced.', screen:true},
-      {agent:'Meropenem',                 disc:'10 µg', S:22, R:16, ok:false, note:'Carbapenemase screen <28 mm.'}
+      {agent:'Ampicillin',                disc:'10 µg', S:14, R:14, ok:true, note:'Binary S/R (iv & oral UTI). Ignore a thin inner zone seen on some MH agar batches.'},
+      {agent:'Amoxicillin-clavulanate (iv)', disc:'20-10 µg', S:19, R:19, ok:true, note:'iv breakpoint, ATU 19-20 mm. Urinary-tract and uncomplicated-UTI breakpoints differ — check indication.'},
+      {agent:'Mecillinam (pivmecillinam)', disc:'10 µg', S:15, R:15, ok:true, note:'Uncomplicated UTI only. E. coli, Citrobacter, Klebsiella, Raoultella, Enterobacter, P. mirabilis. Ignore isolated colonies in zone.'},
+      {agent:'Cefpodoxime',               disc:'10 µg', S:21, R:21, ok:true, note:'Uncomplicated UTI breakpoint; also widely used as the cephalosporin screen for ESBL/AmpC detection (IC/PH).'},
+      {agent:'Ceftriaxone',               disc:'30 µg', S:27, R:24, ok:true, note:'Non-meningitis. Meningitis breakpoint 27/27. ESBL does not itself change the S/I/R category.'},
+      {agent:'Cefoxitin (AmpC screen)',   disc:'30 µg', S:19, R:19, ok:true, note:'Screen only — NOT reportable. High sensitivity / poor specificity for AmpC.', screen:true},
+      {agent:'Ciprofloxacin',             disc:'5 µg',  S:25, R:22, ok:true, note:'Indications other than meningitis. ATU 22-24 mm — resolve before reporting. Salmonella: use pefloxacin screen / MIC.'},
+      {agent:'Gentamicin',                disc:'10 µg', S:17, R:17, ok:true, note:'Urinary-tract breakpoint; systemic 17/17 is in brackets (uncertainty) in v16.0.'},
+      {agent:'Amikacin',                  disc:'30 µg', S:18, R:18, ok:true, note:'Urinary-tract breakpoint; systemic 18/18 is in brackets (uncertainty) in v16.0.'},
+      {agent:'Trimethoprim',              disc:'5 µg',  S:15, R:15, ok:true, note:'Uncomplicated UTI only; E. coli & Klebsiella (not K. aerogenes). Revised in v16.0.'},
+      {agent:'Nitrofurantoin',            disc:'100 µg',S:11, R:11, ok:true, note:'Uncomplicated UTI only; E. coli.'},
+      {agent:'Piperacillin-tazobactam',   disc:'30-6 µg',S:20, R:20, ok:true, note:'Binary S/R, ATU 19 mm.'},
+      {agent:'Temocillin (UTI)',          disc:'30 µg', S:50, R:17, ok:true, note:'Infections from urinary tract; E. coli, Klebsiella (not K. aerogenes), P. mirabilis. Reported "I" (≥17 mm) or R only — no standard-dose S. Ignore isolated colonies in zone.'},
+      {agent:'Ertapenem',                 disc:'10 µg', S:23, R:23, ok:true, note:'Binary S/R. Reduced zone → investigate carbapenemase.'},
+      {agent:'Meropenem',                 disc:'10 µg', S:22, R:16, ok:true, note:'Indications other than meningitis. Carbapenemase screening cut-off: zone <28 mm (MIC >0.125).'}
     ]},
+    // QC: P. aeruginosa ATCC 27853. Antipseudomonal β-lactams/FQs are "I or R only" (S encoded as 50 mm).
     { id:'pseud', name:'Pseudomonas aeruginosa', agents:[
-      {agent:'Piperacillin-tazobactam',   disc:'30-6 µg',S:50, R:18, ok:false, note:'P. aeruginosa uses "S increased exposure" model.'},
-      {agent:'Ceftazidime',               disc:'10 µg', S:50, R:17, ok:false, note:''},
-      {agent:'Cefepime',                  disc:'30 µg', S:50, R:19, ok:false, note:''},
-      {agent:'Ciprofloxacin',             disc:'5 µg',  S:50, R:26, ok:false, note:''},
-      {agent:'Levofloxacin',              disc:'5 µg',  S:50, R:21, ok:false, note:''},
-      {agent:'Meropenem',                 disc:'10 µg', S:24, R:18, ok:false, note:''},
-      {agent:'Tobramycin',                disc:'10 µg', S:18, R:16, ok:false, note:''},
-      {agent:'Amikacin',                  disc:'30 µg', S:18, R:15, ok:false, note:''}
+      {agent:'Piperacillin-tazobactam',   disc:'30-6 µg',S:50, R:18, ok:true, note:'Reported "I" (susceptible, increased exposure, ≥18 mm) or R only. ATU 18-19 mm.'},
+      {agent:'Ceftazidime',               disc:'10 µg', S:50, R:17, ok:true, note:'Reported "I" (≥17 mm) or R only.'},
+      {agent:'Cefepime',                  disc:'30 µg', S:50, R:21, ok:true, note:'Reported "I" (≥21 mm) or R only. ATU 19-23 mm.'},
+      {agent:'Ciprofloxacin',             disc:'5 µg',  S:50, R:26, ok:true, note:'Reported "I" (≥26 mm) or R only.'},
+      {agent:'Levofloxacin',              disc:'5 µg',  S:50, R:18, ok:true, note:'Reported "I" (≥18 mm) or R only.'},
+      {agent:'Meropenem',                 disc:'10 µg', S:20, R:14, ok:true, note:'Indications other than meningitis, P. aeruginosa. Pseudomonas other than P. aeruginosa: 24/18.'},
+      {agent:'Tobramycin',                disc:'10 µg', S:18, R:18, ok:true, note:'Urinary-tract breakpoint; systemic 18/18 in brackets. Gentamicin has no P. aeruginosa breakpoint (IE).'},
+      {agent:'Amikacin',                  disc:'30 µg', S:15, R:15, ok:true, note:'Urinary-tract breakpoint; systemic 15/15 in brackets. (Note: differs from Enterobacterales 18 mm.)'}
     ]},
+    // QC: S. aureus ATCC 29213. Several aminoglycoside breakpoints are bracketed (uncertain) in v16.0.
     { id:'staph', name:'Staphylococcus spp.', agents:[
-      {agent:'Cefoxitin (MRSA screen)',   disc:'30 µg', S:22, R:22, ok:false, note:'Surrogate for meticillin resistance. S. aureus cutoff; CoNS differs.', screen:true},
-      {agent:'Erythromycin',              disc:'15 µg', S:21, R:18, ok:false, note:'Check inducible clinda (D-zone).'},
-      {agent:'Clindamycin',               disc:'2 µg',  S:22, R:19, ok:false, note:''},
-      {agent:'Trimethoprim-sulfamethoxazole', disc:'1.25-23.75 µg', S:17, R:14, ok:false, note:''},
-      {agent:'Tetracycline',              disc:'30 µg', S:22, R:19, ok:false, note:''},
-      {agent:'Gentamicin',                disc:'10 µg', S:18, R:18, ok:false, note:''},
-      {agent:'Fusidic acid',              disc:'10 µg', S:24, R:24, ok:false, note:''},
-      {agent:'Rifampicin',                disc:'5 µg',  S:26, R:23, ok:false, note:''},
-      {agent:'Linezolid',                 disc:'10 µg', S:21, R:21, ok:false, note:''},
-      {agent:'Norfloxacin (FQ screen)',   disc:'10 µg', S:17, R:17, ok:false, note:'Fluoroquinolone screen.', screen:true}
+      {agent:'Cefoxitin (MRSA screen)',   disc:'30 µg', S:22, R:22, ok:true, note:'Surrogate for mecA/mecC (S. aureus & CoNS). S. epidermidis & S. lugdunensis use 27/27. Unidentified CoNS: 25/25 (ATU 22-24).', screen:true},
+      {agent:'Erythromycin',              disc:'15 µg', S:21, R:21, ok:true, note:'Macrolide-class screen. Check inducible clindamycin (D-zone).'},
+      {agent:'Clindamycin',               disc:'2 µg',  S:22, R:22, ok:true, note:'Confirm iMLSb with D-zone (erythromycin disk 12-20 mm apart).'},
+      {agent:'Trimethoprim-sulfamethoxazole', disc:'1.25-23.75 µg', S:24, R:24, ok:true, note:'Revised (raised) in v16.0.'},
+      {agent:'Tetracycline',              disc:'30 µg', S:22, R:22, ok:true, note:'Class screen — if S, can report doxycycline & minocycline S.'},
+      {agent:'Gentamicin',                disc:'10 µg', S:18, R:18, ok:true, note:'S. aureus; CoNS 22/22. Breakpoints in brackets (uncertain) in v16.0.'},
+      {agent:'Fusidic acid',              disc:'10 µg', S:24, R:24, ok:true, note:'Never suitable as monotherapy.'},
+      {agent:'Rifampicin',                disc:'5 µg',  S:26, R:26, ok:true, note:'S. aureus; CoNS 30/30. Never monotherapy.'},
+      {agent:'Linezolid',                 disc:'10 µg', S:21, R:21, ok:true, note:''},
+      {agent:'Norfloxacin (FQ screen)',   disc:'10 µg', S:17, R:17, ok:true, note:'Fluoroquinolone screen (screen only).', screen:true}
     ]},
+    // QC: S. pneumoniae ATCC 49619 · MH-F (MH + 5% horse blood + β-NAD), 5% CO₂.
     { id:'strep', name:'Streptococcus (β-haemolytic A/B/C/G)', agents:[
-      {agent:'Benzylpenicillin',          disc:'1 unit',S:18, R:18, ok:false, note:'Group A/B/C/G; pneumococci differ.'},
-      {agent:'Erythromycin',              disc:'15 µg', S:21, R:18, ok:false, note:'Check inducible clinda (D-zone).'},
-      {agent:'Clindamycin',               disc:'2 µg',  S:19, R:16, ok:false, note:''},
-      {agent:'Tetracycline',              disc:'30 µg', S:23, R:20, ok:false, note:''},
-      {agent:'Levofloxacin',              disc:'5 µg',  S:17, R:14, ok:false, note:''},
-      {agent:'Vancomycin',                disc:'5 µg',  S:13, R:13, ok:false, note:''},
-      {agent:'Teicoplanin',               disc:'30 µg', S:15, R:15, ok:false, note:''}
+      {agent:'Benzylpenicillin',          disc:'1 unit',S:23, R:23, ok:true, note:'Groups A, C, G. S. agalactiae (group B): 18/18 mm. β-lactam susceptibility is inferred from penicillin.'},
+      {agent:'Erythromycin',              disc:'15 µg', S:21, R:21, ok:true, note:'Macrolide-class screen. Check inducible clindamycin (D-zone).'},
+      {agent:'Clindamycin',               disc:'2 µg',  S:17, R:17, ok:true, note:'Confirm iMLSb with D-zone (erythromycin disk 12-16 mm apart).'},
+      {agent:'Tetracycline',              disc:'30 µg', S:23, R:23, ok:true, note:'Class screen for tetracyclines.'},
+      {agent:'Levofloxacin',              disc:'5 µg',  S:50, R:17, ok:true, note:'Reported "I" (≥17 mm) or R only. Norfloxacin disk screens for FQ resistance.'},
+      {agent:'Vancomycin',                disc:'5 µg',  S:13, R:13, ok:true, note:'Resistant isolates are rare — confirm and refer.'},
+      {agent:'Teicoplanin',               disc:'30 µg', S:15, R:15, ok:true, note:''}
     ]},
+    // QC: E. faecalis ATCC 29212.
     { id:'entc', name:'Enterococcus spp.', agents:[
-      {agent:'Ampicillin',                disc:'2 µg',  S:10, R:8,  ok:false, note:'E. faecalis; E. faecium often intrinsically R.'},
-      {agent:'Vancomycin',                disc:'5 µg',  S:12, R:12, ok:false, note:'Read at full 24 h; suspect VRE if hazy/reduced.'},
-      {agent:'Teicoplanin',               disc:'30 µg', S:16, R:16, ok:false, note:''},
-      {agent:'Linezolid',                 disc:'10 µg', S:19, R:19, ok:false, note:''},
-      {agent:'Gentamicin (high-level)',   disc:'30 µg', S:8,  R:8,  ok:false, note:'HLAR screen only — synergy prediction.', screen:true},
-      {agent:'Nitrofurantoin',            disc:'100 µg',S:15, R:15, ok:false, note:'Uncomplicated UTI only.'},
-      {agent:'Norfloxacin (FQ screen)',   disc:'10 µg', S:12, R:12, ok:false, note:'UTI fluoroquinolone screen.', screen:true}
+      {agent:'Ampicillin (iv)',           disc:'2 µg',  S:10, R:10, ok:true, note:'E. faecalis usually S; E. faecium often R (PBP5) — confirm. If R by disk, confirm with MIC.'},
+      {agent:'Vancomycin',                disc:'5 µg',  S:12, R:12, ok:true, note:'E. faecalis & E. faecium. Read at full 24 h; fuzzy edge or colonies in zone → PCR or report R even if ≥12 mm. Other enterococci: 15/15.'},
+      {agent:'Teicoplanin',               disc:'30 µg', S:16, R:16, ok:true, note:''},
+      {agent:'Linezolid',                 disc:'10 µg', S:20, R:20, ok:true, note:''},
+      {agent:'Gentamicin (high-level)',   disc:'30 µg', S:8,  R:8,  ok:true, note:'HLAR synergy screen: zone <8 mm (MIC >128) = no synergy with cell-wall agents. Screen streptomycin separately.', screen:true},
+      {agent:'Nitrofurantoin',            disc:'100 µg',S:15, R:15, ok:true, note:'Uncomplicated UTI only; E. faecalis.'},
+      {agent:'Norfloxacin (FQ screen)',   disc:'10 µg', S:12, R:12, ok:true, note:'UTI fluoroquinolone screen → infers ciprofloxacin/levofloxacin.', screen:true}
     ]}
   ]
 };
