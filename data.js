@@ -409,7 +409,7 @@ const fcPanels = {
   af_amphotericinb:{title:'Amphotericin B',sub:'Polyene',abx:['Candida','Cryptococcus','Aspergillus','Mucorales'],notes:'Broadest-spectrum antifungal (binds ergosterol): active against most yeasts and moulds including the Mucorales. Resistance is uncommon but seen in Aspergillus terreus, Scedosporium and some Candida. Liposomal formulations reduce nephrotoxicity. EUCAST has Candida and Aspergillus breakpoints.'},
   af_flucytosine:{title:'Flucytosine (5-FC)',sub:'Pyrimidine analogue',abx:['Candida','Cryptococcus (with amphotericin)'],notes:'Pyrimidine analogue, almost always used in combination (classically with amphotericin B for cryptococcal meningitis) because monotherapy rapidly selects resistance. EUCAST has breakpoints for Candida; monitor levels to avoid marrow toxicity.'},
   af_terbinafine:{title:'Terbinafine',sub:'Allylamine',abx:['dermatophytes','NOT routine Candida'],notes:'Allylamine (squalene epoxidase inhibitor), the oral agent of choice for dermatophyte nail and skin infection. Emerging terbinafine resistance via SQLE mutations defines Trichophyton indotineae — confirm by MIC / sequencing where treatment fails. EUCAST dermatophyte methodology and breakpoints are developing.'},
-  af_method:{title:'Method & categories (EUCAST AFST)',sub:'Reference · how it is done',abx:['Broth microdilution (reference)','Gradient MIC strips','Yeast disk diffusion (some agents)'],notes:'EUCAST reference methods: E.Def 7.4 for yeasts and E.Def 9.4 for moulds (broth microdilution, read by eye). Categories follow the 2019 revision — S = susceptible, I = susceptible increased exposure (formerly intermediate), R = resistant — plus the Area of Technical Uncertainty (ATU) for problematic MIC ranges. Antifungal clinical breakpoints v10.0 (2020) with later technical-note updates; always check the current EUCAST table.'},
+  af_method:{title:'Method & categories (EUCAST AFST)',sub:'Reference · how it is done',abx:['Broth microdilution (reference)','Gradient MIC strips','Yeast disk diffusion (some agents)'],notes:'EUCAST reference methods: E.Def 7.4 for yeasts and E.Def 9.4 for moulds (broth microdilution, read by eye). Categories follow the 2019 revision — S = susceptible, I = susceptible increased exposure (formerly intermediate), R = resistant — plus the Area of Technical Uncertainty (ATU) for problematic MIC ranges. Antifungal clinical breakpoints v12.1 (valid 2026-04-10); always check the current EUCAST AFST table.'},
   afr_krusei:{title:'Candida krusei (Pichia kudriavzevii)',sub:'Expected resistant',abx:['Fluconazole (intrinsic)','reduced flucytosine'],notes:'Intrinsically resistant to fluconazole — never report fluconazole susceptible. Use an echinocandin or amphotericin B; voriconazole retains activity. Flucytosine susceptibility is reduced.'},
   afr_glabrata:{title:'Candida glabrata (Nakaseomyces glabratus)',sub:'Expected reduced azole',abx:['Fluconazole S-increased-exposure only','rising echinocandin resistance'],notes:'Reduced azole susceptibility — fluconazole at best susceptible-increased-exposure, never plain susceptible. Echinocandins are first line, but FKS-mediated echinocandin resistance is increasing, so test rather than assume.'},
   afr_cryptococcus:{title:'Cryptococcus spp.',sub:'Expected resistant',abx:['Echinocandins (no activity)'],notes:'Echinocandins have NO clinically useful activity against Cryptococcus — never use or report them. Treat with amphotericin B plus flucytosine (induction) then fluconazole.'},
@@ -496,8 +496,10 @@ const mycoDiseases = [
 ];
 
 // ─── PARASITOLOGY ─────────────────────────────────────────────────────────
-// Reference set built from the CDC DPDx Parasites A-Z index
-// (https://www.cdc.gov/dpdx/az.html). Each entry deep-links to its DPDx page.
+// Primary reference: CDC DPDx Parasites A-Z index (https://www.cdc.gov/dpdx/az.html).
+// Each entry deep-links to its DPDx page.
+// Supplementary reference: WHO Bench Aids for Diagnosis of Intestinal Parasites,
+// 2nd edition (2019) — committed as Extra References/BenchAidIntestinalParasites-WHO-2019.pdf.
 // Names listed in DPDx under several synonyms are merged into one entry;
 // American and African trypanosomiasis are kept separate as they are distinct
 // diseases. cls = taxonomic class (primary grouping); site = specimen type(s)
@@ -2525,10 +2527,10 @@ const smiCitations = {
    ════════════════════════════════════════════════════════════════════ */
 const eucastCitations = {
   _meta: {
-    source: 'EUCAST (eucast.org) — clinical breakpoints, expert rules, expected phenotypes and methodology',
+    source: 'EUCAST (eucast.org) — clinical breakpoints, expert rules, expected phenotypes, antifungal breakpoints and methodology',
     prepared: '2026-06-15',
     companion: 'EUCAST-CITATIONS.md',
-    note: 'AST content (breakpoints, disc panels, expert rules, expected phenotypes) is EUCAST scope, not UK SMI. PDFs are committed under EUCAST/.'
+    note: 'AST content (breakpoints, disc panels, expert rules, expected phenotypes) is EUCAST scope, not UK SMI. PDFs are committed under EUCAST/. Antifungal AST (AFST) documents are committed under EUCAST/AFST/.'
   },
   // Headline documents the app is validated against, by repository folder.
   documents: {
@@ -2566,6 +2568,25 @@ const eucastCitations = {
     },
     'Guidance Docs': {
       _note: 'Agent-/organism-specific guidance notes (aminoglycosides, colistin, daptomycin, tigecycline, S. maltophilia, B. cepacia, Legionella, ESBL confirmation, cefiderocol, etc.) are committed under "EUCAST/Guidance Docs/" and cited per agent where relevant.'
+    },
+    'AFST — Clinical Breakpoints and Interpretation': {
+      'Antifungal breakpoint tables (MIC) for yeasts and Aspergillus': { version:'v12.1', valid:'2026-04-10', file:'EUCAST/AFST/Clinical Breakpoints and Interpretation/AFST_BP_v12.1.pdf' },
+      'Antifungal ECOFFs and clinical breakpoints (yeasts, moulds, dermatophytes)': { version:'v6.0', valid:'2025-06-26', file:'EUCAST/AFST/Clinical Breakpoints and Interpretation/AFST_BP-ECOFF_v6.0_non-protected_Final_26_Jun_2025_MaCA.pdf' }
+    },
+    'AFST — Methodology and Instructions': {
+      'E.Def 7.4 — Yeasts broth microdilution (definitive revised)': { version:'E.Def 7.4 (rev.2023)', file:'EUCAST/AFST/Methodology and Instructions/EUCAST_E.Def_7.4_Yeast_definitive_revised_2023.pdf' },
+      'E.Def 9.4 — Moulds broth microdilution': { version:'E.Def 9.4', file:'EUCAST/AFST/Methodology and Instructions/EUCAST_EDef_9.4_method_for_susceptibility_testing_of_moulds.pdf' },
+      'E.Def 10.3 — Agar screening method': { version:'E.Def 10.3', file:'EUCAST/AFST/Methodology and Instructions/EUCAST_EDef_10.3_agar_screening_method_final.pdf' },
+      'Dermatophyte AFST — microconidia-forming method': { date:'2020-09-08', file:'EUCAST/AFST/Methodology and Instructions/How_to_perform_antifungal_susceptibility_testing_of_microconidia-forming_dermatophytes_20200908.pdf' }
+    },
+    'AFST — Technical Notes on Antifungal Agents': {
+      'Fluconazole technical note': { file:'EUCAST/AFST/Technical Notes on Antifungal Agents/fluconazole_technical_note.pdf' },
+      'Moulds technical note (CMI 2008)': { file:'EUCAST/AFST/Technical Notes on Antifungal Agents/moulds_technical_note_CMI2008_14_982_081006.pdf' },
+      'Voriconazole technical note (CMI 2008)': { file:'EUCAST/AFST/Technical Notes on Antifungal Agents/voriconazole_technical_note_CMI2008_14_985_081006.pdf' }
+    },
+    'AFST — Guidance Docs': {
+      'Adopting EUCAST breakpoints for commercial tests': { file:'EUCAST/AFST/Guidance Docs/EUCAST_guidance_for_Adopting_eucast_breakpoints_for_commercial_tests.pdf' },
+      'Rare yeasts with no breakpoints': { date:'2024-06-19', file:'EUCAST/AFST/Guidance Docs/EUCAST_guidance_for_Rare_yeast_with_no_breakpoints_final_clean_19-06-2024.pdf' }
     }
   },
   // Map app data structures to the EUCAST document(s) that validate them.
@@ -2573,7 +2594,8 @@ const eucastCitations = {
     sirBreakpoints:     'Breakpoint tables v16.0 (zone diameters) — every agent checked & ok:true (2026-06-15)',
     expectedPhenotypes: 'Expected Resistant Phenotypes v1.2 + relevant Expert Rules (intrinsic/acquired resistance)',
     dconfigs:           'Detection of resistance mechanisms (2017) + MAST D-set IFUs (ESBL/AmpC/carbapenemase typing)',
-    fcPanels:           'Breakpoint tables v16.0 (agent selection per organism group)',
+    fcPanels_bacterial: 'Breakpoint tables v16.0 (agent selection per organism group)',
+    fcPanels_antifungal:'AFST Breakpoint tables v12.1 (valid 2026-04-10) — af_* and afr_* panels validated (2026-06-15)',
     abxClasses:         'Breakpoint tables v16.0 + agent-specific guidance notes',
     routineSets:        'Breakpoint tables v16.0 + QC tables v15.0',
     qcOrganisms:        'EUCAST QC tables v15.0 (routine + extended QC)'
@@ -2593,16 +2615,20 @@ const eucastCitations = {
    `reviewed:'—'` renders as "review date not set".
    ════════════════════════════════════════════════════════════════════ */
 const GUIDELINE_VERSIONS = {
-  _meta: { appData: 'v25', reviewed: '2026-06-15' },   // global app data version + last full review
+  _meta: { appData: 'v26', reviewed: '2026-06-15' },   // global app data version + last full review
   flow:    { lines:[{label:'EUCAST clinical breakpoints', version:'v16.0 (valid 2026-01-01)'},{label:'UK SMI', version:'B 41 i8.8 · ID/TP 2025'}], reviewed:'2026-06-15' },
   wound:   { lines:[{label:'EUCAST clinical breakpoints', version:'v16.0 (valid 2026-01-01)'},{label:'UK SMI', version:'B 11/B 14/B 17 · ID/TP 2025'}], reviewed:'2026-06-15' },
   bactid:  { lines:[{label:'UK SMI ID + TP series', version:'validated against committed issues'}], reviewed:'2026-06-15' },
   interp:  { lines:[{label:'EUCAST clinical breakpoints', version:'v16.0 (valid 2026-01-01)'},{label:'MAST D-set IFUs', version:'local'}], reviewed:'2026-06-15' },
   checker: { lines:[{label:'EUCAST clinical breakpoints', version:'v16.0 (valid 2026-01-01) — zone diameters validated'}], reviewed:'2026-06-15' },
   rules:   { lines:[{label:'EUCAST Expected Resistant Phenotypes', version:'v1.2 (2023-01-13)'},{label:'EUCAST Expert Rules', version:'Enterobacterales v3.3 (2024) · Staph/Strep/Entero/Pneumo (2025-11-09)'}], reviewed:'2026-06-15' },
-  myco:    { lines:[{label:'UK SMI ID 1', version:'Issue 4 (06.08.25)'},{label:'EUCAST antifungal breakpoints', version:'v10.0 (2020)+updates'}], reviewed:'—' },
+  myco:    { lines:[{label:'UK SMI ID 1 (dermatophyte identification)', version:'Issue 4 (06.08.25)'},{label:'UKHSA Mycology Ref Lab — Service User Handbook', version:'March 2023'},{label:'EUCAST AFST clinical breakpoints', version:'v12.1 (valid 2026-04-10)'},{label:'EUCAST E.Def 7.4 (yeasts) · E.Def 9.4 (moulds)', version:'rev.2023'}], reviewed:'2026-06-15' },
   plate:   { lines:[{label:'Schematic reference', version:'local media'},{label:'UK SMI specimen series', version:'B 41/B 11/B 14 + IFU'}], reviewed:'2026-06-15' },
-  virology:{ lines:[{label:'Assay IFUs + local SOP', version:'local'}], reviewed:'—' }
+  virology:{ lines:[{label:'Hologic Aptima Combo 2 assay (CT/NG)', version:'GBR EN (Panther TMA)'},{label:'Cepheid Xpert Xpress CoV-2/Flu/RSV plus IFU', version:'302-7085 Rev F (2025-08)'},{label:'Cepheid Xpert MTB/RIF IFU', version:'303-0942 Rev B (2024-05)'},{label:'UK SMI V series', version:'see smiCitations'}], reviewed:'2026-06-15' },
+  serology:{ lines:[{label:'Local laboratory SOP — test code & sendaway reference list', version:'local'},{label:'UK SMI V series (individual test indications)', version:'see smiCitations'}], reviewed:'2026-06-15' },
+  parasitology:{ lines:[{label:'CDC DPDx Parasites A–Z', version:'accessed 2026-06-15'},{label:'WHO Bench Aids for Diagnosis of Intestinal Parasites', version:'2nd edition (2019)'}], reviewed:'2026-06-15' },
+  blood:   { lines:[{label:'General pathology reference — NOT microbiology SMI scope', version:'reference-only'},{label:'Not within microbiology UKAS accreditation', version:'refer to Blood Science for accredited testing'}], reviewed:'2026-06-15' },
+  abx:     { lines:[{label:'EUCAST clinical breakpoints', version:'v16.0 (valid 2026-01-01)'},{label:'EUCAST agent-specific guidance docs', version:'see eucastCitations'}], reviewed:'2026-06-15' }
 };
 
 /* ════════════════════════════════════════════════════════════════════

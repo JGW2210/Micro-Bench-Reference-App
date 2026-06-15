@@ -1,12 +1,14 @@
 # EUCAST citation & validation record
 
 **Prepared:** 2026-06-15
-**Scope:** Antimicrobial susceptibility testing (AST) content of the Micro Bench
-Reference App — zone-diameter breakpoints, intrinsic/expected resistance,
-disc-set interpretation and antibiotic-class reference.
+**Scope:** Antimicrobial susceptibility testing (AST) and antifungal susceptibility
+testing (AFST) content of the Micro Bench Reference App — bacterial zone-diameter
+breakpoints, intrinsic/expected resistance, disc-set interpretation, antibiotic-class
+reference, and antifungal agent panels.
 **Authority:** EUCAST (European Committee on Antimicrobial Susceptibility
-Testing). AST is **EUCAST scope, not UK SMI** — the UK SMIs cover specimen
+Testing). AST/AFST is **EUCAST scope, not UK SMI** — the UK SMIs cover specimen
 processing and identification; see the companion `SMI-CITATIONS.md`.
+**Companion:** `MYCOLOGY-VIROLOGY-CITATIONS.md` covers AFST + mycology validation detail.
 
 This document is the audit trail for ISO 15189 / UKAS traceability: it records
 which committed EUCAST source each data structure is validated against, the
@@ -136,14 +138,32 @@ content was found **consistent** and required no value corrections. Key checks:
 
 ---
 
-## 4. Traceability map (data structure → EUCAST source)
+## 4. AFST committed library (added 2026-06-15)
+
+Antifungal documents committed under `EUCAST/AFST/`. Full citation detail in
+`MYCOLOGY-VIROLOGY-CITATIONS.md`.
+
+| Document | Version / date | Path |
+|---|---|---|
+| AFST clinical breakpoints (yeasts & Aspergillus) | **v12.1**, valid 2026-04-10 | `EUCAST/AFST/Clinical Breakpoints and Interpretation/AFST_BP_v12.1.pdf` |
+| AFST MIC/ECOFF overview (yeasts, moulds, dermatophytes) | **v6.0**, valid 2025-06-26 | `EUCAST/AFST/Clinical Breakpoints and Interpretation/AFST_BP-ECOFF_v6.0_...pdf` |
+| E.Def 7.4 — Yeasts BMD (rev. 2023) | rev.2023 | `EUCAST/AFST/Methodology and Instructions/…` |
+| E.Def 9.4 — Moulds BMD | current | `EUCAST/AFST/Methodology and Instructions/…` |
+| E.Def 10.3 — Agar screening | current | `EUCAST/AFST/Methodology and Instructions/…` |
+| Fluconazole / Voriconazole / Moulds technical notes | CMI 2008 | `EUCAST/AFST/Technical Notes on Antifungal Agents/…` |
+
+---
+
+## 5. Traceability map (data structure → EUCAST source)
 
 | App data | Validated against |
 |---|---|
 | `sirBreakpoints` | Breakpoint tables v16.0 (zone diameters) — every agent `ok:true` (2026-06-15) |
 | `expectedPhenotypes` | Expected Resistant Phenotypes v1.2 + relevant Expert Rules |
 | `dconfigs` (D63/D68/D69/D73) | Detection of resistance mechanisms (2017) + MAST D-set IFUs |
-| `fcPanels` (disc panels) | Breakpoint tables v16.0 (agent selection per organism group) |
+| `fcPanels` — bacterial disc panels | Breakpoint tables v16.0 (agent selection per organism group) |
+| `fcPanels` — `af_*` antifungal panels | AFST Breakpoint Tables v12.1 (valid 2026-04-10) — validated 2026-06-15 |
+| `fcPanels` — `afr_*` expected antifungal resistance | AFST BP v12.1 — key resistance claims confirmed 2026-06-15 |
 | `abxClasses` | Breakpoint tables v16.0 + agent-specific guidance notes |
 | `routineSets` / `qcOrganisms` | QC tables v15.0 (routine + extended QC) |
 
@@ -152,16 +172,19 @@ app footer for each view.
 
 ---
 
-## 5. Sign-off
+## 6. Sign-off
 
 | Item | Status |
 |---|---|
 | Zone breakpoints transcribed & checked vs v16.0 | ✅ Done 2026-06-15 |
 | Expected resistant phenotypes checked vs v1.2 | ✅ Done 2026-06-15 |
+| AFST `af_*` / `afr_*` panels checked vs v12.1 | ✅ Done 2026-06-15 |
+| `af_method` version string updated v10.0 → v12.1 | ✅ Done 2026-06-15 |
 | `data.js` syntax (`node --check`) | ✅ Pass |
 | Data-validation suite (`npm test`) | ✅ Pass |
 | Local microbiologist confirmation vs lab SOP | ☐ **Required before bench use** |
-| Re-check on next annual EUCAST release | ☐ Recurring |
+| Re-check on next annual EUCAST release (bacterial BP) | ☐ Recurring |
+| Re-check on next EUCAST AFST update | ☐ Recurring |
 
 > The app remains a reference aid. Before any result is released, breakpoints must
 > be confirmed against the laboratory's own validated SOP, and re-checked whenever
