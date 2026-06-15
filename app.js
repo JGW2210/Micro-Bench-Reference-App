@@ -2349,6 +2349,13 @@ const BACTID_REFS = smiRefIndex(bactIdOrganisms.flatMap(o=>o.smi||[]));
 function plateRefs(){ return plateRefs._ || (plateRefs._ = smiRefIndex(Object.values(smiCitations.mediaByKey).flat())); }
 function flowRefs(){ return flowRefs._ || (flowRefs._ = smiRefIndex(['B 41','ID 7','ID 4','ID 16','ID 17','TP 8','TP 10','TP 26','TP 25','TP 5'])); }
 function woundRefs(){ return woundRefs._ || (woundRefs._ = smiRefIndex(['B 11','B 14','B 17','B 42','B 44','ID 7','ID 4','ID 16','ID 17','ID 12','ID 25','ID 14'])); }
+function appendSmiRefs(viewId, codes, opts){
+  const view=document.getElementById('view-'+viewId);
+  if(!view || view.querySelector(':scope > .smi-refs-block')) return;
+  view.insertAdjacentHTML('beforeend', smiFootnotesHtml(smiRefIndex(codes), opts));
+}
+// Stable numbered index for the bact-ID finder (does not renumber on filter).
+const BACTID_REFS = smiRefIndex(bactIdOrganisms.flatMap(o=>o.smi||[]));
 
 function bidVal(v){return Array.isArray(v)?v:[v];}
 function bidPretty(v){return bidVal(v).filter(x=>x && x !== 'not-recorded').map(x=>String(x).replace('GP','Gram +').replace('GN','Gram −').replace('GV','Gram variable').replace('co2','CO₂').replace('anaerobic','AnO₂').replace('facultative','facultative').replace('microaerophilic','microaerophilic').replace('fermentative','fermentative').replace('oxidative','oxidative').replace('asaccharolytic','asaccharolytic')).join(' / ');}
@@ -2405,6 +2412,13 @@ appendSmiRefs('flow', flowRefs(),
   {note:'Each pathway title is marked [n] against the urine specimen SMI. The sensitivity panels shown in the flows are EUCAST clinical breakpoints, not SMI.'});
 appendSmiRefs('wound', woundRefs(),
   {note:'Each pathway title is marked [n] against the wound/pus/deep-tissue specimen SMIs. The sensitivity panels shown in the flows are EUCAST clinical breakpoints, not SMI.'});
+// UK SMI reference footnotes on the other bacteriology views.
+appendSmiRefs('plate', Object.values(smiCitations.mediaByKey).flat(),
+  {note:'Plate media are cited to the specimen-processing SMI for each context. Chromogenic/selective colour rules (Uriselect, Brilliance MRSA, XLD, TCBS, SMAC) are the manufacturer IFU, not SMI.'});
+appendSmiRefs('flow', ['B 41','ID 7','ID 4','ID 16','ID 17','TP 8','TP 10','TP 26','TP 25','TP 5'],
+  {note:'Urine specimen pathway and organism identification. The sensitivity panels shown in the flows are EUCAST clinical breakpoints, not SMI.'});
+appendSmiRefs('wound', ['B 11','B 14','B 17','B 42','B 44','ID 7','ID 4','ID 16','ID 17','ID 12','ID 25','ID 14'],
+  {note:'Wound / pus / deep-tissue specimen pathways and organism identification. The sensitivity panels shown in the flows are EUCAST clinical breakpoints, not SMI.'});
 renderBloodScience();
 
 // ─── Global search ─────────────────────────────
