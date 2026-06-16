@@ -661,7 +661,7 @@ function showRulesOrg(id){
   if(typeof pushRecent === 'function') pushRecent('rules', id, o.name);
   const panel=document.getElementById('rules-detail'); if(!panel)return;
   panel.innerHTML = `<button class="detail-close" onclick="hideRulesOrg()" aria-label="Close" title="Close (Esc)">×</button>`+
-    `<div class="rules-detail-head"><h3>${o.name}</h3><span class="rules-grp-tag">${rulesGroupLabels[o.group]||o.group}</span></div>`+
+    `<div class="rules-detail-head"><h3>${o.name}${typeof eucastCiteSup==='function'?eucastCiteSup(rulesEucastKeys(o), viewEucastIndex('rules')):''}</h3><span class="rules-grp-tag">${rulesGroupLabels[o.group]||o.group}</span></div>`+
     (o.aka?`<div class="rules-aka">${o.aka}</div>`:'')+
     `<div class="rules-detail-title"><i class="ti ti-ban" aria-hidden="true"></i> Expected resistant — never report susceptible</div>`+
     `<div class="rules-resist-grid">${o.resist.map(r=>`<span class="rules-resist-pill">${r}</span>`).join('')}</div>`+
@@ -947,8 +947,10 @@ function renderOrgFlowGeneric(opts){
   if(!flow)return;
   const el=document.getElementById(opts.targetId);
   const ncols=flow.cols.length;
-  const labelCite = (opts.refsNum && typeof smiCiteSup==='function')
-    ? smiCiteSup(opts.labelCodes||[], opts.refsNum) : '';
+  const labelCite = ((opts.refsNum && typeof smiCiteSup==='function')
+    ? smiCiteSup(opts.labelCodes||[], opts.refsNum) : '')
+    + ((opts.eucastView && typeof eucastCiteSup==='function')
+      ? eucastCiteSup(['bp'], viewEucastIndex(opts.eucastView)) : '');
   let html=`<div style="border-top:0.5px solid var(--color-border-tertiary);margin-top:10px;padding-top:10px">`;
   html+=`<div style="font-size:11px;font-weight:500;color:var(--color-text-secondary);margin-bottom:8px">${flow.label}${labelCite}</div>`;
   if(ncols>1){
@@ -986,19 +988,19 @@ function clearOrgGeneric(opts){
 }
 
 function showOrgFlow(){
-  renderOrgFlowGeneric({selectId:'org-select',flows:orgFlows,targetId:'org-flow',btnId:'org-go-btn',minWidth:110,refsNum:flowRefs().num,labelCodes:['B 41']});
+  renderOrgFlowGeneric({selectId:'org-select',flows:orgFlows,targetId:'org-flow',btnId:'org-go-btn',minWidth:110,refsNum:flowRefs().num,labelCodes:['B 41'],eucastView:'flow'});
 }
 function clearOrg(){
   clearOrgGeneric({selectId:'org-select',targetId:'org-flow',btnId:'org-go-btn'});
 }
 function showOrgFlowWound(){
-  renderOrgFlowGeneric({selectId:'org-select-wound',flows:orgFlowsWound,targetId:'org-flow-wound',btnId:'org-go-btn-wound',minWidth:130,refsNum:woundRefs().num,labelCodes:['B 11','B 14','B 17']});
+  renderOrgFlowGeneric({selectId:'org-select-wound',flows:orgFlowsWound,targetId:'org-flow-wound',btnId:'org-go-btn-wound',minWidth:130,refsNum:woundRefs().num,labelCodes:['B 11','B 14','B 17'],eucastView:'wound'});
 }
 function clearOrgWound(){
   clearOrgGeneric({selectId:'org-select-wound',targetId:'org-flow-wound',btnId:'org-go-btn-wound'});
 }
 function showOrgFlowCsf(){
-  renderOrgFlowGeneric({selectId:'org-select-csf',flows:orgFlowsCsf,targetId:'org-flow-csf',btnId:'org-go-btn-csf',minWidth:130,refsNum:csfRefs().num,labelCodes:['B 27']});
+  renderOrgFlowGeneric({selectId:'org-select-csf',flows:orgFlowsCsf,targetId:'org-flow-csf',btnId:'org-go-btn-csf',minWidth:130,refsNum:csfRefs().num,labelCodes:['B 27'],eucastView:'csf'});
 }
 function clearOrgCsf(){
   clearOrgGeneric({selectId:'org-select-csf',targetId:'org-flow-csf',btnId:'org-go-btn-csf'});
@@ -1019,7 +1021,7 @@ function toggleReportingRules(){
 function showDetail(key){
   const p=fcPanels[key];if(!p)return;
   const d=document.getElementById('detail-fc');
-  document.getElementById('d-title').textContent=p.title;
+  document.getElementById('d-title').innerHTML=escapeAttr(p.title)+(typeof panelCiteSup==='function'?panelCiteSup(key):'');
   document.getElementById('d-sub').textContent=p.sub;
   const cls=p.reagents?'reagent-pill':'abx-pill';
   document.getElementById('d-abx').innerHTML=p.abx.map(a=>`<span class="${cls}">${a}</span>`).join('');
@@ -2494,17 +2496,116 @@ function appendEucastRefs(viewId, keys, opts){
   view.insertAdjacentHTML('beforeend', eucastFootnotesHtml(eucastRefIndex(keys), opts));
 }
 // Per-view EUCAST document sets (ordered → letters). Curated to the documents
-// each AST view's content is actually validated against.
+// each AST view's content is actually validated against. `base` is the floor
+// (methodology/context docs); the per-view list is then expanded to the UNION
+// of base + every doc cited by a panel reachable in that view (computeViewEucastKeys),
+// so an inline [a] tag always resolves to a letter shown in that view's box.
 const EUCAST_VIEW_REFS = {
-  flow:   { keys:['bp','disk','read','atu','nobp'], note:'The urine sensitivity panels and zone interpretation are EUCAST clinical breakpoints; conditional-release/reporting logic follows the local SOP.' },
-  wound:  { keys:['bp','disk','read','rmech','er_entero','er_staph','anaero','bcc'], note:'Wound/pus/deep-tissue panels are EUCAST; resistance-mechanism work (ESBL/AmpC/carbapenemase) and the expert rules drive the reflex and suppression logic.' },
-  csf:    { keys:['bp','disk','read','rmech','er_pneumo','er_haem'], note:'CSF panels use the EUCAST meningitis breakpoints where they differ from other sites; all CSF results are consultant-authorised.' },
-  interp: { keys:['bp','rmech','esbl','er_entero'], note:'The D-set interpreter logic follows the EUCAST resistance-mechanism detection guidance and the MAST disc-set IFUs.' },
-  checker:{ keys:['bp','disk','read','atu'], note:'Zone-diameter S/I/R thresholds are transcribed from the EUCAST breakpoint tables and disk-diffusion method.' },
-  rules:  { keys:['erp','esp','ie','er_entero','er_staph','er_strep','er_entc','er_pneumo','er_haem','er_mor','er_coryne','er_salm'], note:'Intrinsic resistance and expected phenotypes are taken from the EUCAST Expected Phenotypes tables and the organism-specific Expert Rules.' },
-  abx:    { keys:['bp','amino','coli','cefid','sir','nobp'], note:'Agent breakpoints and agent-specific guidance (aminoglycosides, colistin, cefiderocol) are EUCAST.' },
-  myco:   { keys:['afst_bp','afst_yeast','afst_mould'], note:'Antifungal susceptibility (AFST) breakpoints and methods are EUCAST AFST; morphological identification is UK SMI / atlas-based.' }
+  flow:   { base:['bp','disk','read','atu','nobp'], note:'The urine sensitivity panels and zone interpretation are EUCAST clinical breakpoints; conditional-release/reporting logic follows the local SOP.' },
+  wound:  { base:['bp','disk','read','rmech'], note:'Wound/pus/deep-tissue panels are EUCAST; resistance-mechanism work (ESBL/AmpC/carbapenemase) and the expert rules drive the reflex and suppression logic.' },
+  csf:    { base:['bp','disk','read','rmech'], note:'CSF panels use the EUCAST meningitis breakpoints where they differ from other sites; all CSF results are consultant-authorised.' },
+  interp: { base:['bp','rmech','esbl'], note:'The D-set interpreter logic follows the EUCAST resistance-mechanism detection guidance and the MAST disc-set IFUs.' },
+  checker:{ base:['bp','disk','read','atu'], note:'Zone-diameter S/I/R thresholds are transcribed from the EUCAST breakpoint tables and disk-diffusion method.' },
+  rules:  { base:['erp','esp','ie','er_entero','er_staph','er_strep','er_entc','er_pneumo','er_haem','er_mor','er_coryne','er_salm'], note:'Intrinsic resistance and expected phenotypes are taken from the EUCAST Expected Phenotypes tables and the organism-specific Expert Rules.' },
+  abx:    { base:['bp','amino','coli','cefid','sir','nobp'], note:'Agent breakpoints and agent-specific guidance (aminoglycosides, colistin, cefiderocol) are EUCAST.' },
+  myco:   { base:['afst_bp','afst_yeast','afst_mould'], note:'Antifungal susceptibility (AFST) breakpoints and methods are EUCAST AFST; morphological identification is UK SMI / atlas-based.' }
 };
+
+// ── Citation coverage engine ─────────────────────────────────────────────
+// Single source of truth mapping any fcPanel → the EUCAST/SMI documents it
+// cites, plus which panels are reachable in each view. Drives both the inline
+// [a]/[n] tags and the per-view reference boxes so the two can never disagree.
+const EUCAST_ORDER = Object.keys(EUCAST_DOCS);                  // canonical letter order
+const canonEucast = keys => Array.from(new Set(keys)).filter(k=>EUCAST_DOCS[k])
+  .sort((a,b)=>EUCAST_ORDER.indexOf(a)-EUCAST_ORDER.indexOf(b));
+// Reagent / identification panels → the UK SMI ID/TP documents they rest on
+// (codes taken from the bactId SMI map). Each view's SMI box is unioned with the
+// codes of the reagent panels reachable in it (smiRefIndexForView), so every tag
+// resolves to a number shown in that page's box.
+const REAGENT_SMI = {
+  reagent_staph:['ID 7','TP 8','TP 10'], reagent_pseudo:['ID 17','TP 26'], reagent_proteus:['ID 16'],
+  w_haem_id:['ID 12','TP 38'], w_pneumo_id:['ID 4','TP 25','TP 5'], w_anaerobe_id:['ID 25','ID 14'],
+  w_acine_id:['ID 17','TP 26'], w_aero_id:['ID 19','TP 26'], w_steno_id:['ID 17','TP 26'],
+  w_kin_id:['ID 12','TP 26'], w_topical_id:['B 11','B 14'], w_meningo_id:['ID 6','TP 26'],
+  w_gono_id:['ID 6','TP 26'], w_list_id:['ID 3'], w_gpb_id:['ID 2'], w_mor_id:['ID 11','TP 26'],
+  w_past_id:['ID 13','TP 26'], w_actino_id:['ID 15'], w_burk_id:['ID 17','TP 26']
+};
+// Governance / referral cards cite the local SOP (not an SMI/EUCAST document) so
+// they carry no [n]/[a] tag by design.
+const GOVERNANCE_PANELS = new Set(['w_meningo_csf','w_gono_refer']);
+// EUCAST docs a non-reagent (AST) panel cites — base breakpoint+method, refined
+// by what the panel is actually about (resistance mechanisms, anaerobes, etc.).
+function panelEucastKeys(key, p){
+  if(!p || p.reagents || /^fx_|^af/.test(key) || /^viro_/.test(key)) return [];
+  const out=new Set(['bp','disk','read']);
+  const hay=((p.title||'')+' '+(p.sub||'')+' '+(p.abx||[]).join(' ')+' '+(p.notes||'')).toLowerCase();
+  if(/esbl|ampc|amp c|carbapenemase|\bcpe\b|d68|d69|d63|d73|metallo|\bmbl\b|porin|kpc|oxa-48|carbapenem/.test(hay) || key==='d73fc') out.add('rmech');
+  if(/confirm[a-z ]*esbl|esbl[a-z ]*confirm/.test(hay)) out.add('esbl');
+  if(/anaerob/.test(hay) || /anaerobe/.test(key)) out.add('anaero');
+  if(/burkholderia|cepacia/.test(hay) || /^w_burk/.test(key)) out.add('bcc');
+  if(/colistin/.test(hay)) out.add('coli');
+  if(/cefiderocol/.test(hay) || key==='ur4') out.add('cefid');
+  return [...out];
+}
+function panelSmiCodes(key, p){ return (p && p.reagents && REAGENT_SMI[key]) ? REAGENT_SMI[key].slice() : []; }
+// EUCAST docs an intrinsic-resistance (rules) organism cites: the expected-
+// phenotype tables + IE guidance, plus the organism-specific Expert Rules.
+function rulesEucastKeys(o){
+  const out=['erp','esp','ie'];
+  const n=((o.name||'')+' '+(o.aka||'')).toLowerCase();
+  if(/salmonella/.test(n)) out.push('er_salm');
+  else if(o.group==='gnr') out.push('er_entero');
+  if(/staph/.test(n)) out.push('er_staph');
+  if(/strep|pyogenes|agalactiae|viridans/.test(n)) out.push('er_strep');
+  if(/enterococc/.test(n)) out.push('er_entc');
+  if(/pneumonia/.test(n)) out.push('er_pneumo');
+  if(/haemophilus/.test(n)) out.push('er_haem');
+  if(/moraxella/.test(n)) out.push('er_mor');
+  if(/coryneb/.test(n)) out.push('er_coryne');
+  return out;
+}
+
+// Panels reachable in each AST view = static cards on the page + every card in
+// that view's organism-flow dropdown.
+function flowCardKeys(flows){ const s=new Set(); Object.values(flows||{}).forEach(f=>(f.cols||[]).forEach(c=>(c.cards||[]).forEach(card=>s.add(card.key)))); return s; }
+const VIEW_PANELS = {
+  flow:  new Set([...['reagent_proteus','reagent_pseudo','reagent_staph','gp','in','gp1','in1','ur2','ur4','mics'], ...flowCardKeys(typeof orgFlows!=='undefined'?orgFlows:{})]),
+  wound: new Set([...['reagent_proteus','reagent_pseudo','reagent_staph','coli1','coli2','coli3','mero_mic'], ...flowCardKeys(typeof orgFlowsWound!=='undefined'?orgFlowsWound:{})]),
+  csf:   new Set([...flowCardKeys(typeof orgFlowsCsf!=='undefined'?orgFlowsCsf:{})]),
+  interp:new Set(['d73fc'])
+};
+// Final per-view EUCAST key list = base ∪ (docs cited by reachable panels), canon-ordered.
+function computeViewEucastKeys(view){
+  const cfg=EUCAST_VIEW_REFS[view]; if(!cfg) return [];
+  const keys=new Set(cfg.base);
+  (VIEW_PANELS[view]||[]).forEach(k=>panelEucastKeys(k, fcPanels[k]).forEach(d=>keys.add(d)));
+  return canonEucast([...keys]);
+}
+const EUCAST_VIEW_KEYS = {};
+Object.keys(EUCAST_VIEW_REFS).forEach(v=>{ EUCAST_VIEW_KEYS[v]=computeViewEucastKeys(v); });
+const _eucastIdxCache={};
+function viewEucastIndex(view){ return _eucastIdxCache[view] || (_eucastIdxCache[view]=eucastRefIndex(EUCAST_VIEW_KEYS[view]||[])); }
+const VIEW_SMI_INDEX = { flow:()=>flowRefs(), wound:()=>woundRefs(), csf:()=>csfRefs(), plate:()=>plateRefs(), bactid:()=>BACTID_REFS };
+function viewSmiIndex(view){ const f=VIEW_SMI_INDEX[view]; return f?f():null; }
+// Which AST view a panel "belongs to" — used to pick the right letter index when
+// a panel is opened from a context (search/index) that has no reference box.
+function panelHomeView(key){
+  if(EUCAST_VIEW_KEYS[curView] && (VIEW_PANELS[curView]&&VIEW_PANELS[curView].has(key))) return curView;
+  if((VIEW_PANELS.csf||new Set()).has(key) || /^csf_/.test(key)) return 'csf';
+  if((VIEW_PANELS.wound||new Set()).has(key) || /^coli|^w_|^mero_mic/.test(key)) return 'wound';
+  if((VIEW_PANELS.flow||new Set()).has(key)) return 'flow';
+  if(key==='d73fc') return 'interp';
+  return 'flow';
+}
+// Build the combined [n][a] citation markup for a panel's detail header.
+function panelCiteSup(key){
+  const p=fcPanels[key]; if(!p) return '';
+  const view=panelHomeView(key);
+  const smiIdx=viewSmiIndex(view), eucIdx=viewEucastIndex(view);
+  const smi = smiIdx ? smiCiteSup(panelSmiCodes(key,p), smiIdx.num) : '';
+  const euc = eucIdx ? eucastCiteSup(panelEucastKeys(key,p), eucIdx) : '';
+  return smi+euc;
+}
 function appendSmiRefs(viewId, idx, opts){
   const view=document.getElementById('view-'+viewId);
   if(!view || view.querySelector(':scope > .smi-refs-block')) return;
@@ -2516,9 +2617,14 @@ const BACTID_REFS = smiRefIndex(bactIdOrganisms.flatMap(o=>o.smi||[]));
 // footnote list on each view so the numbers line up. Hoisted, lazily cached
 // functions so they are safe to call from the plate render that runs earlier.
 function plateRefs(){ return plateRefs._ || (plateRefs._ = smiRefIndex(Object.values(smiCitations.mediaByKey).flat())); }
-function flowRefs(){ return flowRefs._ || (flowRefs._ = smiRefIndex(['B 41','ID 7','ID 4','ID 16','ID 17','TP 8','TP 10','TP 26','TP 25','TP 5'])); }
-function woundRefs(){ return woundRefs._ || (woundRefs._ = smiRefIndex(['B 11','B 14','B 17','B 42','B 44','ID 7','ID 4','ID 16','ID 17','ID 12','ID 25','ID 14'])); }
-function csfRefs(){ return csfRefs._ || (csfRefs._ = smiRefIndex(['B 27','B 41','ID 7','ID 4','ID 16','ID 17'])); }
+// SMI codes contributed by the reagent/ID panels reachable in a view — unioned
+// into the view's base list so every reagent [n] tag resolves in the box.
+function reagentSmiForView(view){
+  const out=[]; (VIEW_PANELS[view]||[]).forEach(k=>{ if(REAGENT_SMI[k]) out.push(...REAGENT_SMI[k]); }); return out;
+}
+function flowRefs(){ return flowRefs._ || (flowRefs._ = smiRefIndex(['B 41','ID 7','ID 4','ID 16','ID 17','TP 8','TP 10','TP 26','TP 25','TP 5', ...reagentSmiForView('flow')])); }
+function woundRefs(){ return woundRefs._ || (woundRefs._ = smiRefIndex(['B 11','B 14','B 17','B 42','B 44','ID 7','ID 4','ID 16','ID 17','ID 12','ID 25','ID 14', ...reagentSmiForView('wound')])); }
+function csfRefs(){ return csfRefs._ || (csfRefs._ = smiRefIndex(['B 27','B 41','ID 7','ID 4','ID 16','ID 17', ...reagentSmiForView('csf')])); }
 
 function bidVal(v){return Array.isArray(v)?v:[v];}
 function bidPretty(v){return bidVal(v).filter(x=>x && x !== 'not-recorded').map(x=>String(x).replace('GP','Gram +').replace('GN','Gram −').replace('GV','Gram variable').replace('co2','CO₂').replace('anaerobic','AnO₂').replace('facultative','facultative').replace('microaerophilic','microaerophilic').replace('fermentative','fermentative').replace('oxidative','oxidative').replace('asaccharolytic','asaccharolytic')).join(' / ');}
@@ -2577,7 +2683,15 @@ appendSmiRefs('wound', woundRefs(),
   {note:'Each pathway title is marked [n] against the wound/pus/deep-tissue specimen SMIs. The sensitivity panels shown in the flows are EUCAST clinical breakpoints, not SMI.'});
 // EUCAST [a] reference lists on the AST-relevant views (companion to the SMI [n]
 // lists; collapsed by default). Appended after the SMI blocks so they stack.
-Object.entries(EUCAST_VIEW_REFS).forEach(([viewId,cfg])=>appendEucastRefs(viewId, cfg.keys, {note:cfg.note}));
+Object.entries(EUCAST_VIEW_REFS).forEach(([viewId,cfg])=>appendEucastRefs(viewId, EUCAST_VIEW_KEYS[viewId], {note:cfg.note}));
+// Inline EUCAST marker on the antibiotics-view intro (the whole view is EUCAST
+// breakpoint/agent-guidance data) and the mycology antifungal section.
+(function(){
+  const intro=document.querySelector('#view-abx .abx-class-intro');
+  if(intro && typeof eucastCiteSup==='function') intro.insertAdjacentHTML('beforeend',' '+eucastCiteSup(['bp'],viewEucastIndex('abx')));
+  const afst=document.querySelector('#view-myco #myco-tab-afst, #view-myco [data-myco-tab="afst"]');
+  if(afst && typeof eucastCiteSup==='function') afst.insertAdjacentHTML('beforeend',' '+eucastCiteSup(['afst_bp'],viewEucastIndex('myco')));
+})();
 renderBloodScience();
 
 // ─── Global search ─────────────────────────────
@@ -3319,7 +3433,8 @@ function renderCheckerRows(){
     host.innerHTML = '<div class="sir-placeholder">Pick an organism group above to load its agents, then type a measured zone diameter against each one.</div>';
     return;
   }
-  if(titleEl) titleEl.textContent = g.name + ' — measured zones';
+  if(titleEl) titleEl.innerHTML = escapeAttr(g.name + ' — measured zones')
+    + (typeof eucastCiteSup==='function' ? eucastCiteSup(['bp','disk'], viewEucastIndex('checker')) : '');
   host.innerHTML = g.agents.map((a,i)=>{
     const key = g.id+':'+i;
     const val = checkerZones[key];
