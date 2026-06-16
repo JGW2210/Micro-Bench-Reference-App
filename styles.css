@@ -531,6 +531,11 @@ html.cursor-custom,html.cursor-custom *{cursor:none!important}
 .dset-pill:hover{transform:translateY(-1px);box-shadow:0 0 14px -6px color-mix(in srgb,var(--cat) 70%,transparent)}
 .dset-pill.d68{--cat:var(--cat-amber)} .dset-pill.d69{--cat:var(--cat-blue)}
 .dset-pill.d63{--cat:var(--cat-purple)} .dset-pill.d73{--cat:var(--cat-red)}
+.dset-trig{list-style:none;margin:10px 0 0;padding:0;display:flex;flex-direction:column;gap:5px}
+.dset-trig li{line-height:1.45;padding-left:9px;border-left:2px solid var(--cat,var(--line-strong))}
+.dset-trig li.d68{--cat:var(--cat-amber)} .dset-trig li.d69{--cat:var(--cat-blue)}
+.dset-trig li.d63{--cat:var(--cat-purple)} .dset-trig li.d73{--cat:var(--cat-red)}
+.dset-trig b{color:var(--text);font-weight:600}
 
 /* ============================================================
    DETAIL PANEL  (#detail-fc)

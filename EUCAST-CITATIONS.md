@@ -1,6 +1,6 @@
 # EUCAST citation & validation record
 
-**Prepared:** 2026-06-15
+**Prepared:** 2026-06-15 · **Revised:** 2026-06-16 (guidance-doc citations + validation coverage)
 **Scope:** Antimicrobial susceptibility testing (AST) and antifungal susceptibility
 testing (AFST) content of the Micro Bench Reference App — bacterial zone-diameter
 breakpoints, intrinsic/expected resistance, disc-set interpretation, antibiotic-class
@@ -26,7 +26,7 @@ document titles.
 | Document | Version / date | File |
 |---|---|---|
 | Breakpoint tables for interpretation of MICs and zone diameters | **v16.0**, valid 2026-01-01 | `v_16.0_Breakpoint_Tables.pdf` |
-| Area of Technical Uncertainty (ATU) guidance | v2 (2020) | `Area_of_Technical_Uncertainty_-_guidance_v2_2020.pdf` |
+| Area of Technical Uncertainty (ATU) guidance | **v4 (2024)** (v2 2020 retained for history) | `Area_of_Technical_Uncertainty_-_guidance_v4_2024.pdf` |
 | Breakpoints in brackets | — | `Breakpoints_in_brackets.pdf` |
 | Recent changes in S/I/R reporting (to clinical colleagues) | 2021-07-09 | `To_clinical_colleagues_..._9_July2021.pdf` |
 | When there are no breakpoints | 2024-09-03 | `When_there_are_no_breakpoints_2024-09-03.pdf` |
@@ -58,10 +58,21 @@ document titles.
 | QC tables (routine + extended) | v15.0 | `v_15.0_EUCAST_QC_tables_routine_and_extended_QC.pdf` |
 | Anaerobe disk diffusion reading guide | v2.0 (2023) | `Disk_diffusion_Anaerobes_Reading_Guide_v_2.0_2023.pdf` |
 
-Agent-/organism-specific **Guidance Docs** (aminoglycosides, colistin, daptomycin,
-tigecycline, *S. maltophilia*, *B. cepacia*, *Legionella*, ESBL confirmation,
-cefiderocol, fosfomycin iv, topical agents, etc.) are committed under
-`EUCAST/Guidance Docs/` and cited per agent where relevant.
+Agent-/organism-specific **Guidance Docs** are committed under
+`EUCAST/Guidance Docs/` and, as of 2026-06-16, each is **individually cited**
+in `eucastCitations.documents['Guidance Docs']` (previously a single free-text
+note). The set covers: aminoglycosides, aminopenicillins, colistin (clinical +
+MIC determination), daptomycin (rev. 2025-12-02), tigecycline, *S. maltophilia*
+(v2 2024), *B. cepacia* complex, cefiderocol, *Legionella*, oral cephalosporins,
+topical agents, fosfomycin iv, ESBL confirmation, screening to detect/exclude
+resistance, intrinsic resistance / expected phenotypes (IE), cephalosporins for
+*S. aureus* (2026), direct testing, and the antimicrobial-abbreviations sheet.
+
+A new **`eucastCitations.agentGuidance`** map links the specific agents in
+`sirBreakpoints` and organisms in `expectedPhenotypes` to the guidance document
+that backs each one (e.g. cefoxitin/cefpodoxime screening → *Screening to detect
+and exclude resistance*; *S. maltophilia* → the v2 2024 guidance), giving
+per-agent traceability rather than a generic pointer.
 
 ---
 
@@ -166,9 +177,22 @@ Antifungal documents committed under `EUCAST/AFST/`. Full citation detail in
 | `fcPanels` — `afr_*` expected antifungal resistance | AFST BP v12.1 — key resistance claims confirmed 2026-06-15 |
 | `abxClasses` | Breakpoint tables v16.0 + agent-specific guidance notes |
 | `routineSets` / `qcOrganisms` | QC tables v15.0 (routine + extended QC) |
+| `eucastCitations.agentGuidance` | Agent/organism → committed Guidance Doc (per-agent traceability) |
 
 Per-view version stamps live in `GUIDELINE_VERSIONS` (`data.js`) and render in the
 app footer for each view.
+
+### Automated validation coverage (`tests/validate-data.js`)
+
+The data-validation suite now guards the EUCAST-driven structures so a future
+edit cannot silently break traceability:
+
+| Check | What it enforces |
+|---|---|
+| `validateSirBreakpoints` | Structure **plus** every agent `ok:true` (signed off vs v16.0), `note` is a string, and `screen` is `true` when present |
+| `validateExpectedPhenotypes` | Unique `id`, valid `group` (gnr/nf/gpc/anaerobe), non-empty `resist` and `rules` |
+| `validateEucastCitations` | `documents`/`appliesTo`/`agentGuidance` structure **and every cited `file` resolves to a committed PDF/sheet under `EUCAST/`** |
+| `validateGuidelineVersions` | Each view has `lines` with `label`+`version` and a `reviewed` stamp |
 
 ---
 
@@ -180,6 +204,14 @@ app footer for each view.
 | Expected resistant phenotypes checked vs v1.2 | ✅ Done 2026-06-15 |
 | AFST `af_*` / `afr_*` panels checked vs v12.1 | ✅ Done 2026-06-15 |
 | `af_method` version string updated v10.0 → v12.1 | ✅ Done 2026-06-15 |
+| Agent-specific Guidance Docs individually cited + `agentGuidance` map added | ✅ Done 2026-06-16 |
+| ATU guidance citation updated v2 (2020) → v4 (2024) | ✅ Done 2026-06-16 |
+| Validation added: `expectedPhenotypes`, `eucastCitations` (on-disk file check), `GUIDELINE_VERSIONS`; `sirBreakpoints` `ok:true` enforced | ✅ Done 2026-06-16 |
+| Urine + wound flowchart methodology reviewed (cards, panels, notes) | ✅ Done 2026-06-16 |
+| Fixed: `reagent_staph` cefoxitin MRSA cut-off ≤19mm → ≤21mm (matched v16.0 + `cefox_mhe`/glossary) | ✅ Done 2026-06-16 |
+| Corrected cefoxitin medium to EUCAST standard MH (no NaCl); clarified MH + 2% NaCl is the CLSI oxacillin screen | ✅ Done 2026-06-16 |
+| Added S. epidermidis/S. lugdunensis 27/27 CoNS detail; standardised topical "Fucidin" → "Fusidic acid"; flagged mupirocin zones for re-confirmation | ✅ Done 2026-06-16 |
+| Phenotypic screen selection: added per-D-set triggers (D68 cefpodoxime → D69 AmpC/cefoxitin · D63 ESBL confirm · D73 carbapenem-reduced) to urine + wound flows; tightened GP1/IN1 reflex triggers | ✅ Done 2026-06-16 |
 | `data.js` syntax (`node --check`) | ✅ Pass |
 | Data-validation suite (`npm test`) | ✅ Pass |
 | Local microbiologist confirmation vs lab SOP | ☐ **Required before bench use** |

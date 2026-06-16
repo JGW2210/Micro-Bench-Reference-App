@@ -31,8 +31,22 @@ const data = vm.runInNewContext(`${source}
   bactIdFields,
   bactIdOrganisms,
   GUIDELINE_VERSIONS,
-  sirBreakpoints
+  sirBreakpoints,
+  eucastCitations
 })`, {}, { filename: dataPath });
+
+// Index every file committed under EUCAST/ by basename, so citation entries can
+// be checked against what actually exists on disk (ISO 15189 traceability).
+const eucastDir = path.join(root, 'EUCAST');
+const eucastFiles = new Set();
+(function indexDir(dir) {
+  if (!fs.existsSync(dir)) return;
+  fs.readdirSync(dir, { withFileTypes: true }).forEach(entry => {
+    const full = path.join(dir, entry.name);
+    if (entry.isDirectory()) indexDir(full);
+    else eucastFiles.add(entry.name);
+  });
+})(eucastDir);
 
 const failures = [];
 
@@ -257,7 +271,70 @@ function validateSirBreakpoints() {
       assert(Number.isFinite(agent.R) && agent.R >= 0, `${where}.R must be a non-negative number`);
       assert(agent.S >= agent.R, `${where}.S must be greater than or equal to R`);
       assert(typeof agent.ok === 'boolean', `${where}.ok must be boolean`);
+      // Citation record claims every agent is transcribed & signed off vs v16.0.
+      assert(agent.ok === true, `${where} (${agent.agent}) is not signed off (ok:true) against EUCAST v16.0`);
+      assert(typeof agent.note === 'string', `${where} (${agent.agent}).note must be a string`);
+      if ('screen' in agent) assert(agent.screen === true, `${where} (${agent.agent}).screen must be true when present`);
     });
+  });
+}
+
+function validateExpectedPhenotypes() {
+  assert(Array.isArray(data.expectedPhenotypes) && data.expectedPhenotypes.length > 0, 'expectedPhenotypes must be a non-empty array');
+  const groups = new Set(['gnr', 'nf', 'gpc', 'anaerobe']);
+  valuesById(data.expectedPhenotypes || [], 'id');
+  (data.expectedPhenotypes || []).forEach((o, index) => {
+    const where = `expectedPhenotypes[${index}]${o && o.id ? ` (${o.id})` : ''}`;
+    assert(hasText(o.name), `${where} is missing name`);
+    assert(groups.has(o.group), `${where} has invalid group ${o.group}`);
+    assert(Array.isArray(o.resist) && o.resist.length > 0 && o.resist.every(hasText), `${where}.resist must be non-empty text values`);
+    assert(Array.isArray(o.rules) && o.rules.length > 0 && o.rules.every(hasText), `${where}.rules must be non-empty text values`);
+  });
+}
+
+function validateEucastCitations() {
+  const cites = data.eucastCitations;
+  assert(isObject(cites), 'eucastCitations must be an object');
+  assert(isObject(cites && cites.documents), 'eucastCitations.documents must be an object');
+  assert(isObject(cites && cites.appliesTo), 'eucastCitations.appliesTo must be an object');
+
+  // Every cited file (documents + agentGuidance) must exist on disk under EUCAST/.
+  const citedFiles = [];
+  (function collect(obj) {
+    Object.entries(obj || {}).forEach(([key, value]) => {
+      if (key === 'file' && typeof value === 'string') citedFiles.push(value);
+      else if (isObject(value)) collect(value);
+    });
+  })(cites.documents);
+  Object.values((cites && cites.agentGuidance) || {}).forEach(f => citedFiles.push(f));
+
+  assert(citedFiles.length > 0, 'eucastCitations cites no files');
+  citedFiles.forEach(file => {
+    assert(hasText(file), 'eucastCitations has an empty file citation');
+    if (hasText(file)) assert(eucastFiles.has(path.basename(file)), `eucastCitations references missing file on disk: ${file}`);
+  });
+
+  assert(isObject(cites.agentGuidance), 'eucastCitations.agentGuidance must be an object');
+  Object.entries(cites.agentGuidance || {}).forEach(([label, file]) => {
+    assert(hasText(label), 'eucastCitations.agentGuidance has an empty label');
+    assert(hasText(file), `eucastCitations.agentGuidance.${label} is missing a file`);
+  });
+}
+
+function validateGuidelineVersions() {
+  assert(isObject(data.GUIDELINE_VERSIONS), 'GUIDELINE_VERSIONS must be an object');
+  Object.entries(data.GUIDELINE_VERSIONS || {}).forEach(([viewId, cfg]) => {
+    if (viewId === '_meta') {
+      assert(hasText(cfg.appData), 'GUIDELINE_VERSIONS._meta.appData is missing');
+      assert(hasText(cfg.reviewed), 'GUIDELINE_VERSIONS._meta.reviewed is missing');
+      return;
+    }
+    assert(Array.isArray(cfg.lines) && cfg.lines.length > 0, `GUIDELINE_VERSIONS.${viewId}.lines must be non-empty`);
+    (cfg.lines || []).forEach((line, index) => {
+      assert(hasText(line.label), `GUIDELINE_VERSIONS.${viewId}.lines[${index}] is missing label`);
+      assert(hasText(line.version), `GUIDELINE_VERSIONS.${viewId}.lines[${index}] is missing version`);
+    });
+    assert(hasText(cfg.reviewed), `GUIDELINE_VERSIONS.${viewId} is missing reviewed`);
   });
 }
 
@@ -270,6 +347,9 @@ validateIndexes();
 validateBactId();
 validateSerology();
 validateSirBreakpoints();
+validateExpectedPhenotypes();
+validateEucastCitations();
+validateGuidelineVersions();
 
 if (failures.length) {
   console.error(`Data validation failed (${failures.length}):`);
