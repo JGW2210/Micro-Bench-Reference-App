@@ -1240,7 +1240,6 @@ html.cursor-custom,html.cursor-custom *{cursor:none!important}
 #view-notes .qc-table tbody tr:hover td,#view-notes .barcode-table tbody tr:hover td{background:var(--bg-elev-2)}
 #view-notes .qc-org{font-weight:600;color:var(--text);font-style:italic}
 #view-notes .qc-strain{font-family:var(--font-mono);font-size:10px;color:var(--text-dim)}
-#view-notes .qc-strain-mini{font-family:var(--font-mono);font-size:10px;color:var(--text-faint)}
 #view-notes .qc-plate{font-family:var(--font-mono);font-size:9px;letter-spacing:.02em;padding:2px 7px;border-radius:var(--border-radius-md);background:var(--bg-elev-2);border:1px solid var(--line);color:var(--text-dim);display:inline-block;margin:1px 2px 1px 0}
 
 .barcode-controls{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-top:10px}
