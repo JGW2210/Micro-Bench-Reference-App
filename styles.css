@@ -1579,20 +1579,42 @@ html[data-theme="light"] .barcode-date-input{color-scheme:light}
   .sir-input input{border:1px solid #888 !important;color:#000 !important;background:#fff !important}
   .sir-badge,.sir-tag,.sir-agent-name,.sir-agent-meta,.sir-note,.gs-label,.gs-ver,.gs-guidance,.checker-banner-progress{color:#000 !important}
   a,button{color:#000 !important}
-  .smi-refs-block{break-inside:avoid;border:1px solid #888 !important;background:#fff !important;color:#000 !important}
-  .smi-cite,.smi-ref-n,.smi-refs-title,.smi-refs li,.smi-ref-code{color:#000 !important}
+  .refs-collapsible{break-inside:avoid;border:1px solid #888 !important;background:#fff !important;color:#000 !important}
+  .refs-collapsible>.refs-body{display:block !important}            /* force-expand when printing */
+  .refs-chev{display:none !important}
+  .smi-cite,.smi-ref-n,.smi-refs-title,.smi-refs li,.smi-ref-code,
+  .eucast-cite,.eucast-ref-n,.eucast-refs li,.eucast-ref-code,.refs-summary{color:#000 !important}
 }
 
 /* ─── UK SMI numbered citations + validation footnotes ─── */
 .smi-cite{display:inline-block;font-size:.64em;font-weight:600;color:var(--accent);background:var(--accent-dim);border:1px solid var(--line-strong);border-radius:5px;padding:0 4px;vertical-align:super;margin-left:4px;cursor:help;font-family:var(--font-mono);line-height:1.6;letter-spacing:.02em;white-space:nowrap;}
-.smi-refs-block{margin:22px 0 6px;padding:14px 16px;border:1px solid var(--line);border-radius:12px;background:var(--bg-elev-2);font-size:13px;color:var(--text-dim);}
+.smi-refs-block{font-size:13px;color:var(--text-dim);}
 .smi-refs-title{margin:0 0 10px;font-size:12px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--accent);font-family:var(--font-mono);}
-.smi-refs{margin:0;padding-left:0;list-style:none;}
-.smi-refs li{margin:3px 0;line-height:1.45;color:var(--text);}
+.smi-refs,.eucast-refs{margin:0;padding-left:0;list-style:none;}
+.smi-refs li,.eucast-refs li{margin:3px 0;line-height:1.45;color:var(--text);}
 .smi-ref-n{color:var(--accent);font-weight:600;margin-right:5px;font-family:var(--font-mono);}
 .smi-ref-code{font-weight:700;color:var(--text);}
-.smi-ref-iss{color:var(--text-faint);}
+.smi-ref-iss,.eucast-ref-iss{color:var(--text-faint);}
 .smi-ref-note,.smi-ref-foot{margin:10px 0 0;font-size:12px;line-height:1.5;}
 .smi-ref-note{color:var(--text-dim);}
 .smi-ref-foot{color:var(--text-faint);}
 .smi-ref-foot code,.smi-ref-note code{font-family:var(--font-mono);color:var(--text-dim);}
+
+/* EUCAST [a] citations — companion to SMI, distinguished with a violet accent */
+.eucast-cite{display:inline-block;font-size:.64em;font-weight:600;color:var(--cat-purple);background:color-mix(in srgb,var(--cat-purple) 14%,transparent);border:1px solid color-mix(in srgb,var(--cat-purple) 50%,transparent);border-radius:5px;padding:0 4px;vertical-align:super;margin-left:4px;cursor:help;font-family:var(--font-mono);line-height:1.6;letter-spacing:.02em;white-space:nowrap;}
+.eucast-refs-block{font-size:13px;color:var(--text-dim);}
+.eucast-ref-n{color:var(--cat-purple);font-weight:600;margin-right:5px;font-family:var(--font-mono);}
+.eucast-ref-code{font-weight:700;color:var(--text);}
+
+/* Collapsible reference boxes (native <details>) — collapsed by default */
+.refs-collapsible{margin:22px 0 6px;border:1px solid var(--line);border-radius:12px;background:var(--bg-elev-2);overflow:hidden;}
+.refs-collapsible+.refs-collapsible{margin-top:10px;}
+.refs-summary{list-style:none;cursor:pointer;display:flex;align-items:center;gap:9px;padding:12px 16px;font-family:var(--font-mono);font-size:12px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:var(--accent);}
+.refs-summary::-webkit-details-marker{display:none;}
+.refs-summary:hover{background:color-mix(in srgb,var(--accent) 6%,transparent);}
+.refs-summary-meta{margin-left:auto;font-weight:400;text-transform:none;letter-spacing:0;font-size:11px;color:var(--text-faint);}
+.refs-chev{font-size:14px;transition:transform .18s ease;}
+.refs-collapsible[open] .refs-chev{transform:rotate(90deg);}
+.refs-body{padding:2px 16px 14px;}
+.eucast-refs-block .refs-summary{color:var(--cat-purple);}
+.eucast-refs-block .refs-summary:hover{background:color-mix(in srgb,var(--cat-purple) 8%,transparent);}
