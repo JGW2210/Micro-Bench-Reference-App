@@ -16,7 +16,8 @@ const data = vm.runInNewContext(`${source}
   routineSets,
   rareSets,
   anaerobeMICs,
-  qcOrganisms,
+  qcWeeklyOrganisms,
+  qcDailyOrganisms,
   parasites,
   oxoidDiscCodes,
   serologyTests,
@@ -151,11 +152,15 @@ function validateRoutineSets() {
     assert(Array.isArray(entry[1]), `rareSets[${index}] discs must be an array`);
   });
 
-  assert(Array.isArray(data.qcOrganisms) && data.qcOrganisms.length > 0, 'qcOrganisms must be non-empty');
-  data.qcOrganisms.forEach((org, index) => {
-    assert(hasText(org.name), `qcOrganisms[${index}] is missing name`);
-    assert(hasText(org.strain), `qcOrganisms[${index}] is missing strain`);
-    assert(Array.isArray(org.plates) && org.plates.every(hasText), `qcOrganisms[${index}].plates must be non-empty text values`);
+  [['qcWeeklyOrganisms', data.qcWeeklyOrganisms], ['qcDailyOrganisms', data.qcDailyOrganisms]].forEach(([label, list]) => {
+    assert(Array.isArray(list) && list.length > 0, `${label} must be non-empty`);
+    (list || []).forEach((org, index) => {
+      assert(hasText(org.name), `${label}[${index}] is missing name`);
+      assert(hasText(org.strain), `${label}[${index}] is missing strain`);
+      assert(Array.isArray(org.plates) && org.plates.every(hasText), `${label}[${index}].plates must be non-empty text values`);
+      assert(hasText(org.bcName), `${label}[${index}] is missing bcName`);
+      assert(hasText(org.bcStrain), `${label}[${index}] is missing bcStrain`);
+    });
   });
 
   const parasiteClasses = new Set(['protozoa', 'nematode', 'cestode', 'trematode', 'ectoparasite']);

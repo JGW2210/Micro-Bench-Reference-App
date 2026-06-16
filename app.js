@@ -1587,16 +1587,8 @@ function renderNotesView(){
   if(anaEl){
     anaEl.innerHTML = anaerobeMICs.map(a => `<span class="anaerobe-pill">${a}</span>`).join('');
   }
-  const qcBody = document.getElementById('qc-tbody');
-  if(qcBody){
-    qcBody.innerHTML = qcOrganisms.map(o => `
-      <tr>
-        <td><em class="qc-org">${o.name}</em></td>
-        <td><code class="qc-strain">${o.strain}</code></td>
-        <td>${o.plates.map(p => `<span class="qc-plate">${p}</span>`).join('')}</td>
-      </tr>
-    `).join('');
-  }
+  // QC platings now live alongside the barcode labels (rendered by
+  // renderBarcodes), so there is no standalone QC organisms table to fill here.
 }
 
 // Track which view to return to when notes is toggled off
@@ -1828,24 +1820,33 @@ function formatBarcodeDate(iso){
   return d + m + y.slice(2);
 }
 
-function makeBarcode(org, iso){
+// Weekly QC labels carry a 'W' marker, daily QC a 'D' — inserted between the
+// strain and the date so the two QC streams stay distinguishable on the bench.
+function makeBarcode(org, iso, suffix){
   const date = formatBarcodeDate(iso);
-  return org.bcName + org.bcStrain + (date ? '.' + date : '');
+  return org.bcName + org.bcStrain + (suffix || '') + (date ? '.' + date : '');
 }
 
-function renderBarcodes(){
-  const tbody = document.getElementById('barcode-tbody');
-  if(!tbody) return;
-  const iso = (document.getElementById('barcode-date') || {}).value || '';
-  tbody.innerHTML = qcOrganisms.map(o => {
-    const label = makeBarcode(o, iso);
+function barcodeRowsHtml(list, iso, suffix){
+  return list.map(o => {
+    const label = makeBarcode(o, iso, suffix);
     const escaped = label.replace(/"/g,'&quot;');
     return `<tr>
-      <td><em class="qc-org">${o.name}</em><span class="qc-strain-mini">${o.bcStrain}</span></td>
+      <td><em class="qc-org">${o.name}</em></td>
+      <td><code class="qc-strain">${o.strain}</code></td>
+      <td>${o.plates.map(p => `<span class="qc-plate">${p}</span>`).join('')}</td>
       <td><code class="barcode-label">${label}</code></td>
       <td class="barcode-action-cell"><button class="barcode-copy-btn" type="button" data-text="${escaped}" onclick="copyBarcode(this)" aria-label="Copy ${escaped}" title="Copy"><i class="ti ti-copy" aria-hidden="true"></i></button></td>
     </tr>`;
   }).join('');
+}
+
+function renderBarcodes(){
+  const iso = (document.getElementById('barcode-date') || {}).value || '';
+  const weekly = document.getElementById('barcode-tbody-weekly');
+  if(weekly) weekly.innerHTML = barcodeRowsHtml(qcWeeklyOrganisms, iso, 'W');
+  const daily = document.getElementById('barcode-tbody-daily');
+  if(daily) daily.innerHTML = barcodeRowsHtml(qcDailyOrganisms, iso, 'D');
 }
 
 function copyBarcode(btn){
@@ -1855,11 +1856,13 @@ function copyBarcode(btn){
   showCopiedFeedback(btn, true);
 }
 
-function copyAllBarcodes(){
+function copyAllBarcodes(kind){
   const iso = (document.getElementById('barcode-date') || {}).value || '';
-  const all = qcOrganisms.map(o => makeBarcode(o, iso)).join('\n');
+  const daily = kind === 'daily';
+  const list = daily ? qcDailyOrganisms : qcWeeklyOrganisms;
+  const all = list.map(o => makeBarcode(o, iso, daily ? 'D' : 'W')).join('\n');
   copyToClipboard(all);
-  const btn = document.getElementById('barcode-copy-all');
+  const btn = document.getElementById(daily ? 'barcode-copy-all-daily' : 'barcode-copy-all-weekly');
   if(btn) showCopiedFeedback(btn, false);
 }
 

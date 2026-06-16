@@ -1357,7 +1357,12 @@ const rareSets = [
 
 const anaerobeMICs = ['Augmentin','Clindamycin','Meropenem','Metronidazole','Penicillin G','Piperacillin/Tazobactam'];
 
-const qcOrganisms = [
+// Weekly QC — sensitivities bench reference strains and the media each should
+// be plated to (formerly labelled "daily QC"). Barcode labels carry a 'W'
+// marker. bcName/bcStrain are the short forms used by the barcode label
+// generator (single-letter genus + first 4 chars of species, or a known
+// abbreviation).
+const qcWeeklyOrganisms = [
   {name:'E. coli',       strain:'25922',              plates:['CBA','CLED'],  bcName:'E.coli', bcStrain:'25922'},
   {name:'P. aeruginosa', strain:'27853 / NCTC 12903', plates:['CBA','CLED'],  bcName:'P.aeru', bcStrain:'27853'},
   {name:'S. aureus',     strain:'29213',              plates:['CBA','CNA'],   bcName:'S.aure', bcStrain:'29213'},
@@ -1369,6 +1374,16 @@ const qcOrganisms = [
   {name:'VRE',           strain:'51299',              plates:['CBA'],         bcName:'VRE',    bcStrain:'51299'},
   {name:'K. pneumoniae', strain:'700603',             plates:['CBA'],         bcName:'K.pneu', bcStrain:'700603'},
   {name:'ESBL E. coli',  strain:'35218',              plates:['CBA'],         bcName:'ESBL',   bcStrain:'35218'}
+];
+
+// Daily QC — UTI plates on Orientation Chromogenic agar (ORI, the standard UTI
+// plate). Barcode labels carry a 'D' marker.
+const qcDailyOrganisms = [
+  {name:'E. coli',       strain:'25922', plates:['ORI'], bcName:'E.coli', bcStrain:'25922'},
+  {name:'E. faecalis',   strain:'29212', plates:['ORI'], bcName:'E.faec', bcStrain:'29212'},
+  {name:'K. pneumoniae', strain:'13440', plates:['ORI'], bcName:'K.pneu', bcStrain:'13440'},
+  {name:'P. mirabilis',  strain:'25933', plates:['ORI'], bcName:'P.mira', bcStrain:'25933'},
+  {name:'S. aureus',     strain:'25923', plates:['ORI'], bcName:'S.aure', bcStrain:'25923'}
 ];
 
 
@@ -2612,7 +2627,8 @@ const eucastCitations = {
     fcPanels_antifungal:'AFST Breakpoint tables v12.1 (valid 2026-04-10) — af_* and afr_* panels validated (2026-06-15)',
     abxClasses:         'Breakpoint tables v16.0 + agent-specific guidance notes',
     routineSets:        'Breakpoint tables v16.0 + QC tables v15.0',
-    qcOrganisms:        'EUCAST QC tables v15.0 (routine + extended QC)'
+    qcWeeklyOrganisms:  'EUCAST QC tables v15.0 (routine + extended QC)',
+    qcDailyOrganisms:   'EUCAST QC tables v15.0 + UTI Orientation Chromogenic (ORI) daily QC'
   }
 };
 

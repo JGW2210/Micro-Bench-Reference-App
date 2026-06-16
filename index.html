@@ -845,7 +845,8 @@
     <button class="notes-nav-btn" type="button" onclick="scrollNotesTo('notes-routine-wound')"><i class="ti ti-bandage" aria-hidden="true"></i> Wound sets</button>
     <button class="notes-nav-btn" type="button" onclick="scrollNotesTo('notes-routine-ear-eye')"><i class="ti ti-eye" aria-hidden="true"></i> Ear/eye sets</button>
     <button class="notes-nav-btn" type="button" onclick="scrollNotesTo('notes-rare')"><i class="ti ti-flask-2" aria-hidden="true"></i> Rare sets</button>
-    <button class="notes-nav-btn" type="button" onclick="scrollNotesTo('notes-qc')"><i class="ti ti-test-pipe-2" aria-hidden="true"></i> QC area</button>
+    <button class="notes-nav-btn" type="button" onclick="scrollNotesTo('notes-qc-weekly')"><i class="ti ti-barcode" aria-hidden="true"></i> Weekly QC</button>
+    <button class="notes-nav-btn" type="button" onclick="scrollNotesTo('notes-qc-daily')"><i class="ti ti-barcode" aria-hidden="true"></i> Daily QC</button>
   </nav>
 
   <section class="notes-section" id="notes-routine">
@@ -887,19 +888,8 @@
   </section>
 
   <section class="notes-section" id="notes-qc">
-    <h3 class="notes-section-title"><i class="ti ti-test-pipe-2" aria-hidden="true"></i> QC organisms &amp; platings</h3>
-    <p class="notes-section-sub">Reference strains and the media each should be plated to for routine quality control.</p>
-    <div class="qc-table-wrap">
-      <table class="qc-table">
-        <thead><tr><th>Organism</th><th>Strain</th><th>Plates</th></tr></thead>
-        <tbody id="qc-tbody"></tbody>
-      </table>
-    </div>
-  </section>
-
-  <section class="notes-section" id="notes-qc-barcodes">
-    <h3 class="notes-section-title"><i class="ti ti-barcode" aria-hidden="true"></i> Daily QC barcode labels</h3>
-    <p class="notes-section-sub">Pick a date and copy the per-strain labels. Format: <code class="inline-code">[organism][strain].DDMMYY</code></p>
+    <h3 class="notes-section-title"><i class="ti ti-test-pipe-2" aria-hidden="true"></i> QC barcode labels</h3>
+    <p class="notes-section-sub">Reference strains, their platings and per-strain barcode labels for routine quality control. Pick a date — labels update for both streams.</p>
 
     <div class="barcode-controls">
       <label class="barcode-date-label" for="barcode-date">
@@ -907,15 +897,41 @@
         <span>Date</span>
         <input type="date" id="barcode-date" class="barcode-date-input" aria-label="Date for barcode labels">
       </label>
-      <button class="barcode-copy-all" id="barcode-copy-all" type="button" onclick="copyAllBarcodes()">
+    </div>
+  </section>
+
+  <section class="notes-section" id="notes-qc-weekly">
+    <h3 class="notes-section-title"><i class="ti ti-barcode" aria-hidden="true"></i> Weekly QC <span class="notes-section-tag">sensitivities</span></h3>
+    <p class="notes-section-sub">Sensitivities-bench reference strains, run weekly. Format: <code class="inline-code">[organism][strain]W.DDMMYY</code></p>
+
+    <div class="barcode-controls">
+      <button class="barcode-copy-all" id="barcode-copy-all-weekly" type="button" onclick="copyAllBarcodes('weekly')">
         <i class="ti ti-clipboard-copy" aria-hidden="true"></i> Copy all
       </button>
     </div>
 
     <div class="barcode-table-wrap">
       <table class="barcode-table">
-        <thead><tr><th>Organism</th><th>Barcode label</th><th aria-label="Copy"></th></tr></thead>
-        <tbody id="barcode-tbody"></tbody>
+        <thead><tr><th>Organism</th><th>Strain</th><th>Plates</th><th>Barcode label</th><th aria-label="Copy"></th></tr></thead>
+        <tbody id="barcode-tbody-weekly"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="notes-section" id="notes-qc-daily">
+    <h3 class="notes-section-title"><i class="ti ti-barcode" aria-hidden="true"></i> Daily QC <span class="notes-section-tag">UTI · ORI agar</span></h3>
+    <p class="notes-section-sub">Daily UTI plates on Orientation Chromogenic agar (ORI). Format: <code class="inline-code">[organism][strain]D.DDMMYY</code></p>
+
+    <div class="barcode-controls">
+      <button class="barcode-copy-all" id="barcode-copy-all-daily" type="button" onclick="copyAllBarcodes('daily')">
+        <i class="ti ti-clipboard-copy" aria-hidden="true"></i> Copy all
+      </button>
+    </div>
+
+    <div class="barcode-table-wrap">
+      <table class="barcode-table">
+        <thead><tr><th>Organism</th><th>Strain</th><th>Plates</th><th>Barcode label</th><th aria-label="Copy"></th></tr></thead>
+        <tbody id="barcode-tbody-daily"></tbody>
       </table>
     </div>
   </section>
