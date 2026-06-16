@@ -33,7 +33,8 @@ const data = vm.runInNewContext(`${source}
   bactIdOrganisms,
   GUIDELINE_VERSIONS,
   sirBreakpoints,
-  eucastCitations
+  eucastCitations,
+  ifuCitations
 })`, {}, { filename: dataPath });
 
 // Index every file committed under EUCAST/ by basename, so citation entries can
@@ -322,6 +323,36 @@ function validateEucastCitations() {
   });
 }
 
+function validateIfuCitations() {
+  const cites = data.ifuCitations;
+  assert(isObject(cites), 'ifuCitations must be an object');
+  assert(isObject(cites && cites.documents), 'ifuCitations.documents must be an object');
+
+  // Index every file committed under IFUs/ by basename, so each cited IFU can be
+  // checked against what actually exists on disk (ISO 15189 traceability).
+  const ifuDir = path.join(root, 'IFUs');
+  const ifuFiles = new Set();
+  (function indexDir(dir) {
+    if (!fs.existsSync(dir)) return;
+    fs.readdirSync(dir, { withFileTypes: true }).forEach(entry => {
+      const full = path.join(dir, entry.name);
+      if (entry.isDirectory()) indexDir(full);
+      else ifuFiles.add(entry.name);
+    });
+  })(ifuDir);
+
+  const docKeys = Object.keys(cites.documents || {});
+  assert(docKeys.length > 0, 'ifuCitations cites no documents');
+  docKeys.forEach(key => {
+    const doc = cites.documents[key];
+    assert(isObject(doc), `ifuCitations.documents.${key} must be an object`);
+    assert(hasText(doc.code), `ifuCitations.documents.${key} is missing code`);
+    assert(hasText(doc.name), `ifuCitations.documents.${key} is missing name`);
+    assert(hasText(doc.file), `ifuCitations.documents.${key} is missing file`);
+    if (hasText(doc.file)) assert(ifuFiles.has(path.basename(doc.file)), `ifuCitations references missing IFU on disk: ${doc.file}`);
+  });
+}
+
 function validateGuidelineVersions() {
   assert(isObject(data.GUIDELINE_VERSIONS), 'GUIDELINE_VERSIONS must be an object');
   Object.entries(data.GUIDELINE_VERSIONS || {}).forEach(([viewId, cfg]) => {
@@ -398,6 +429,7 @@ validateSerology();
 validateSirBreakpoints();
 validateExpectedPhenotypes();
 validateEucastCitations();
+validateIfuCitations();
 validateGuidelineVersions();
 validateDiscContents();
 

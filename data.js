@@ -2823,6 +2823,39 @@ const eucastCitations = {
 
 
 /* ════════════════════════════════════════════════════════════════════
+   MANUFACTURER IFU CITATION CATALOGUE  (added v31)
+   Companion to smiCitations / eucastCitations, but for the molecular
+   (virology) stream. Molecular assays are validated against the
+   manufacturer's Instructions For Use (IFU), not UK SMI or EUCAST, so the
+   viro_* fcPanels carry their own [n] reference list keyed to the IFU PDFs
+   committed under IFUs/. File paths are checked against disk by
+   tests/validate-data.js for ISO 15189 / UKAS traceability.
+   ════════════════════════════════════════════════════════════════════ */
+const ifuCitations = {
+  _meta: {
+    source: 'Manufacturer Instructions For Use (IFU) — Hologic Panther (Aptima) & Cepheid GeneXpert (Xpert) assays',
+    prepared: '2026-06-16',
+    companion: 'MYCOLOGY-VIROLOGY-CITATIONS.md',
+    note: 'Molecular/NAAT content is validated against the assay IFU + local SOP, not UK SMI or EUCAST. PDFs are committed under IFUs/.'
+  },
+  // Document catalogue — short key → {code (chip label), name, ver, file}.
+  documents: {
+    aptima_ctng: { code:'Aptima CT/NG', name:'Hologic Aptima Combo 2 Assay (CT/NG) — Information Sheet', ver:'GBR EN (Panther TMA)', file:'IFUs/Hologic/Aptima Combo 2® Assay (for CT_NG) Information Sheet GBR EN.pdf' },
+    xpert_resp:  { code:'Xpert Resp', name:'Cepheid Xpert Xpress CoV-2/Flu/RSV plus IFU', ver:'302-7085 Rev F (2025-08)', file:'IFUs/Cepheid/Xpert Xpress CoV-2 FLU RSV plus CE-IVD ENGLISH IFU 302-7085 Rev F.pdf' },
+    xpert_tb:    { code:'Xpert MTB/RIF', name:'Cepheid Xpert MTB/RIF IFU', ver:'303-0942 Rev B (2024-05)', file:'IFUs/Cepheid/Xpert MTB-RIF ENGLISH IFU 303-0942 Rev B.pdf' },
+    xpert_noro:  { code:'Xpert Norovirus', name:'Cepheid Xpert Norovirus (GI/GII) IFU', ver:'303-0938 Rev A (2023-07)', file:'IFUs/Cepheid/Xpert Norovirus ENGLISH IFU 303-0938 Rev. A.pdf' }
+  },
+  // Human-readable stream labels for each IFU document key.
+  streamMap: {
+    aptima_ctng: 'Panther Aptima CT/NG NAAT stream',
+    xpert_resp:  'GeneXpert respiratory multiplex stream',
+    xpert_tb:    'GeneXpert MTB/RIF (CL3 sputum) stream',
+    xpert_noro:  'GeneXpert Norovirus GI/GII enteric stream'
+  }
+};
+
+
+/* ════════════════════════════════════════════════════════════════════
    GUIDELINE VERSION STAMPS  (added v25)
    Single source of truth for the "based on / reviewed" badge shown per
    view. Values here are the same citations already used in the view

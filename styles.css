@@ -1583,7 +1583,8 @@ html[data-theme="light"] .barcode-date-input{color-scheme:light}
   .refs-collapsible>.refs-body{display:block !important}            /* force-expand when printing */
   .refs-chev{display:none !important}
   .smi-cite,.smi-ref-n,.smi-refs-title,.smi-refs li,.smi-ref-code,
-  .eucast-cite,.eucast-ref-n,.eucast-refs li,.eucast-ref-code,.refs-summary{color:#000 !important}
+  .eucast-cite,.eucast-ref-n,.eucast-refs li,.eucast-ref-code,
+  .ifu-cite,.ifu-ref-n,.ifu-refs li,.ifu-ref-code,.refs-summary{color:#000 !important}
 }
 
 /* ─── UK SMI numbered citations + validation footnotes ─── */
@@ -1605,6 +1606,17 @@ html[data-theme="light"] .barcode-date-input{color-scheme:light}
 .eucast-refs-block{font-size:13px;color:var(--text-dim);}
 .eucast-ref-n{color:var(--cat-purple);font-weight:600;margin-right:5px;font-family:var(--font-mono);}
 .eucast-ref-code{font-weight:700;color:var(--text);}
+
+/* Manufacturer IFU citations (molecular / virology stream) — distinct blue */
+.ifu-cite{display:inline-block;font-size:.64em;font-weight:600;color:var(--cat-blue);background:color-mix(in srgb,var(--cat-blue) 14%,transparent);border:1px solid color-mix(in srgb,var(--cat-blue) 50%,transparent);border-radius:5px;padding:0 4px;vertical-align:super;margin-left:4px;cursor:help;font-family:var(--font-mono);line-height:1.6;letter-spacing:.02em;white-space:nowrap;}
+.ifu-refs-block{font-size:13px;color:var(--text-dim);}
+.ifu-refs{margin:0;padding-left:0;list-style:none;}
+.ifu-refs li{margin:3px 0;line-height:1.45;color:var(--text);}
+.ifu-ref-n{color:var(--cat-blue);font-weight:600;margin-right:5px;font-family:var(--font-mono);}
+.ifu-ref-code{font-weight:700;color:var(--text);}
+.ifu-ref-iss{color:var(--text-faint);}
+.ifu-refs-block .refs-summary{color:var(--cat-blue);}
+.ifu-refs-block .refs-summary:hover{background:color-mix(in srgb,var(--cat-blue) 8%,transparent);}
 
 /* Collapsible reference boxes (native <details>) — collapsed by default */
 .refs-collapsible{margin:22px 0 6px;border:1px solid var(--line);border-radius:12px;background:var(--bg-elev-2);overflow:hidden;}
