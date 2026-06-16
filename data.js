@@ -2565,7 +2565,7 @@ const eucastCitations = {
   documents: {
     'Clinical Breakpoints and Interpretation': {
       'Breakpoint tables': { version:'v16.0', valid:'2026-01-01', file:'v_16.0_Breakpoint_Tables.pdf' },
-      'Area of Technical Uncertainty (ATU) guidance': { version:'v2 (2020)', file:'Area_of_Technical_Uncertainty_-_guidance_v2_2020.pdf' },
+      'Area of Technical Uncertainty (ATU) guidance': { version:'v4 (2024)', file:'Area_of_Technical_Uncertainty_-_guidance_v4_2024.pdf', note:'Current ATU guidance; supersedes v2 (2020), which remains committed for history.' },
       'Breakpoints in brackets': { file:'Breakpoints_in_brackets.pdf' },
       'Changes in susceptibility reports (S/I/R)': { date:'2021-07-09', file:'To_clinical_colleagues_on_recent_changes_in_clinical_microbiology_susceptibility_reports_9_July2021.pdf' },
       'When there are no breakpoints': { date:'2024-09-03', file:'When_there_are_no_breakpoints_2024-09-03.pdf' }
@@ -2593,10 +2593,31 @@ const eucastCitations = {
       'Broth microdilution reading guide': { version:'v5.0 (2024)', file:'Reading_guide_BMD_v_5.0_2024.pdf' },
       'Media preparation':            { version:'v8.0 (2026)', file:'Media_preparation_v_8.0_EUCAST_AST_2026.pdf' },
       'QC tables (routine + extended)': { version:'v15.0', file:'v_15.0_EUCAST_QC_tables_routine_and_extended_QC.pdf' },
-      'Anaerobe disk diffusion reading guide': { version:'v2.0 (2023)', file:'Disk_diffusion_Anaerobes_Reading_Guide_v_2.0_2023.pdf' }
+      'Anaerobe disk diffusion reading guide': { version:'v2.0 (2023)', file:'Disk_diffusion_Anaerobes_Reading_Guide_v_2.0_2023.pdf' },
+      'Anaerobe disk diffusion methodology (rapidly growing anaerobes)': { version:'v2.0 (2023)', file:'EUCAST_disk_diffusion_methodology_for_rapidly_growing_anaerobic_bacteria_v_2.0_2023.pdf' },
+      'Alternative media for fastidious organisms (disk diffusion)': { date:'2025-09-19', file:'Alternative_media_for_fastidious_organisms_in_EUCAST_disk_diffusion_testing_250919_FINAL.pdf' }
     },
     'Guidance Docs': {
-      _note: 'Agent-/organism-specific guidance notes (aminoglycosides, colistin, daptomycin, tigecycline, S. maltophilia, B. cepacia, Legionella, ESBL confirmation, cefiderocol, etc.) are committed under "EUCAST/Guidance Docs/" and cited per agent where relevant.'
+      _note: 'Agent-/organism-specific guidance notes committed under "EUCAST/Guidance Docs/" and cited per agent/organism via eucastCitations.agentGuidance.',
+      'Aminoglycosides':                 { date:'2020-04-24', file:'Aminoglycoside_guidance_document_20200424.pdf' },
+      'Aminopenicillins':                { date:'2023-01-13', file:'Aminopenicillins_EUCAST_guidance_note_20230113_error_corrected.pdf' },
+      'Burkholderia cepacia complex':    { date:'2019-07-13', file:'BCC_susceptibility_testing_130719.pdf' },
+      'Cefiderocol MIC testing':         { date:'2024-01', file:'Cefiderocol_MIC_testing_EUCAST_guidance_document_January_2024.pdf' },
+      'Cephalosporins for S. aureus':    { date:'2026-04-27', file:'Cephalosporins_for_Staphylococcus_aureus_Infections_20260427.pdf' },
+      'Colistin (clinical guidance)':    { version:'2022', file:'Colistin_guidance_2022.pdf' },
+      'Colistin MIC determination':      { date:'2016-03', file:'Recommendations_for_MIC_determination_of_colistin_March_2016.pdf' },
+      'Daptomycin':                      { date:'2025-12-02', file:'Daptomycin_guidance_revised_20251202.pdf' },
+      'Direct testing from samples':     { date:'2012-02', file:'Direct_testing_guidance_note_Feb2012.pdf' },
+      'ESBL confirmation':               { file:'Guidance_document_Confirmation_of_ESBL.pdf' },
+      'Intrinsic resistance / expected phenotypes (IE)': { date:'2024-12-05', file:'Guidance_document_IE_new_EUCAST_style_final_version_241205_final.pdf' },
+      'Legionella':                      { date:'2021-05-28', file:'Legionella_guidance_note_-_20210528.pdf' },
+      'Oral cephalosporin breakpoints':  { version:'v2', date:'2020-07-10', file:'Oral_ceph_breakpoints_v2_20200710.pdf' },
+      'Screening to detect and exclude resistance': { date:'2022-08-22', file:'Screening_to_detect_and_exclude_resistance_2022_08_22.pdf' },
+      'Stenotrophomonas maltophilia':    { version:'v2', date:'2024-11-14', file:'Stenotrophomonas_maltophilia_guidance_document_v2_20241114.pdf' },
+      'Tigecycline':                     { version:'v2', date:'2022-07-20', file:'Tigecycline_Guidance_document_v2_20220720.pdf' },
+      'Topical agents':                  { date:'2012-04-12', file:'Topicals_guidance_note_220412.pdf' },
+      'Fosfomycin iv breakpoints':       { date:'2024-05-28', file:'Use_of_fosfomycin_iv_breakpoints_General_advice_20240528.pdf' },
+      'Antimicrobial abbreviations':     { version:'v7', date:'2022-01-20', file:'Antimicrobial_abbreviations_v7_20220120.xlsx' }
     },
     'AFST — Clinical Breakpoints and Interpretation': {
       'Antifungal breakpoint tables (MIC) for yeasts and Aspergillus': { version:'v12.1', valid:'2026-04-10', file:'EUCAST/AFST/Clinical Breakpoints and Interpretation/AFST_BP_v12.1.pdf' },
@@ -2629,6 +2650,24 @@ const eucastCitations = {
     routineSets:        'Breakpoint tables v16.0 + QC tables v15.0',
     qcWeeklyOrganisms:  'EUCAST QC tables v15.0 (routine + extended QC)',
     qcDailyOrganisms:   'EUCAST QC tables v15.0 + UTI Orientation Chromogenic (ORI) daily QC'
+  },
+  // Per-agent / per-organism guidance traceability. Each label below appears in
+  // sirBreakpoints (agent) or expectedPhenotypes (organism) and is backed by a
+  // committed guidance doc under "EUCAST/Guidance Docs/". Validated 2026-06-16.
+  agentGuidance: {
+    'Aminoglycosides (Gentamicin / Amikacin / Tobramycin)': 'Aminoglycoside_guidance_document_20200424.pdf',
+    'Ampicillin / Amoxicillin (aminopenicillins)':          'Aminopenicillins_EUCAST_guidance_note_20230113_error_corrected.pdf',
+    'Cefoxitin / Cefpodoxime ESBL & AmpC screening':         'Screening_to_detect_and_exclude_resistance_2022_08_22.pdf',
+    'ESBL confirmation (cefepime/clavulanate)':              'Guidance_document_Confirmation_of_ESBL.pdf',
+    'Temocillin / Daptomycin (Daptomycin guidance)':         'Daptomycin_guidance_revised_20251202.pdf',
+    'Tigecycline (Enterobacterales / Acinetobacter)':        'Tigecycline_Guidance_document_v2_20220720.pdf',
+    'Colistin (Enterobacterales / Pseudomonas)':             'Colistin_guidance_2022.pdf',
+    'Cefiderocol (MBL / CRAB / S. maltophilia)':             'Cefiderocol_MIC_testing_EUCAST_guidance_document_January_2024.pdf',
+    'Stenotrophomonas maltophilia':                          'Stenotrophomonas_maltophilia_guidance_document_v2_20241114.pdf',
+    'Burkholderia cepacia complex':                          'BCC_susceptibility_testing_130719.pdf',
+    'Cephalosporins for S. aureus (ceftaroline/ceftobiprole)':'Cephalosporins_for_Staphylococcus_aureus_Infections_20260427.pdf',
+    'Intrinsic resistance / expected phenotypes':            'Guidance_document_IE_new_EUCAST_style_final_version_241205_final.pdf',
+    'Fusidic acid / Mupirocin (topical agents)':             'Topicals_guidance_note_220412.pdf'
   }
 };
 
