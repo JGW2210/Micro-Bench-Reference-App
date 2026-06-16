@@ -2,7 +2,6 @@
    Application LOGIC: rendering, interpreters, search, view switching, init.
    Depends on the datasets defined in data.js, so MUST load after data.js. */
 
-const istate={d68:[],d69:[],d63:[],d73:[]};
 let curITab='d68', curView='flow';
 
 // Hash-routing state (declared early with var so the hoisted writeHash() can
@@ -10,81 +9,9 @@ let curITab='d68', curView='flow';
 // further down is initialised). See the HASH ROUTING block at end of file.
 var routingReady=false, routingApply=false;
 
-function initDiscs(id){
-  const cfg=dconfigs[id];
-  istate[id]=cfg.discs.map(()=>null);
-  const row=document.getElementById('discs-'+id);
-  row.innerHTML='';
-  cfg.discs.forEach((d,i)=>{
-    const el=document.createElement('div');
-    el.className='disc';
-    el.innerHTML=`<span class="disc-letter">Disc ${d.l}</span><div class="disc-circle" id="dc-${id}-${i}" onclick="toggleDisc('${id}',${i})">?</div><span class="disc-label">${d.label}</span>`;
-    row.appendChild(el);
-  });
-  buildITable(id);
-}
-
-function toggleDisc(id,i){
-  const cur=istate[id][i];
-  istate[id][i]=cur===null?'S':cur==='S'?'R':'S';
-  const el=document.getElementById('dc-'+id+'-'+i);
-  el.className='disc-circle '+(istate[id][i]==='S'?'s':'r');
-  el.textContent=istate[id][i];
-  interpretDiscs(id);
-}
-
-function resetDiscs(id){
-  istate[id]=dconfigs[id].discs.map(()=>null);
-  dconfigs[id].discs.forEach((_,i)=>{
-    const el=document.getElementById('dc-'+id+'-'+i);
-    el.className='disc-circle';el.textContent='?';
-  });
-  const rb=document.getElementById('res-'+id);
-  rb.className='result-box';
-  rb.innerHTML='<span style="color:var(--color-text-tertiary);font-size:12px">Set all disc results to see interpretation.</span>';
-  buildITable(id);renderDsetPlate(id);
-}
-
-function interpretDiscs(id){
-  const vals=istate[id];
-  if(vals.some(v=>v===null)){
-    const rb=document.getElementById('res-'+id);
-    rb.className='result-box';
-    rb.innerHTML='<span style="color:var(--color-text-tertiary);font-size:12px">Set all disc results to see interpretation.</span>';
-    buildITable(id);renderDsetPlate(id);return;
-  }
-  let match=null;
-  for(const p of dconfigs[id].patterns){if(p.v.every((v,i)=>v===vals[i])){match=p;break;}}
-  const rb=document.getElementById('res-'+id);
-  if(match){
-    // 'match' collides with the search-highlight utility class; use 'ident' for styling
-    const tcls = match.type==='match' ? 'ident' : match.type;
-    rb.className='result-box '+tcls;
-    rb.innerHTML=`<div class="result-title ${tcls}">${match.title}</div><div class="result-body">${match.body}</div>`;
-  } else {
-    rb.className='result-box warn';
-    rb.innerHTML=`<div class="result-title warn">Atypical pattern</div><div class="result-body">This combination does not match a standard pattern. Verify disc placement and zone readings. Consider repeat testing, mixed culture, or molecular confirmation.</div>`;
-  }
-  buildITable(id);renderDsetPlate(id);
-}
-
-function buildITable(id){
-  const vals=istate[id];
-  const allSet=vals.every(v=>v!==null);
-  const tbody=document.getElementById('itbody-'+id);
-  tbody.innerHTML='';
-  const seen=new Set();
-  dconfigs[id].patterns.forEach(p=>{
-    const key=p.v.join(',');
-    if(seen.has(key))return;seen.add(key);
-    const isActive=allSet&&p.v.every((v,i)=>v===vals[i]);
-    const tr=document.createElement('tr');
-    if(isActive)tr.className='active-row';
-    let cells=p.v.map(v=>`<td><span class="disc-badge ${v.toLowerCase()}">${v}</span></td>`).join('');
-    tr.innerHTML=cells+`<td>${p.title}${isActive?' <span style="font-size:10px;color:var(--color-text-info)">← current</span>':''}</td>`;
-    tbody.appendChild(tr);
-  });
-}
+// (Legacy S/R disc-toggle interpreters for D68/D69/D63 were removed 2026-06-16;
+//  all four D-sets now use the zone-difference calculators — see interpretD73mm
+//  and interpretDsetMm. dconfigs[*].patterns are retained only for the test suite.)
 
 function setITab(id){
   curITab=id;
@@ -225,6 +152,135 @@ function buildD73mmTable(activeKey){
   tbody.innerHTML = rows.join('');
 }
 
+// ─── D68 / D69 / D63 zone-diameter calculators (zone-difference synergy, per MAST IFUs) ───
+// The MAST D6x sets are interpreted by zone-diameter DIFFERENCE (inhibitor − base
+// ≥ 5 mm = synergy), not by S/R category. This replaces the legacy S/R toggles
+// (initDiscs/toggleDisc) with mm inputs mirroring the D73 calculator. Thresholds:
+// D68C: ESBL = B−A≥5 & D−C≥5 (A≈C,B≈D); AmpC = C−A≥5 & D−B≥5 (A≈B,C≈D); both = D−C≥5 (A≈B);
+//       all within 2mm = negative. D69C: AmpC = C−A≥5 & C−B≥5; within 3mm = negative.
+//       D63C: ESBL = B−A≥5. (See IFUs/MAST/.)
+const dsetMm = {d68:{}, d69:{}, d63:{}};
+const dsetMmLastKey = {d68:null, d69:null, d63:null};
+const dsetFmt = n => (n>=0?'+':'') + n.toFixed(0);
+
+function initDsetMm(id){
+  const grid = document.getElementById('discs-'+id);
+  if(!grid) return;
+  grid.className = 'zone-input-grid';
+  grid.innerHTML = '';
+  dsetMm[id] = {};
+  dconfigs[id].discs.forEach(d=>{
+    dsetMm[id][d.l] = null;
+    const wrap = document.createElement('div');
+    wrap.className = 'zone-input';
+    wrap.innerHTML = `<span class="disc-letter">Disc ${d.l}</span>`+
+      `<div class="zone-input-wrap"><input type="number" min="0" max="60" step="1" id="dsetmm-${id}-${d.l}" placeholder="—" inputmode="numeric" aria-label="Zone ${d.l} diameter (${d.label})" oninput="updateDsetMm('${id}','${d.l}', this.value)"><span class="zone-unit">mm</span></div>`+
+      `<span class="disc-label">${d.label}</span>`;
+    grid.appendChild(wrap);
+  });
+  buildDsetMmTable(id);
+}
+
+function updateDsetMm(id, letter, val){
+  const t = String(val).trim();
+  const n = t === '' ? null : parseFloat(t);
+  dsetMm[id][letter] = (n === null || isNaN(n)) ? null : n;
+  interpretDsetMm(id);
+}
+
+function resetDsetMm(id){
+  Object.keys(dsetMm[id]).forEach(k=>{
+    dsetMm[id][k] = null;
+    const el = document.getElementById('dsetmm-'+id+'-'+k);
+    if(el) el.value = '';
+  });
+  const rb = document.getElementById('res-'+id);
+  rb.className = 'result-box';
+  rb.innerHTML = '<span style="color:var(--color-text-tertiary);font-size:12px">Enter all zone diameters (mm) to see interpretation.</span>';
+  dsetMmLastKey[id] = null;
+  buildDsetMmTable(id);
+  renderDsetPlate(id);
+}
+
+function interpretDsetMm(id){
+  const st = dsetMm[id];
+  const letters = dconfigs[id].discs.map(d=>d.l);
+  const rb = document.getElementById('res-'+id);
+  if(letters.some(l => st[l]===null)){
+    rb.className = 'result-box';
+    rb.innerHTML = '<span style="color:var(--color-text-tertiary);font-size:12px">Enter all zone diameters (mm) to see interpretation.</span>';
+    dsetMmLastKey[id] = null; buildDsetMmTable(id); renderDsetPlate(id); return;
+  }
+  let result, key, calc = '';
+  if(id === 'd68'){
+    const {A,B,C,D} = st;
+    const range = Math.max(A,B,C,D) - Math.min(A,B,C,D);
+    const dBA=B-A, dCA=C-A, dDC=D-C, dDB=D-B;
+    calc = `ΔB−A ${dsetFmt(dBA)} · ΔC−A ${dsetFmt(dCA)} · ΔD−C ${dsetFmt(dDC)} · ΔD−B ${dsetFmt(dDB)} mm`;
+    if(range <= 2 && A < 18){ key='carba'; result={type:'danger', title:'No synergy — possible carbapenemase masking', body:'All four zones within 2 mm AND cefpodoxime resistant (no inhibitor restores the zone). A fully resistant profile can mask an MβL or KPC carbapenemase — proceed to D73. (D68C is not valid for Pseudomonas / Acinetobacter.)'}; }
+    else if(range <= 2){ key='neg'; result={type:'success', title:'No ESBL or AmpC detected', body:'All four zones within 2 mm of each other and cefpodoxime susceptible — no ESBL or AmpC phenotype.'}; }
+    else if(dBA>=5 && dDC>=5 && Math.abs(B-D)<=4 && Math.abs(A-C)<=4){ key='esbl'; result={type:'ident', title:'ESBL alone', body:'ESBL-inhibitor synergy (B−A ≥5 and D−C ≥5) with no AmpC-inhibitor effect (A≈C, B≈D). Report ESBL-positive; suppress 3GCs per local policy. Reflex UR2; confirm with D63 if required.'}; }
+    else if(dDB>=5 && dCA>=5 && Math.abs(A-B)<=4 && Math.abs(C-D)<=4){ key='ampc'; result={type:'warn', title:'AmpC alone', body:'AmpC-inhibitor synergy (C−A ≥5 and D−B ≥5) with no ESBL-inhibitor effect (A≈B, C≈D). Characterise with D69. A masked ESBL cannot be excluded — confirm with D63.'}; }
+    else if(dDC>=5 && Math.abs(A-B)<=4){ key='both'; result={type:'warn', title:'ESBL + AmpC combined', body:'Only the dual-inhibitor disc (D) restores the zone (D−C ≥5, A≈B). Combined ESBL + AmpC. Suppress cephalosporins; reflex UR2; confirm ESBL with D63.'}; }
+    else { key='atyp'; result={type:'warn', title:'Atypical pattern — manual review', body:'Zone differences do not match a standard D68C pattern. Verify disc placement and re-measure; consider mixed culture or carbapenemase (D73).'}; }
+  }
+  else if(id === 'd69'){
+    const {A,B,C} = st;
+    const range = Math.max(A,B,C) - Math.min(A,B,C);
+    const dCA=C-A, dCB=C-B, dBA=B-A;
+    calc = `ΔC−A ${dsetFmt(dCA)} · ΔC−B ${dsetFmt(dCB)} · ΔB−A ${dsetFmt(dBA)} mm`;
+    if(range <= 3){ key='neg'; result={type:'success', title:'AmpC negative', body:'All three zones within 3 mm — no AmpC production detected.'}; }
+    else if(dCA>=5 && dCB>=5){ key='ampc'; result={type:'ident', title:'AmpC positive', body:'AmpC-inhibitor disc (C) restores the zone vs both A and B (C−A ≥5 and C−B ≥5). AmpC confirmed — do not report 3GCs susceptible even if they test S. Reflex UR2.'}; }
+    else if(dCA>=5 && dBA>=5 && Math.abs(B-C)<=4){ key='other'; result={type:'warn', title:'Possible ESBL interference — use D63', body:'B and C both restore the zone vs A (B−A and C−A ≥5; B≈C). The ESBL inhibitor (B) is restoring activity — D69C CANNOT confirm ESBL (it is present only to stop ESBL masking the AmpC read). Confirm ESBL with D63.'}; }
+    else { key='atyp'; result={type:'warn', title:'Atypical pattern — manual review', body:'Zone differences do not match a standard D69C pattern. Verify disc placement and re-measure.'}; }
+  }
+  else { // d63
+    const {A,B} = st;
+    const dBA = B-A;
+    calc = `ΔB−A ${dsetFmt(dBA)} mm`;
+    if(dBA >= 5){ key='esbl'; result={type:'ident', title:'ESBL confirmed', body:'Cefepime + clavulanate exceeds cefepime by ≥5 mm — clavulanate restores activity. Because cefepime resists AmpC, this synergy is ESBL-specific. Report ESBL-positive. Reflex UR2.'}; }
+    else if(A < 21){ key='noesbl_r'; result={type:'danger', title:'Cefepime resistant — no ESBL synergy', body:'Cefepime reduced with &lt; 5 mm clavulanate enhancement. No ESBL synergy — consider high-level ESBL, AmpC + porin loss, or carbapenemase. Proceed to D73.'}; }
+    else { key='neg'; result={type:'success', title:'No ESBL detected', body:'No significant clavulanate enhancement (&lt; 5 mm) and cefepime susceptible. No ESBL phenotype detectable.'}; }
+  }
+  rb.className = 'result-box ' + result.type;
+  rb.innerHTML = `<div class="result-title ${result.type}">${result.title}</div><div class="result-body">${result.body}</div><div class="calc-readout">${calc}</div>`;
+  dsetMmLastKey[id] = key;
+  buildDsetMmTable(id, key);
+  renderDsetPlate(id);
+}
+
+function buildDsetMmTable(id, activeKey){
+  const tbody = document.getElementById('itbody-'+id);
+  if(!tbody) return;
+  const tag = active => active ? ' <span style="font-size:10px;color:var(--color-text-info)">← current</span>' : '';
+  let rows;
+  if(id === 'd68'){
+    rows = [
+      ['neg','No ESBL / AmpC','All four zones within 2 mm (cefpodoxime susceptible)'],
+      ['esbl','ESBL alone','B−A ≥ 5 and D−C ≥ 5; A≈C and B≈D (≤ 4 mm)'],
+      ['ampc','AmpC alone','C−A ≥ 5 and D−B ≥ 5; A≈B and C≈D (≤ 4 mm)'],
+      ['both','ESBL + AmpC','D−C ≥ 5 and A≈B (≤ 4 mm)'],
+      ['carba','Possible carbapenemase','All zones within 2 mm AND cefpodoxime resistant → D73']
+    ];
+  } else if(id === 'd69'){
+    rows = [
+      ['neg','AmpC negative','All three zones within 3 mm'],
+      ['ampc','AmpC positive','C−A ≥ 5 and C−B ≥ 5'],
+      ['other','ESBL interference (use D63)','C−A ≥ 5 and B−A ≥ 5; B≈C (≤ 4 mm)']
+    ];
+  } else {
+    rows = [
+      ['esbl','ESBL confirmed','B (cefepime+clav) − A (cefepime) ≥ 5 mm'],
+      ['neg','No ESBL','&lt; 5 mm enhancement; cefepime susceptible'],
+      ['noesbl_r','Cefepime R, no synergy','&lt; 5 mm enhancement; cefepime resistant → D73']
+    ];
+  }
+  tbody.innerHTML = rows.map(r=>{
+    const active = r[0] === activeKey;
+    return `<tr${active?' class="active-row"':''}><td>${r[1]}${tag(active)}</td><td>${r[2]}</td></tr>`;
+  }).join('');
+}
+
 // ═══════════════════════════════════════════════
 // D-SET PLATE PREVIEW — estimated MHA appearance, MAST hexagonal carrier
 // Jumps off the plate-appearance SVG system (deterministic procedural film).
@@ -271,10 +327,11 @@ function dsetZonesFor(id){
       return {l:d.l, label:d.label, zoneMm, porin};
     });
   }
-  const vals = istate[id] || [];
-  return cfg.discs.map((d,i)=>{
-    const s = vals[i];
-    const zoneMm = s==='S' ? DSET_STD.S : s==='R' ? DSET_STD.R : 0;
+  // D68 / D69 / D63 now read measured zone diameters (mm) from dsetMm.
+  const st = (typeof dsetMm !== 'undefined' && dsetMm[id]) ? dsetMm[id] : {};
+  return cfg.discs.map(d=>{
+    const v = st[d.l];
+    const zoneMm = (v===null || v===undefined || isNaN(v)) ? 0 : Math.max(0, Math.min(60, v));
     return {l:d.l, label:d.label, zoneMm, porin:false};
   });
 }
@@ -457,7 +514,7 @@ function renderDsetPlate(id){
   }
 }
 
-['d68','d69','d63'].forEach(initDiscs);
+['d68','d69','d63'].forEach(initDsetMm);
 initD73mm();
 setITab('d68');
 ['d68','d69','d63','d73'].forEach(renderDsetPlate);

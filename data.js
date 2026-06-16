@@ -439,10 +439,11 @@ const fcPanels = {
 // D-set disc layouts and interpretation validated 2026-06-16 against the
 // committed MAST IFUs: IFUs/MAST/MAST D68c IFU.pdf (ESBL/AmpC, IFU179 V13),
 // D69c (AmpC only, IFU187 V6), D63c (cefepime ESBL ID, IFU169 V9), D73c
-// (Carba plus, IFU190 V8). NOTE: the true MAST method is zone-diameter
-// difference (≥5 mm synergy); the D68/D69/D63 S/R toggles in the interpreter
-// are a simplified teaching proxy. D73 uses the full zone-mm calculator
-// (interpretD73mm in app.js) which matches the D73c thresholds exactly.
+// (Carba plus, IFU190 V8). All four sets are interpreted in-app by zone-diameter
+// DIFFERENCE (≥5 mm synergy), matching the IFUs: D68/D69/D63 via interpretDsetMm
+// and D73 via interpretD73mm (app.js). The `discs` arrays below drive the input
+// labels and the plate preview; the `patterns` arrays are LEGACY (the old S/R
+// toggle model) — retained only for the data-validation suite and not rendered.
 const dconfigs = {
   d68:{discs:[{l:'A',label:'Cefpodoxime'},{l:'B',label:'Cefpodoxime + ESBL inhibitor'},{l:'C',label:'Cefpodoxime + AmpC inhibitor'},{l:'D',label:'Cefpodoxime + ESBL + AmpC inhibitor'}],patterns:[
     {v:['S','S','S','S'],type:'success',title:'No resistance detected',body:'All discs susceptible. No ESBL or AmpC phenotype identified. No escalation required from cefpodoxime results alone.'},
@@ -2692,7 +2693,7 @@ const eucastCitations = {
    ════════════════════════════════════════════════════════════════════ */
 const GUIDELINE_VERSIONS = {
   // nextReview: recurring EUCAST re-validation cadence (see EUCAST-CITATIONS.md §"Recurring re-validation schedule").
-  _meta: { appData: 'v28', reviewed: '2026-06-16', nextReview: '2027-01 — EUCAST v17 breakpoints (annual); also re-check AFST, QC v16, and Staph/Strep/Pneumo Expert Rules' },   // global app data version + last full review
+  _meta: { appData: 'v29', reviewed: '2026-06-16', nextReview: '2027-01 — EUCAST v17 breakpoints (annual); also re-check AFST v13, QC v16, and Expert Rules' },   // global app data version + last full review
   flow:    { lines:[{label:'EUCAST clinical breakpoints', version:'v16.0 (valid 2026-01-01)'},{label:'UK SMI', version:'B 41 i8.8 · ID/TP 2025'}], reviewed:'2026-06-15' },
   wound:   { lines:[{label:'EUCAST clinical breakpoints', version:'v16.0 (valid 2026-01-01)'},{label:'UK SMI', version:'B 11/B 14/B 17 · ID/TP 2025'}], reviewed:'2026-06-15' },
   bactid:  { lines:[{label:'UK SMI ID + TP series', version:'validated against committed issues'}], reviewed:'2026-06-15' },
