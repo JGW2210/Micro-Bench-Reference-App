@@ -2511,6 +2511,56 @@ const EUCAST_VIEW_REFS = {
   myco:   { base:['afst_bp','afst_yeast','afst_mould'], note:'Antifungal susceptibility (AFST) breakpoints and methods are EUCAST AFST; morphological identification is UK SMI / atlas-based.' }
 };
 
+// ─── Manufacturer IFU numbered citations (molecular / virology stream) ───
+// Mirrors the UK SMI [n] system but for the molecular assays, which are
+// validated against the manufacturer Instructions For Use (committed under
+// IFUs/), not UK SMI or EUCAST. Markers use a distinct .ifu-cite colour so the
+// three reference systems ([n] SMI, [a] EUCAST, [n] IFU) stay visually separate.
+const IFU_REVIEWED = '2026-06-16';
+function ifuDocOrder(){ return (typeof ifuCitations!=='undefined' && ifuCitations.documents) ? Object.keys(ifuCitations.documents) : []; }
+function ifuRefIndex(keys){
+  const order=ifuDocOrder();
+  const ordered=Array.from(new Set((keys||[]).filter(k=>order.includes(k)))).sort((a,b)=>order.indexOf(a)-order.indexOf(b));
+  const num={}; ordered.forEach((k,i)=>num[k]=i+1);
+  return {ordered,num};
+}
+function ifuCiteSup(keys, num){
+  const ns=(keys||[]).map(k=>num[k]).filter(Boolean);
+  return ns.length ? `<sup class="ifu-cite" title="Manufacturer IFU reference — see footnotes">[${ns.join(',')}]</sup>` : '';
+}
+function ifuFootnotesHtml(idx, opts){
+  opts=opts||{};
+  const docs=(typeof ifuCitations!=='undefined' && ifuCitations.documents) || {};
+  const lis=idx.ordered.map((k,i)=>{
+    const d=docs[k]||{};
+    return `<li><span class="ifu-ref-n">[${i+1}]</span> <span class="ifu-ref-code">${d.code||k}</span> ${d.name||''}${d.ver?` <span class="ifu-ref-iss">(${d.ver})</span>`:''}</li>`;
+  }).join('');
+  const note=opts.note ? `<p class="smi-ref-note">${opts.note}</p>` : '';
+  const body=`<ol class="ifu-refs">${lis}</ol>`+note
+    +`<p class="smi-ref-foot">Each [n] marks the manufacturer Instructions For Use (IFU) the molecular assay content was validated against (revision/date as committed under <code>IFUs/</code>). Guidance only — verify against the current IFU and local SOP before clinical use. Molecular/NAAT results are not UK SMI or EUCAST scope.</p>`;
+  return collapsibleRefsHtml({
+    blockClass:'ifu-refs-block', ariaLabel:'Manufacturer IFU references', title:'Manufacturer IFU references',
+    meta:`${idx.ordered.length} document${idx.ordered.length===1?'':'s'} · validated ${IFU_REVIEWED}`,
+    bodyHtml:body
+  });
+}
+function appendIfuRefs(viewId, idx, opts){
+  const view=document.getElementById('view-'+viewId);
+  if(!view || view.querySelector(':scope > .ifu-refs-block')) return;
+  view.insertAdjacentHTML('beforeend', ifuFootnotesHtml(idx, opts));
+}
+// All molecular IFU documents, in catalogue order — the virology view's box.
+function virologyRefs(){ return virologyRefs._ || (virologyRefs._ = ifuRefIndex(ifuDocOrder())); }
+// viro_* fcPanel key → IFU document key(s) (matched by stream prefix).
+function ifuKeysForPanel(key){
+  if(/^viro_(accept_aptima|panther|ct_|ng_|ctng|ct_ng)/.test(key)) return ['aptima_ctng'];
+  if(/^viro_(accept_resp|genexpert_resp|resp_)/.test(key)) return ['xpert_resp'];
+  if(/^viro_(accept_tb|tb_)/.test(key)) return ['xpert_tb'];
+  if(/^viro_(accept_gi|gi_)/.test(key)) return ['xpert_noro'];
+  if(key==='viro_pcr_qc') return ['aptima_ctng','xpert_resp','xpert_tb','xpert_noro'];
+  return [];
+}
+
 // ── Citation coverage engine ─────────────────────────────────────────────
 // Single source of truth mapping any fcPanel → the EUCAST/SMI documents it
 // cites, plus which panels are reachable in each view. Drives both the inline
@@ -2533,10 +2583,26 @@ const REAGENT_SMI = {
 // Governance / referral cards cite the local SOP (not an SMI/EUCAST document) so
 // they carry no [n]/[a] tag by design.
 const GOVERNANCE_PANELS = new Set(['w_meningo_csf','w_gono_refer']);
+// EUCAST AFST docs an antifungal panel (af_* agents / afr_* expected resistance)
+// cites — the AFST breakpoint table always, plus the yeast/mould reference method
+// per the agent's spectrum (default to both when the panel spans the spectrum).
+function afstEucastKeys(key, p){
+  const hay=((p.title||'')+' '+(p.sub||'')+' '+(p.notes||'')+' '+(p.abx||[]).join(' ')).toLowerCase();
+  const out=new Set(['afst_bp']);
+  const yeast=/yeast|candida|cryptococc|krusei|glabrata|albicans|pichia/.test(hay);
+  const mould=/mould|mold|aspergill|mucor|fusari|scedosp|lomentospora|dermatoph|terbinafine|indotineae|trichophyton|hyphae|filament/.test(hay);
+  if(yeast) out.add('afst_yeast');
+  if(mould) out.add('afst_mould');
+  if(!yeast && !mould){ out.add('afst_yeast'); out.add('afst_mould'); }
+  return [...out];
+}
 // EUCAST docs a non-reagent (AST) panel cites — base breakpoint+method, refined
 // by what the panel is actually about (resistance mechanisms, anaerobes, etc.).
+// Antifungal (af_*/afr_*) panels are EUCAST AFST scope; mycology-morphology (fx_*)
+// and molecular (viro_*) panels are SMI / IFU scope and carry no EUCAST tag.
 function panelEucastKeys(key, p){
-  if(!p || p.reagents || /^fx_|^af/.test(key) || /^viro_/.test(key)) return [];
+  if(!p || p.reagents || /^fx_/.test(key) || /^viro_/.test(key)) return [];
+  if(/^af/.test(key)) return afstEucastKeys(key, p);
   const out=new Set(['bp','disk','read']);
   const hay=((p.title||'')+' '+(p.sub||'')+' '+(p.abx||[]).join(' ')+' '+(p.notes||'')).toLowerCase();
   if(/esbl|ampc|amp c|carbapenemase|\bcpe\b|d68|d69|d63|d73|metallo|\bmbl\b|porin|kpc|oxa-48|carbapenem/.test(hay) || key==='d73fc') out.add('rmech');
@@ -2547,7 +2613,12 @@ function panelEucastKeys(key, p){
   if(/cefiderocol/.test(hay) || key==='ur4') out.add('cefid');
   return [...out];
 }
-function panelSmiCodes(key, p){ return (p && p.reagents && REAGENT_SMI[key]) ? REAGENT_SMI[key].slice() : []; }
+// SMI codes a panel cites — reagent/ID panels via REAGENT_SMI; mycology-morphology
+// (fx_*) flowchart cards rest on UK SMI ID 1 (fungal morphological identification).
+function panelSmiCodes(key, p){
+  if(/^fx_/.test(key)) return ['ID 1'];
+  return (p && p.reagents && REAGENT_SMI[key]) ? REAGENT_SMI[key].slice() : [];
+}
 // EUCAST docs an intrinsic-resistance (rules) organism cites: the expected-
 // phenotype tables + IE guidance, plus the organism-specific Expert Rules.
 function rulesEucastKeys(o){
@@ -2568,10 +2639,14 @@ function rulesEucastKeys(o){
 // Panels reachable in each AST view = static cards on the page + every card in
 // that view's organism-flow dropdown.
 function flowCardKeys(flows){ const s=new Set(); Object.values(flows||{}).forEach(f=>(f.cols||[]).forEach(c=>(c.cards||[]).forEach(card=>s.add(card.key)))); return s; }
+// Mycology view's on-click cards: the morphology flowchart (fx_*) and the
+// antifungal agent / expected-resistance cards (af_*, afr_*).
+const mycoPanelKeys = (typeof fcPanels!=='undefined') ? Object.keys(fcPanels).filter(k=>/^fx_|^af/.test(k)) : [];
 const VIEW_PANELS = {
   flow:  new Set([...['reagent_proteus','reagent_pseudo','reagent_staph','gp','in','gp1','in1','ur2','ur4','mics'], ...flowCardKeys(typeof orgFlows!=='undefined'?orgFlows:{})]),
   wound: new Set([...['reagent_proteus','reagent_pseudo','reagent_staph','coli1','coli2','coli3','mero_mic'], ...flowCardKeys(typeof orgFlowsWound!=='undefined'?orgFlowsWound:{})]),
   csf:   new Set([...flowCardKeys(typeof orgFlowsCsf!=='undefined'?orgFlowsCsf:{})]),
+  myco:  new Set(mycoPanelKeys),
   interp:new Set(['d73fc'])
 };
 // Final per-view EUCAST key list = base ∪ (docs cited by reachable panels), canon-ordered.
@@ -2585,11 +2660,13 @@ const EUCAST_VIEW_KEYS = {};
 Object.keys(EUCAST_VIEW_REFS).forEach(v=>{ EUCAST_VIEW_KEYS[v]=computeViewEucastKeys(v); });
 const _eucastIdxCache={};
 function viewEucastIndex(view){ return _eucastIdxCache[view] || (_eucastIdxCache[view]=eucastRefIndex(EUCAST_VIEW_KEYS[view]||[])); }
-const VIEW_SMI_INDEX = { flow:()=>flowRefs(), wound:()=>woundRefs(), csf:()=>csfRefs(), plate:()=>plateRefs(), bactid:()=>BACTID_REFS };
+const VIEW_SMI_INDEX = { flow:()=>flowRefs(), wound:()=>woundRefs(), csf:()=>csfRefs(), myco:()=>mycoRefs(), plate:()=>plateRefs(), bactid:()=>BACTID_REFS };
 function viewSmiIndex(view){ const f=VIEW_SMI_INDEX[view]; return f?f():null; }
-// Which AST view a panel "belongs to" — used to pick the right letter index when
+// Which view a panel "belongs to" — used to pick the right reference index when
 // a panel is opened from a context (search/index) that has no reference box.
 function panelHomeView(key){
+  if(/^viro_/.test(key)) return 'virology';
+  if(/^fx_|^af/.test(key)) return 'myco';
   if(EUCAST_VIEW_KEYS[curView] && (VIEW_PANELS[curView]&&VIEW_PANELS[curView].has(key))) return curView;
   if((VIEW_PANELS.csf||new Set()).has(key) || /^csf_/.test(key)) return 'csf';
   if((VIEW_PANELS.wound||new Set()).has(key) || /^coli|^w_|^mero_mic/.test(key)) return 'wound';
@@ -2597,9 +2674,12 @@ function panelHomeView(key){
   if(key==='d73fc') return 'interp';
   return 'flow';
 }
-// Build the combined [n][a] citation markup for a panel's detail header.
+// Build the combined citation markup for a panel's detail header. Molecular
+// (viro_*) panels carry the IFU [n] system; everything else gets the SMI [n]
+// and/or EUCAST [a] tags resolved against its home view's reference boxes.
 function panelCiteSup(key){
   const p=fcPanels[key]; if(!p) return '';
+  if(/^viro_/.test(key)) return ifuCiteSup(ifuKeysForPanel(key), virologyRefs().num);
   const view=panelHomeView(key);
   const smiIdx=viewSmiIndex(view), eucIdx=viewEucastIndex(view);
   const smi = smiIdx ? smiCiteSup(panelSmiCodes(key,p), smiIdx.num) : '';
@@ -2625,6 +2705,9 @@ function reagentSmiForView(view){
 function flowRefs(){ return flowRefs._ || (flowRefs._ = smiRefIndex(['B 41','ID 7','ID 4','ID 16','ID 17','TP 8','TP 10','TP 26','TP 25','TP 5', ...reagentSmiForView('flow')])); }
 function woundRefs(){ return woundRefs._ || (woundRefs._ = smiRefIndex(['B 11','B 14','B 17','B 42','B 44','ID 7','ID 4','ID 16','ID 17','ID 12','ID 25','ID 14', ...reagentSmiForView('wound')])); }
 function csfRefs(){ return csfRefs._ || (csfRefs._ = smiRefIndex(['B 27','B 41','ID 7','ID 4','ID 16','ID 17', ...reagentSmiForView('csf')])); }
+// Mycology view SMI box: ID 1 (fungal morphological identification — the
+// flowchart cards) + B 39 (dermatological specimens / superficial mycoses).
+function mycoRefs(){ return mycoRefs._ || (mycoRefs._ = smiRefIndex(['ID 1','B 39'])); }
 
 function bidVal(v){return Array.isArray(v)?v:[v];}
 function bidPretty(v){return bidVal(v).filter(x=>x && x !== 'not-recorded').map(x=>String(x).replace('GP','Gram +').replace('GN','Gram −').replace('GV','Gram variable').replace('co2','CO₂').replace('anaerobic','AnO₂').replace('facultative','facultative').replace('microaerophilic','microaerophilic').replace('fermentative','fermentative').replace('oxidative','oxidative').replace('asaccharolytic','asaccharolytic')).join(' / ');}
@@ -2681,6 +2764,14 @@ appendSmiRefs('flow', flowRefs(),
   {note:'Each pathway title is marked [n] against the urine specimen SMI. The sensitivity panels shown in the flows are EUCAST clinical breakpoints, not SMI.'});
 appendSmiRefs('wound', woundRefs(),
   {note:'Each pathway title is marked [n] against the wound/pus/deep-tissue specimen SMIs. The sensitivity panels shown in the flows are EUCAST clinical breakpoints, not SMI.'});
+appendSmiRefs('csf', csfRefs(),
+  {note:'Each CSF organism pathway and its identification cards are marked [n] against the CSF specimen SMI (B 27) and the relevant ID/TP documents. Sensitivity panels use EUCAST meningitis breakpoints (see the EUCAST references box), not SMI; all CSF results are consultant-authorised.'});
+appendSmiRefs('myco', mycoRefs(),
+  {note:'The fungal morphology flowchart and dermatophyte cards are marked [n] against UK SMI ID 1 (fungal morphological identification) and B 39 (superficial mycoses). Antifungal susceptibility is EUCAST AFST (see the EUCAST references box); colony/microscopy images are atlas-based (Mycology Online, Adelaide) + the UKHSA Mycology Reference Laboratory handbook.'});
+// Manufacturer IFU [n] reference list on the molecular (virology) view — its
+// content is validated against the assay IFUs, not UK SMI or EUCAST.
+appendIfuRefs('virology', virologyRefs(),
+  {note:'Each molecular pathway and result card is marked [n] against the manufacturer IFU for that assay (Hologic Panther Aptima CT/NG; Cepheid GeneXpert respiratory, MTB/RIF and Norovirus GI/GII). NAAT does not provide antimicrobial susceptibility; repeat/escalation and reporting follow local SOP.'});
 // EUCAST [a] reference lists on the AST-relevant views (companion to the SMI [n]
 // lists; collapsed by default). Appended after the SMI blocks so they stack.
 Object.entries(EUCAST_VIEW_REFS).forEach(([viewId,cfg])=>appendEucastRefs(viewId, EUCAST_VIEW_KEYS[viewId], {note:cfg.note}));

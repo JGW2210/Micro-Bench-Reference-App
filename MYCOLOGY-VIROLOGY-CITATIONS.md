@@ -222,6 +222,27 @@ is marked accordingly with `version:'reference-only'`.
 
 ---
 
+## 7a. In-app citation tagging (added v31)
+
+Every on-click card in the non-bacteriology streams now carries an inline citation
+marker that resolves to a collapsible reference box on its view, matching the UK
+SMI `[n]` / EUCAST `[a]` system already used on the bacteriology views:
+
+| Card group | Marker | Resolves to |
+|---|---|---|
+| Antifungal agents / expected resistance (`af_*`, `afr_*`) | EUCAST `[a]` | Mycology view EUCAST references box (AFST BP v12.1 + E.Def 7.4/9.4) |
+| Fungal morphology flowchart (`fx_*`) | UK SMI `[n]` | Mycology view UK SMI box (ID 1 + B 39) |
+| Molecular / NAAT (`viro_*`) | Manufacturer IFU `[n]` | Molecular view IFU references box (`ifuCitations` → committed IFUs) |
+
+The IFU references are catalogued in `data.js` as `ifuCitations` (document key →
+title/version/file path) and the committed file paths are verified against disk by
+`tests/validate-data.js`. `tests/audit-citations.js` confirms every molecular panel
+maps to a catalogued IFU and every antifungal/morphology tag resolves in its box.
+The AFST tab version string was also corrected from the stale v10.0 (2020) to the
+committed **v12.1 (valid 2026-04-10)**.
+
+---
+
 ## 8. Sign-off
 
 | Item | Status |
