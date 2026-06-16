@@ -217,10 +217,12 @@ edit cannot silently break traceability:
 | Disc-content sweep vs v16.0 (all panel/routine-set loads correct) + `validateDiscContents` test added | ✅ Done 2026-06-16 |
 | Stenotrophomonas intrinsic-resistance harmonised with S. maltophilia guidance v2 2024 (ceftazidime not reliably reportable) | ✅ Done 2026-06-16 |
 | Enterococcus Expert Rules (2025-11-09) cross-checked — app reflects clindamycin-R E. faecium + HLAR/norfloxacin/vanA-B rules | ✅ Done 2026-06-16 |
+| Staph / Strep / Pneumococcus Expert Rules (2025-11-09) cross-checked — no drift (cefoxitin-not-oxacillin for S. aureus, oxacillin screen for pneumo, iMLSb, β-lactam inference from penicillin, tetracycline class) | ✅ Done 2026-06-16 |
+| D68/D69/D63 interpreters converted from S/R toggle to zone-difference (mm) calculators matching the MAST IFUs (D73-style); logic unit-tested | ✅ Done 2026-06-16 |
 | `data.js` syntax (`node --check`) | ✅ Pass |
 | Data-validation suite (`npm test`) | ✅ Pass |
 | Local microbiologist confirmation vs lab SOP | ☐ **Required before bench use** |
-| Staph / Strep / Pneumococcus Expert Rules (2025-11-09) full re-validation | ☐ Outstanding (Enterococcus done) |
+| All organism-group Expert Rules (2025-11-09) cross-checked — no drift | ✅ Done 2026-06-16 |
 | Re-check on next annual EUCAST release (bacterial BP) | ☐ Recurring |
 | Re-check on next EUCAST AFST update | ☐ Recurring |
 
