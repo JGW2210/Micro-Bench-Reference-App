@@ -226,6 +226,15 @@ html.cursor-custom,html.cursor-custom *{cursor:none!important}
 @keyframes trace{0%{opacity:.6;transform:scale(1)}100%{opacity:0;transform:scale(.25)}}
 @media (pointer:coarse){.cursor,.trace{display:none}}
 
+/* ---- VERSION BADGE: faint fixed build stamp, shown on every view ---- */
+.app-version{position:fixed;right:10px;bottom:8px;z-index:140;pointer-events:none;
+  font-family:var(--font-mono);font-size:9px;letter-spacing:.08em;line-height:1;
+  color:var(--text-faint);opacity:.65;padding:3px 7px;border-radius:var(--border-radius-md);
+  border:1px solid var(--line);background:color-mix(in srgb,var(--bg-elev) 78%,transparent);
+  -webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px)}
+.app-version:empty{display:none}
+@media (max-width:560px){.app-version{right:6px;bottom:6px;opacity:.5}}
+
 /* ============================================================
    MAIN CONTAINER  (.wrap) — primary HUD panel
    ============================================================ */
