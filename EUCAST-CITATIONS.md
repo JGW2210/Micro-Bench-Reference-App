@@ -207,6 +207,10 @@ edit cannot silently break traceability:
 | Agent-specific Guidance Docs individually cited + `agentGuidance` map added | ✅ Done 2026-06-16 |
 | ATU guidance citation updated v2 (2020) → v4 (2024) | ✅ Done 2026-06-16 |
 | Validation added: `expectedPhenotypes`, `eucastCitations` (on-disk file check), `GUIDELINE_VERSIONS`; `sirBreakpoints` `ok:true` enforced | ✅ Done 2026-06-16 |
+| Urine + wound flowchart methodology reviewed (cards, panels, notes) | ✅ Done 2026-06-16 |
+| Fixed: `reagent_staph` cefoxitin MRSA cut-off ≤19mm → ≤21mm (matched v16.0 + `cefox_mhe`/glossary) | ✅ Done 2026-06-16 |
+| Corrected cefoxitin medium to EUCAST standard MH (no NaCl); clarified MH + 2% NaCl is the CLSI oxacillin screen | ✅ Done 2026-06-16 |
+| Added S. epidermidis/S. lugdunensis 27/27 CoNS detail; standardised topical "Fucidin" → "Fusidic acid"; flagged mupirocin zones for re-confirmation | ✅ Done 2026-06-16 |
 | `data.js` syntax (`node --check`) | ✅ Pass |
 | Data-validation suite (`npm test`) | ✅ Pass |
 | Local microbiologist confirmation vs lab SOP | ☐ **Required before bench use** |
