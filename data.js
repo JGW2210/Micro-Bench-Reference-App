@@ -2684,7 +2684,7 @@ const eucastCitations = {
    `reviewed:'—'` renders as "review date not set".
    ════════════════════════════════════════════════════════════════════ */
 const GUIDELINE_VERSIONS = {
-  _meta: { appData: 'v26', reviewed: '2026-06-15' },   // global app data version + last full review
+  _meta: { appData: 'v27', reviewed: '2026-06-16' },   // global app data version + last full review
   flow:    { lines:[{label:'EUCAST clinical breakpoints', version:'v16.0 (valid 2026-01-01)'},{label:'UK SMI', version:'B 41 i8.8 · ID/TP 2025'}], reviewed:'2026-06-15' },
   wound:   { lines:[{label:'EUCAST clinical breakpoints', version:'v16.0 (valid 2026-01-01)'},{label:'UK SMI', version:'B 11/B 14/B 17 · ID/TP 2025'}], reviewed:'2026-06-15' },
   bactid:  { lines:[{label:'UK SMI ID + TP series', version:'validated against committed issues'}], reviewed:'2026-06-15' },
