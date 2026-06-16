@@ -2408,12 +2408,103 @@ function smiFootnotesHtml(idx, opts){
     return `<li><span class="smi-ref-n">[${i+1}]</span> <span class="smi-ref-code">${code}</span> ${smiDocTitle(code)}${iss?` <span class="smi-ref-iss">(${iss})</span>`:''}</li>`;
   }).join('');
   const note=opts.note ? `<p class="smi-ref-note">${opts.note}</p>` : '';
-  return `<section class="smi-refs-block" aria-label="UK SMI references">`
-    +`<h4 class="smi-refs-title">UK SMI references · validated ${SMI_REVIEWED}</h4>`
-    +`<ol class="smi-refs">${lis}</ol>`+note
-    +`<p class="smi-ref-foot">Each [n] marks the UK Standard for Microbiology Investigations the item was checked against (issue/date as committed under <code>SMIs/</code>). Guidance only — verify against the current issue before clinical use. AST panels/breakpoints are EUCAST, not SMI.</p>`
-    +`</section>`;
+  const body=`<ol class="smi-refs">${lis}</ol>`+note
+    +`<p class="smi-ref-foot">Each [n] marks the UK Standard for Microbiology Investigations the item was checked against (issue/date as committed under <code>SMIs/</code>). Guidance only — verify against the current issue before clinical use. AST panels/breakpoints are EUCAST, not SMI.</p>`;
+  return collapsibleRefsHtml({
+    blockClass:'smi-refs-block', ariaLabel:'UK SMI references', title:'UK SMI references',
+    meta:`${idx.ordered.length} document${idx.ordered.length===1?'':'s'} · validated ${SMI_REVIEWED}`,
+    bodyHtml:body
+  });
 }
+// Shared collapsible reference box — used by both the UK SMI [n] and EUCAST [a]
+// footnote lists. Native <details> so it is keyboard-accessible with no JS, and
+// defaults closed to keep the pages clean (the user can expand on demand).
+function collapsibleRefsHtml({blockClass, ariaLabel, title, meta, bodyHtml}){
+  return `<details class="refs-collapsible ${blockClass}" aria-label="${ariaLabel}">`
+    +`<summary class="refs-summary"><i class="ti ti-chevron-right refs-chev" aria-hidden="true"></i>`
+    +`<span class="refs-summary-title">${title}</span>`
+    +(meta?`<span class="refs-summary-meta">${meta}</span>`:'')
+    +`</summary><div class="refs-body">${bodyHtml}</div></details>`;
+}
+
+// ─── EUCAST numbered citations (added v30) ───────────────────────────────
+// Companion to the UK SMI [n] system, but for antimicrobial susceptibility
+// testing, which is EUCAST scope. Listed the same way as the SMI documents but
+// with letter markers [a],[b],[c]… to keep the two reference systems visually
+// distinct. Versions/dates mirror eucastCitations + GUIDELINE_VERSIONS.
+const EUCAST_REVIEWED = '2026-06-15';
+const EUCAST_DOCS = {
+  bp:        {name:'EUCAST Breakpoint tables (MIC & zone diameters)', ver:'v16.0 · valid 2026-01-01'},
+  disk:      {name:'EUCAST disk diffusion method', ver:'v13.0 (2025)'},
+  read:      {name:'EUCAST disk diffusion reading guide', ver:'v11.0 (2025)'},
+  atu:       {name:'Area of Technical Uncertainty (ATU) guidance', ver:'v4 (2024)'},
+  nobp:      {name:'When there are no breakpoints', ver:'2024-09-03'},
+  sir:       {name:'Changes to S/I/R definitions (note to clinical colleagues)', ver:'2021-07-09'},
+  rmech:     {name:'Detection of resistance mechanisms (ESBL/AmpC/carbapenemase/MRSA)', ver:'2017-07-11'},
+  esbl:      {name:'Guidance document — confirmation of ESBL', ver:'—'},
+  erp:       {name:'Expected Resistant Phenotypes', ver:'v1.2 (2023-01-13)'},
+  esp:       {name:'Expected Susceptible Phenotypes', ver:'v1.1 (2022-03-25)'},
+  ie:        {name:'Intrinsic resistance & insufficient-evidence (IE) guidance', ver:'2024-12-05'},
+  er_entero: {name:'Expert Rules — Enterobacterales', ver:'v3.3 (2024-06-30)'},
+  er_staph:  {name:'Expert Rules — Staphylococcus', ver:'2025-11-09'},
+  er_strep:  {name:'Expert Rules — Streptococcus', ver:'2025-11-09'},
+  er_entc:   {name:'Expert Rules — Enterococcus', ver:'2025-11-09'},
+  er_pneumo: {name:'Expert Rules — Pneumococcus', ver:'2025-11-09'},
+  er_haem:   {name:'Expert Rules — Haemophilus', ver:'v3.2 (2019-06-13)'},
+  er_mor:    {name:'Expert Rules — Moraxella', ver:'v3.2 (2019-06-13)'},
+  er_coryne: {name:'Expert Rules — Corynebacterium', ver:'v3.2 (2019-06-13)'},
+  er_salm:   {name:'Expert Rules — Salmonella', ver:'v3.2 (2019-06-13)'},
+  anaero:    {name:'Anaerobe disk diffusion reading guide', ver:'v2.0 (2023)'},
+  bcc:       {name:'Burkholderia cepacia complex susceptibility testing', ver:'2019-07-13'},
+  amino:     {name:'Aminoglycoside guidance document', ver:'2020-04-24'},
+  coli:      {name:'Colistin MIC determination', ver:'2016-03'},
+  cefid:     {name:'Cefiderocol MIC testing guidance', ver:'2024-01'},
+  afst_bp:   {name:'Antifungal (AFST) clinical breakpoint tables', ver:'v12.1 · valid 2026-04-10'},
+  afst_yeast:{name:'AFST E.Def 7.4 — fermentative yeasts', ver:'rev. 2023'},
+  afst_mould:{name:'AFST E.Def 9.4 — moulds', ver:'rev. 2023'}
+};
+function eucastLetter(i){ return i<26 ? String.fromCharCode(97+i) : String.fromCharCode(97+Math.floor(i/26)-1)+String.fromCharCode(97+i%26); }
+function eucastRefIndex(keys){
+  const ordered=Array.from(new Set((keys||[]).filter(k=>EUCAST_DOCS[k])));
+  const letter={}; ordered.forEach((k,i)=>letter[k]=eucastLetter(i));
+  return {ordered, letter};
+}
+function eucastCiteSup(keys, idx){
+  const ls=(keys||[]).map(k=>idx.letter[k]).filter(Boolean);
+  return ls.length ? `<sup class="eucast-cite" title="EUCAST reference — see footnotes">[${ls.join(',')}]</sup>` : '';
+}
+function eucastFootnotesHtml(idx, opts){
+  opts=opts||{};
+  const lis=idx.ordered.map((k,i)=>{
+    const d=EUCAST_DOCS[k];
+    return `<li><span class="eucast-ref-n">[${eucastLetter(i)}]</span> <span class="eucast-ref-code">${d.name}</span>${d.ver&&d.ver!=='—'?` <span class="eucast-ref-iss">(${d.ver})</span>`:''}</li>`;
+  }).join('');
+  const note=opts.note ? `<p class="smi-ref-note">${opts.note}</p>` : '';
+  const body=`<ol class="eucast-refs">${lis}</ol>`+note
+    +`<p class="smi-ref-foot">Each [a] marks the EUCAST document the AST content was validated against (version/date as committed under <code>EUCAST/</code>). EUCAST revises breakpoints annually — verify against the current version before clinical use.</p>`;
+  return collapsibleRefsHtml({
+    blockClass:'eucast-refs-block', ariaLabel:'EUCAST references', title:'EUCAST references',
+    meta:`${idx.ordered.length} document${idx.ordered.length===1?'':'s'} · validated ${EUCAST_REVIEWED}`,
+    bodyHtml:body
+  });
+}
+function appendEucastRefs(viewId, keys, opts){
+  const view=document.getElementById('view-'+viewId);
+  if(!view || view.querySelector(':scope > .eucast-refs-block')) return;
+  view.insertAdjacentHTML('beforeend', eucastFootnotesHtml(eucastRefIndex(keys), opts));
+}
+// Per-view EUCAST document sets (ordered → letters). Curated to the documents
+// each AST view's content is actually validated against.
+const EUCAST_VIEW_REFS = {
+  flow:   { keys:['bp','disk','read','atu','nobp'], note:'The urine sensitivity panels and zone interpretation are EUCAST clinical breakpoints; conditional-release/reporting logic follows the local SOP.' },
+  wound:  { keys:['bp','disk','read','rmech','er_entero','er_staph','anaero','bcc'], note:'Wound/pus/deep-tissue panels are EUCAST; resistance-mechanism work (ESBL/AmpC/carbapenemase) and the expert rules drive the reflex and suppression logic.' },
+  csf:    { keys:['bp','disk','read','rmech','er_pneumo','er_haem'], note:'CSF panels use the EUCAST meningitis breakpoints where they differ from other sites; all CSF results are consultant-authorised.' },
+  interp: { keys:['bp','rmech','esbl','er_entero'], note:'The D-set interpreter logic follows the EUCAST resistance-mechanism detection guidance and the MAST disc-set IFUs.' },
+  checker:{ keys:['bp','disk','read','atu'], note:'Zone-diameter S/I/R thresholds are transcribed from the EUCAST breakpoint tables and disk-diffusion method.' },
+  rules:  { keys:['erp','esp','ie','er_entero','er_staph','er_strep','er_entc','er_pneumo','er_haem','er_mor','er_coryne','er_salm'], note:'Intrinsic resistance and expected phenotypes are taken from the EUCAST Expected Phenotypes tables and the organism-specific Expert Rules.' },
+  abx:    { keys:['bp','amino','coli','cefid','sir','nobp'], note:'Agent breakpoints and agent-specific guidance (aminoglycosides, colistin, cefiderocol) are EUCAST.' },
+  myco:   { keys:['afst_bp','afst_yeast','afst_mould'], note:'Antifungal susceptibility (AFST) breakpoints and methods are EUCAST AFST; morphological identification is UK SMI / atlas-based.' }
+};
 function appendSmiRefs(viewId, idx, opts){
   const view=document.getElementById('view-'+viewId);
   if(!view || view.querySelector(':scope > .smi-refs-block')) return;
@@ -2484,6 +2575,9 @@ appendSmiRefs('flow', flowRefs(),
   {note:'Each pathway title is marked [n] against the urine specimen SMI. The sensitivity panels shown in the flows are EUCAST clinical breakpoints, not SMI.'});
 appendSmiRefs('wound', woundRefs(),
   {note:'Each pathway title is marked [n] against the wound/pus/deep-tissue specimen SMIs. The sensitivity panels shown in the flows are EUCAST clinical breakpoints, not SMI.'});
+// EUCAST [a] reference lists on the AST-relevant views (companion to the SMI [n]
+// lists; collapsed by default). Appended after the SMI blocks so they stack.
+Object.entries(EUCAST_VIEW_REFS).forEach(([viewId,cfg])=>appendEucastRefs(viewId, cfg.keys, {note:cfg.note}));
 renderBloodScience();
 
 // ─── Global search ─────────────────────────────
