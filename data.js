@@ -436,6 +436,13 @@ const fcPanels = {
   __wound_end:{title:'',sub:'',abx:[],notes:''}
 };
 
+// D-set disc layouts and interpretation validated 2026-06-16 against the
+// committed MAST IFUs: IFUs/MAST/MAST D68c IFU.pdf (ESBL/AmpC, IFU179 V13),
+// D69c (AmpC only, IFU187 V6), D63c (cefepime ESBL ID, IFU169 V9), D73c
+// (Carba plus, IFU190 V8). NOTE: the true MAST method is zone-diameter
+// difference (≥5 mm synergy); the D68/D69/D63 S/R toggles in the interpreter
+// are a simplified teaching proxy. D73 uses the full zone-mm calculator
+// (interpretD73mm in app.js) which matches the D73c thresholds exactly.
 const dconfigs = {
   d68:{discs:[{l:'A',label:'Cefpodoxime'},{l:'B',label:'Cefpodoxime + ESBL inhibitor'},{l:'C',label:'Cefpodoxime + AmpC inhibitor'},{l:'D',label:'Cefpodoxime + ESBL + AmpC inhibitor'}],patterns:[
     {v:['S','S','S','S'],type:'success',title:'No resistance detected',body:'All discs susceptible. No ESBL or AmpC phenotype identified. No escalation required from cefpodoxime results alone.'},
@@ -447,7 +454,7 @@ const dconfigs = {
   ]},
   d69:{discs:[{l:'A',label:'Cefpodoxime + AmpC inducer'},{l:'B',label:'+ ESBL inhibitor'},{l:'C',label:'+ ESBL + AmpC inhibitor'}],patterns:[
     {v:['R','R','R'],type:'danger',title:'Derepressed AmpC — no ESBL',body:'All discs resistant. AmpC fully induced and overproduced; no inhibitor rescues. Consistent with derepressed chromosomal AmpC (Enterobacter, Citrobacter, Serratia). Do not report 3GCs even if susceptible in vitro. Reflex UR2.'},
-    {v:['R','S','S'],type:'match',title:'ESBL confirmed in context of AmpC induction',body:'AmpC induced (A resistant); ESBL inhibitor (B) restores susceptibility. ESBL confirmed despite AmpC induction. Report ESBL-positive. Suppress 3GCs. Reflex UR2.'},
+    {v:['R','S','S'],type:'warn',title:'Possible ESBL interference — confirm with D63',body:'Cefpodoxime + inducer (A) resistant; the ESBL-inhibitor disc (B) restores the zone while the AmpC-inhibitor disc (C) adds nothing further. AmpC is NOT demonstrated (C no larger than B). Per the D69C IFU the ESβL inhibitor is present only to stop an ESBL masking the AmpC read — D69 CANNOT confirm ESBL. Confirm any ESBL with D63 (cefepime/clavulanate).'},
     {v:['R','R','S'],type:'warn',title:'AmpC induced — ESBL masked, confirm with D63',body:'A and B resistant (high-level AmpC masking ESBL synergy in B); C susceptible (AmpC inhibitor removes masking). Suggests ESBL masked by induced AmpC. Confirm with D63. Treat as ESBL+AmpC pending confirmation.'},
     {v:['S','S','S'],type:'success',title:'No significant AmpC induction or ESBL',body:'Susceptible across all discs despite AmpC inducer. Low-level or non-inducible AmpC; no ESBL. Susceptibility likely genuine.'},
     {v:['R','S','R'],type:'warn',title:'Unusual pattern — verify disc placement',body:'Inconsistent result (B susceptible but C resistant). Check disc placement and repeat. May indicate zone reading artefact or mixed culture.'}
@@ -2643,7 +2650,7 @@ const eucastCitations = {
   appliesTo: {
     sirBreakpoints:     'Breakpoint tables v16.0 (zone diameters) — every agent checked & ok:true (2026-06-15)',
     expectedPhenotypes: 'Expected Resistant Phenotypes v1.2 + relevant Expert Rules (intrinsic/acquired resistance)',
-    dconfigs:           'Detection of resistance mechanisms (2017) + MAST D-set IFUs (ESBL/AmpC/carbapenemase typing)',
+    dconfigs:           'Detection of resistance mechanisms (2017) + committed MAST D-set IFUs (IFUs/MAST/: D68c·D69c·D63c·D73c) — disc layouts & interpretation validated 2026-06-16',
     fcPanels_bacterial: 'Breakpoint tables v16.0 (agent selection per organism group)',
     fcPanels_antifungal:'AFST Breakpoint tables v12.1 (valid 2026-04-10) — af_* and afr_* panels validated (2026-06-15)',
     abxClasses:         'Breakpoint tables v16.0 + agent-specific guidance notes',
