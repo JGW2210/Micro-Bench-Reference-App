@@ -211,6 +211,7 @@ edit cannot silently break traceability:
 | Fixed: `reagent_staph` cefoxitin MRSA cut-off ≤19mm → ≤21mm (matched v16.0 + `cefox_mhe`/glossary) | ✅ Done 2026-06-16 |
 | Corrected cefoxitin medium to EUCAST standard MH (no NaCl); clarified MH + 2% NaCl is the CLSI oxacillin screen | ✅ Done 2026-06-16 |
 | Added S. epidermidis/S. lugdunensis 27/27 CoNS detail; standardised topical "Fucidin" → "Fusidic acid"; flagged mupirocin zones for re-confirmation | ✅ Done 2026-06-16 |
+| Phenotypic screen selection: added per-D-set triggers (D68 cefpodoxime → D69 AmpC/cefoxitin · D63 ESBL confirm · D73 carbapenem-reduced) to urine + wound flows; tightened GP1/IN1 reflex triggers | ✅ Done 2026-06-16 |
 | `data.js` syntax (`node --check`) | ✅ Pass |
 | Data-validation suite (`npm test`) | ✅ Pass |
 | Local microbiologist confirmation vs lab SOP | ☐ **Required before bench use** |

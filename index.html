@@ -163,13 +163,19 @@
 
 <div class="arrow-down" style="margin:6px 0">↓ ESBL / AmpC / carbapenemase screen triggered by resistance pattern</div>
 <div class="resist-trigger">
-  <div style="margin-bottom:8px"><strong>Phenotypic screen selection</strong> — triggered by cefpodoxime resistance, multi-resistance, or clinical flag:</div>
+  <div style="margin-bottom:8px"><strong>Phenotypic screen selection</strong> — choose the screen from the triggering disc result (each links to the D-set interpreter):</div>
   <div class="dset-row">
     <span class="dset-pill d68" onclick="switchView('interp','d68')">D68 — ESBL / AmpC screen ↗</span>
     <span class="dset-pill d69" onclick="switchView('interp','d69')">D69 — AmpC characterisation ↗</span>
     <span class="dset-pill d63" onclick="switchView('interp','d63')">D63 — ESBL confirmation ↗</span>
     <span class="dset-pill d73" onclick="switchView('interp','d73')">D73 — Carbapenemase typing ↗</span>
   </div>
+  <ul class="dset-trig">
+    <li class="d68"><b>D68</b> — first-line screen when <b>cefpodoxime is resistant / reduced</b> (the 3GC screen disc on GP/IN). Splits ESBL vs AmpC by inhibitor synergy.</li>
+    <li class="d69"><b>D69</b> — when D68 points to <b>AmpC</b> (no ESBL-inhibitor synergy, or AmpC-inhibitor restores the zone), <b>cefoxitin is resistant</b>, or the organism is an inducible-AmpC species (Enterobacter, C. freundii, Serratia, M. morganii, K. aerogenes).</li>
+    <li class="d63"><b>D63</b> — to <b>confirm ESBL</b> when D68 shows ESBL-inhibitor synergy, or to unmask ESBL hidden behind AmpC. Uses cefepime ± clavulanate — cefepime resists AmpC, so synergy is ESBL-specific.</li>
+    <li class="d73"><b>D73</b> — when a <b>carbapenem is reduced</b> (ertapenem reduced zone — the most sensitive marker — or meropenem zone &lt;28 mm), or when D68/D63 show <b>no inhibitor synergy</b>.</li>
+  </ul>
 </div>
 
 <div class="arrow-down" style="margin:6px 0">↓ confirmed resistant phenotype / MDR escalation</div>
@@ -211,13 +217,19 @@
 
 <div class="arrow-down" style="margin:6px 0">↓ ESBL / AmpC / carbapenemase screen on resistance pattern</div>
 <div class="resist-trigger">
-  <div style="margin-bottom:8px"><strong>Phenotypic screen selection</strong> — triggered by cefpodoxime/ceftriaxone resistance, carbapenem reduced zone, or MDR phenotype:</div>
+  <div style="margin-bottom:8px"><strong>Phenotypic screen selection</strong> — choose the screen from the triggering disc result on Coli 1 / Coli 2 (each links to the D-set interpreter):</div>
   <div class="dset-row">
     <span class="dset-pill d68" onclick="switchView('interp','d68')">D68 — ESBL / AmpC screen ↗</span>
     <span class="dset-pill d69" onclick="switchView('interp','d69')">D69 — AmpC characterisation ↗</span>
     <span class="dset-pill d63" onclick="switchView('interp','d63')">D63 — ESBL confirmation ↗</span>
     <span class="dset-pill d73" onclick="switchView('interp','d73')">D73 — Carbapenemase typing ↗</span>
   </div>
+  <ul class="dset-trig">
+    <li class="d68"><b>D68</b> — first-line screen when the <b>cephalosporin screen is positive</b>: cefpodoxime resistant (Coli 1) or ceftriaxone resistant (Coli 2). Splits ESBL vs AmpC by inhibitor synergy.</li>
+    <li class="d69"><b>D69</b> — when D68 points to <b>AmpC</b> (no ESBL-inhibitor synergy, or AmpC-inhibitor restores the zone), <b>cefoxitin is resistant</b> (Coli 2), or the organism is an inducible-AmpC species (Enterobacter, C. freundii, Serratia, M. morganii, K. aerogenes).</li>
+    <li class="d63"><b>D63</b> — to <b>confirm ESBL</b> when D68 shows ESBL-inhibitor synergy, or to unmask ESBL hidden behind AmpC. Uses cefepime ± clavulanate — cefepime resists AmpC, so synergy is ESBL-specific.</li>
+    <li class="d73"><b>D73</b> — when a <b>carbapenem is reduced</b>: ertapenem reduced zone (most sensitive — Coli 2) or meropenem zone &lt;28 mm, or when D68/D63 show <b>no inhibitor synergy</b>. Also from the Acinetobacter / Pseudomonas pathways on reduced meropenem.</li>
+  </ul>
 </div>
 
 <div class="arrow-down" style="margin:6px 0">↓ confirmed MDR / carbapenem-reduced — reflex alongside D73 or D68</div>
