@@ -43,6 +43,7 @@
           <div class="sens-menu-list" id="sens-menu-list" role="menu" aria-label="Sensitivity sections">
             <button class="sens-menu-item active" id="sw-flow" type="button" role="menuitem" onclick="selectNavView('flow')"><i class="ti ti-droplet" aria-hidden="true"></i><span>Urine sensitivities</span></button>
             <button class="sens-menu-item" id="sw-wound" type="button" role="menuitem" onclick="selectNavView('wound')"><i class="ti ti-bandage" aria-hidden="true"></i><span>Wound sensitivities</span></button>
+            <button class="sens-menu-item" id="sw-csf" type="button" role="menuitem" onclick="selectNavView('csf')"><i class="ti ti-droplet-half" aria-hidden="true"></i><span>CSF sensitivities</span></button>
             <button class="sens-menu-item" id="sw-interp" type="button" role="menuitem" onclick="selectNavView('interp')"><i class="ti ti-flask" aria-hidden="true"></i><span>D-set interpreter</span></button>
             <button class="sens-menu-item" id="sw-rules" type="button" role="menuitem" onclick="selectNavView('rules')"><i class="ti ti-shield-half" aria-hidden="true"></i><span>Intrinsic resistance</span></button>
             <button class="sens-menu-item" id="sw-checker" type="button" role="menuitem" onclick="selectNavView('checker')"><i class="ti ti-ruler-measure" aria-hidden="true"></i><span>Zone S/I/R checker</span></button>
@@ -115,6 +116,27 @@
 
 <!-- ═══ FLOWCHART VIEW ═══ -->
 <div class="view" id="view-flow">
+<div class="reporting-toggle-bar">
+  <button class="reporting-toggle" type="button" aria-pressed="false" onclick="toggleReportingRules()"><i class="ti ti-clipboard-text" aria-hidden="true"></i> Reporting rules <span class="rt-state">OFF</span></button>
+  <span class="reporting-toggle-hint">SOP interpretation &amp; reporting logic — toggle the highlighted boxes</span>
+</div>
+<div class="reporting-rule">
+  <div class="rr-head"><i class="ti ti-alert-triangle" aria-hidden="true"></i> Urine reporting rules</div>
+  <ul>
+    <li><strong>Report ALL resistant antibiotics</strong> for urines.</li>
+    <li>Release <strong>Augmentin</strong> on ampicillin-resistant isolates (Winpath rule appends it automatically).</li>
+    <li>Release <strong>Nitrofurantoin only for E. coli</strong> — breakpoints are not validated for other coliforms, Proteus or Pseudomonas.</li>
+    <li>Enter results as <span class="rr-code">S</span> / <span class="rr-code">R</span> / <span class="rr-code">H</span> (highly resistant) / <span class="rr-code">W</span> (waiting). EUCAST no longer recognises “I” as Intermediate — it now means <em>Increased exposure</em>, and a Winpath rule appends the aminoglycoside-combination comment.</li>
+  </ul>
+</div>
+<div class="reporting-rule">
+  <div class="rr-head"><i class="ti ti-arrow-guide" aria-hidden="true"></i> Inferred resistance — override the zone</div>
+  <ul>
+    <li><strong>ESBL / AmpC:</strong> report ALL cephalosporins resistant irrespective of zone size (cefepime excepted where AmpC-stable). Add the <span class="rr-code">@ESB</span> / <span class="rr-code">@AMC</span> / <span class="rr-code">@IAC</span> comment.</li>
+    <li><strong>Inducible clindamycin (D-zone):</strong> erythromycin adjacent to clindamycin — a flattened clindamycin zone = report BOTH erythromycin and clindamycin resistant.</li>
+    <li><strong>Carbapenemase (CPE):</strong> add the <span class="rr-code">CPE</span> comment, notify infection control, and refer sterile-site isolates.</li>
+  </ul>
+</div>
 <div class="legend">
   <span class="leg"><span class="leg-dot" style="background:#7F77DD"></span>GP pathway</span>
   <span class="leg"><span class="leg-dot" style="background:#1D9E75"></span>Inpatient pathway</span>
@@ -193,6 +215,28 @@
 
 <!-- ═══ WOUND SENSITIVITIES VIEW ═══ -->
 <div class="view hidden" id="view-wound">
+<div class="reporting-toggle-bar">
+  <button class="reporting-toggle" type="button" aria-pressed="false" onclick="toggleReportingRules()"><i class="ti ti-clipboard-text" aria-hidden="true"></i> Reporting rules <span class="rt-state">OFF</span></button>
+  <span class="reporting-toggle-hint">SOP interpretation &amp; reporting logic — toggle the highlighted boxes</span>
+</div>
+<div class="reporting-rule">
+  <div class="rr-head"><i class="ti ti-alert-triangle" aria-hidden="true"></i> Reporting &amp; inferred resistance</div>
+  <ul>
+    <li><strong>S. aureus — make resistant agents reportable</strong> (Winpath rule, per CHC1139): Rifampicin, Trimethoprim, Gentamicin, Linezolid, Mupirocin, Tigecycline, Norfloxacin (except ears/eyes, where it indicates Ciprofloxacin), Septrin, Ciprofloxacin, Ampicillin, Nitrofurantoin, Fucidin, Clindamycin, Erythromycin.</li>
+    <li><strong>Cefoxitin</strong> is reported <strong>as Flucloxacillin</strong>; <strong>Tetracycline</strong> is reported <strong>as Doxycycline</strong> (by rule).</li>
+    <li><strong>Coliform conditional release:</strong> Augmentin only if ampicillin R; Ciprofloxacin and Pip/Taz only if ampicillin AND augmentin R.</li>
+    <li><strong>ESBL / AmpC:</strong> report ALL cephalosporins resistant irrespective of zone (cefepime excepted where AmpC-stable). <strong>Proteus:</strong> report tigecycline resistant irrespective of zone. Add the relevant <span class="rr-code">@ESB</span>/<span class="rr-code">@AMC</span>/<span class="rr-code">@IAC</span>/<span class="rr-code">CPE</span> comment.</li>
+    <li><strong>Inducible clindamycin (D-zone):</strong> flattening of clindamycin adjacent to erythromycin = report BOTH resistant.</li>
+  </ul>
+</div>
+<div class="reporting-rule">
+  <div class="rr-head"><i class="ti ti-ruler-2" aria-hidden="true"></i> Organism interpretive thresholds</div>
+  <ul>
+    <li><strong>S. pneumoniae — Oxacillin 1 µg screen (non-CSF):</strong> ≥20 mm → report all β-lactams penicillin-susceptible (cefaclor I); &lt;20 &amp; ≥8 mm → Amp/Amox/Pip/CTX/CRO susceptible; &lt;8 mm → do penicillin MIC (infer to amoxicillin/piperacillin). If penicillin MIC 0.5–2 confirm by broth dilution. <em>CSF: &lt;20 mm = report penicillin RESISTANT</em> — see CSF view.</li>
+    <li><strong>H. influenzae — Benzylpenicillin 1 µg screen:</strong> ≥12 mm → report susceptible to all β-lactams (amoxicillin, piperacillin). &lt;12 mm &amp; β-lactamase POSITIVE → Amp/Amox/Pip resistant, test other intended β-lactams. &lt;12 mm &amp; β-lactamase NEGATIVE → test the intended β-lactam and report β-lactamase negative. (Amoxicillin/ampicillin: IE for meningitis.)</li>
+    <li><strong>Staphylococci — Vancomycin:</strong> sharp zone ≥12 mm = S; fuzzy zone → confirm by MIC or report R.</li>
+  </ul>
+</div>
 <div class="legend">
   <span class="leg"><span class="leg-dot" style="background:#7F77DD"></span>Preliminary panel</span>
   <span class="leg"><span class="leg-dot" style="background:#D85A30"></span>Organism-specific</span>
@@ -273,6 +317,54 @@
 
 <div class="page-footer">EUCAST sens. · 2026</div>
 </div><!-- end view-wound -->
+
+
+<!-- ═══ CSF SENSITIVITIES VIEW ═══ -->
+<div class="view hidden" id="view-csf">
+<div class="reporting-toggle-bar">
+  <button class="reporting-toggle" type="button" aria-pressed="false" onclick="toggleReportingRules()"><i class="ti ti-clipboard-text" aria-hidden="true"></i> Reporting rules <span class="rt-state">OFF</span></button>
+  <span class="reporting-toggle-hint">SOP Table 4 interpretation &amp; reporting logic — toggle the highlighted boxes</span>
+</div>
+
+<div class="csf-banner">
+  <strong><i class="ti ti-alert-octagon" aria-hidden="true"></i> SEND ALL CSF results to the consultant microbiologist before authorising.</strong>
+  CSF susceptibilities carry direct clinical-urgency and public-health weight — do not release independently. Invasive meningococcal disease is notifiable: inform the duty consultant / IPC and refer the isolate for serogrouping.
+</div>
+
+<div class="reporting-rule">
+  <div class="rr-head"><i class="ti ti-ruler-2" aria-hidden="true"></i> CSF interpretive rules</div>
+  <ul>
+    <li><strong>S. pneumoniae — Oxacillin 1 µg (CSF):</strong> zone &lt;20 mm → report <strong>penicillin RESISTANT</strong> and perform Ceftriaxone &amp; Meropenem MICs. Never report penicillin susceptible on the disc for CSF.</li>
+    <li><strong>Meningitis breakpoints differ from other sites</strong> (lower) — interpret β-lactam MICs against the EUCAST meningitis column.</li>
+    <li><strong>Listeria:</strong> cephalosporins are intrinsically inactive — never report them. Ampicillin (or penicillin) + gentamicin is standard.</li>
+    <li><strong>H. influenzae / Listeria:</strong> Meropenem MIC for CSF is added <strong>by request only</strong>.</li>
+    <li>Enter results as <span class="rr-code">S</span> / <span class="rr-code">R</span> / <span class="rr-code">H</span> / <span class="rr-code">W</span>; all CSF reports are consultant-authorised.</li>
+  </ul>
+</div>
+
+<div class="tier-label">CSF received → Gram stain / antigen / culture / MALDI-TOF → organism-specific CSF panel</div>
+<div class="arrow-down" style="margin:10px 0">↓ select the CSF organism for its dedicated panel (SOP Table 4)</div>
+<div class="org-selector">
+  <div class="org-selector-top">
+    <span style="font-size:12px;font-weight:500;white-space:nowrap">CSF organism pathways</span>
+    <select id="org-select-csf">
+      <option value="">— select organism —</option>
+      <option value="csf_meningo">Neisseria meningitidis</option>
+      <option value="csf_pneumo">Streptococcus pneumoniae</option>
+      <option value="csf_haem">Haemophilus influenzae</option>
+      <option value="csf_listeria">Listeria monocytogenes</option>
+      <option value="csf_gbs">Group B Streptococcus</option>
+      <option value="csf_ecoli">E. coli / coliforms</option>
+      <option value="csf_staph">Staphylococci (shunt)</option>
+    </select>
+    <button class="org-btn" id="org-go-btn-csf" onclick="showOrgFlowCsf()">Show pathway ↗</button>
+    <button class="org-btn" onclick="clearOrgCsf()" style="font-size:11px;color:var(--color-text-secondary)">Clear</button>
+  </div>
+  <div id="org-flow-csf" style="display:none"></div>
+</div>
+
+<div class="page-footer">EUCAST sens. (meningitis BPs) · 2026</div>
+</div><!-- end view-csf -->
 
 
 <!-- ═══ MOLECULAR VIEW ═══ -->

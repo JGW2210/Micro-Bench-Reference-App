@@ -9,6 +9,7 @@ const source = fs.readFileSync(dataPath, 'utf8');
 const data = vm.runInNewContext(`${source}
 ({
   orgFlowsWound,
+  orgFlowsCsf,
   orgFlows,
   fcPanels,
   dconfigs,
@@ -388,6 +389,7 @@ function validateDiscContents() {
 validateFcPanels();
 validateFlowCollection('orgFlows', data.orgFlows);
 validateFlowCollection('orgFlowsWound', data.orgFlowsWound);
+validateFlowCollection('orgFlowsCsf', data.orgFlowsCsf);
 validateDconfigs();
 validateRoutineSets();
 validateIndexes();

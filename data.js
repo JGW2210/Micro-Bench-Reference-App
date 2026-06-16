@@ -249,6 +249,68 @@ const orgFlowsWound = {
   ]}
 };
 
+// CSF pathway (SOP Table 4). All CSF susceptibilities are authorised only
+// after consultant review — surfaced as a permanent banner in the view and
+// reinforced on every panel. Several organisms reuse the wound ID panels.
+const orgFlowsCsf = {
+  csf_meningo:{label:'Neisseria meningitidis — CSF pathway',cols:[
+    {header:'Reagent ID',color:'green',cards:[
+      {name:'GN diplococcus',desc:'Oxidase + · refer to Meningococcal Reference Unit',key:'w_meningo_id'}
+    ]},
+    {header:'CSF panel (all MIC)',color:'coral',cards:[
+      {name:'Meningococcus MICs',desc:'Ceftriaxone · Chloramphenicol · Ciprofloxacin · Minocycline · Penicillin · Rifampicin',key:'w_meningo'}
+    ]},
+    {header:'Consultant',color:'pink',cards:[
+      {name:'CSF reporting rule',desc:'SEND ALL CSF results to consultant',key:'w_meningo_csf'}
+    ]}
+  ]},
+  csf_pneumo:{label:'Streptococcus pneumoniae — CSF pathway',cols:[
+    {header:'Reagent ID',color:'green',cards:[
+      {name:'Optochin / bile',desc:'Pneumococcus confirmation',key:'w_pneumo_id'}
+    ]},
+    {header:'CSF panel',color:'coral',cards:[
+      {name:'CSF Pneumo panel',desc:'Chloramphenicol · Oxacillin 1 (zone <20 = Pen R) · Rifampicin · Vancomycin',key:'csf_pneumo'}
+    ]},
+    {header:'Oxacillin <20 reflex',color:'pink',cards:[
+      {name:'Ceftriaxone / Meropenem MIC',desc:'Mandatory when oxacillin zone <20 mm',key:'csf_pneumo_mic'}
+    ]}
+  ]},
+  csf_haem:{label:'Haemophilus influenzae — CSF pathway',cols:[
+    {header:'Reagent ID',color:'green',cards:[
+      {name:'X + V factor',desc:'H. influenzae ID · β-lactamase (nitrocefin)',key:'w_haem_id'}
+    ]},
+    {header:'CSF panel',color:'coral',cards:[
+      {name:'CSF Haemophilus panel',desc:'Ampicillin · Chloramphenicol · Cipro · Ceftriaxone · Cefuroxime · Septrin',key:'csf_haem'}
+    ]}
+  ]},
+  csf_listeria:{label:'Listeria monocytogenes — CSF pathway',cols:[
+    {header:'Reagent ID',color:'green',cards:[
+      {name:'GP rod, tumbling',desc:'L. monocytogenes — cephalosporins intrinsically inactive',key:'w_list_id'}
+    ]},
+    {header:'CSF panel',color:'coral',cards:[
+      {name:'CSF Listeria panel',desc:'Ampicillin · Penicillin · Septrin (+ gentamicin synergy)',key:'csf_listeria'}
+    ]}
+  ]},
+  csf_gbs:{label:'Group B Streptococcus (S. agalactiae) — CSF pathway',cols:[
+    {header:'CSF panel',color:'coral',cards:[
+      {name:'CSF GBS panel',desc:'Chloramphenicol · Penicillin · Rifampicin · Septrin · Teicoplanin · Vancomycin',key:'csf_gbs'}
+    ]}
+  ]},
+  csf_ecoli:{label:'E. coli / coliforms — CSF pathway',cols:[
+    {header:'CSF panel',color:'coral',cards:[
+      {name:'CSF Coliform panel',desc:'Chloramphenicol · Cefpodoxime · Ceftriaxone · Cefotaxime · Gentamicin · Meropenem · Norfloxacin',key:'csf_ecoli'}
+    ]}
+  ]},
+  csf_staph:{label:'Staphylococci — CSF / shunt pathway',cols:[
+    {header:'Reagent ID',color:'green',cards:[
+      {name:'Catalase · latex · DNase',desc:'S. aureus vs CoNS · cefoxitin MR screen',key:'reagent_staph'}
+    ]},
+    {header:'CSF panel',color:'coral',cards:[
+      {name:'CSF Staph panel',desc:'Cefoxitin · Gentamicin · Rifampicin · Septrin · Teicoplanin MIC · Vancomycin MIC',key:'csf_staph'}
+    ]}
+  ]}
+};
+
 const orgFlows = {
   staph:{label:'Staphylococcus spp. pathway',cols:[
     {header:'Reagent ID',color:'green',cards:[
@@ -394,6 +456,15 @@ const fcPanels = {
   w_burk_id:{title:'Burkholderia cepacia complex — identification',sub:'Non-fermenting Gram-negative rod, important in cystic fibrosis and chronic respiratory disease.',abx:['Oxidase (variable)','Growth on BCSA selective agar','MALDI-TOF','Differentiate from Pseudomonas / Stenotrophomonas'],reagents:true,notes:'Oxidase-variable, lysine-decarboxylase-positive non-fermenter; use Burkholderia cepacia selective agar (BCSA) for CF sputum. Critical to distinguish from Pseudomonas (oxidase +) and Stenotrophomonas (oxidase −, lavender pigment) — MALDI-TOF is definitive. B. cepacia complex is a major CF infection-control concern (cross-infection / "cepacia syndrome") — flag to the CF team and IPC. Refer to the dedicated BCC susceptibility testing guidance, not EUCAST, for interpretation.'},
   w_burk:{title:'Burkholderia Donker — B. cepacia complex primary panel',sub:'EU_BCE — SEND to consultant. No EUCAST interpretive criteria (non-reproducible) — interpret using the dedicated BCC susceptibility guidance / archived BSAC data.',abx:['Ceftazidime 10','Ciprofloxacin 5','Ceftolozane/Tazobactam 40','Gentamicin 10','Meropenem 10','Piperacillin/Tazobactam 36'],notes:'There are NO EUCAST breakpoints for Burkholderia cepacia complex due to poor reproducibility — results must be interpreted against the dedicated BCC susceptibility testing guidance (the document referenced in the citations view) rather than standard EUCAST zone/MIC tables. Co-trimoxazole, ceftazidime, meropenem and minocycline are the agents with the most supporting evidence. Intrinsically resistant to aminoglycosides, colistin/polymyxins and aztreonam (do not report these as susceptible). ALWAYS refer the result to the consultant microbiologist before authorising — therapy is individualised and combination regimens are common.'},
   w_burk_mic:{title:'Burkholderia — Colistin / Fosfomycin MIC (by request)',sub:'Added only at consultant request for complex / multi-resistant B. cepacia complex.',abx:['Colistin MIC','Fosfomycin MIC'],notes:'Note: B. cepacia complex is INTRINSICALLY resistant to colistin/polymyxins — a colistin MIC is performed only to document the phenotype at consultant request, never as a routine reportable option, and only by broth microdilution (gradient strip is not valid for colistin). Fosfomycin MIC similarly by request only. These do not replace the consultant-led interpretation of the primary panel against BCC-specific guidance.'},
+
+  // ═══ CSF PANEL ENTRIES (SOP Table 4 — SEND ALL CSF results to consultant) ═══
+  csf_pneumo:{title:'CSF Pneumococcus panel — S. pneumoniae from CSF',sub:'EU_SPN (CSF) — reduced CSF-specific panel. SEND ALL CSF results to the consultant before authorising.',abx:['Chloramphenicol 30','Oxacillin 1','Rifampicin 5','Vancomycin 5'],notes:'Oxacillin 1 µg is the penicillin screen, and the CSF threshold is stricter than at other sites: an oxacillin zone <20 mm MUST be reported as PENICILLIN RESISTANT (never report susceptible on the disc) and triggers ceftriaxone & meropenem MICs (reflex card). At ≥20 mm, penicillin and the other β-lactams may be reported susceptible. Vancomycin + rifampicin reflect empirical pen-allergic / cephalosporin-resistant meningitis cover (rifampicin only ever in combination). Chloramphenicol is the severe-β-lactam-allergy alternative. All CSF susceptibilities are authorised only after consultant review.'},
+  csf_pneumo_mic:{title:'CSF Pneumococcus MICs — oxacillin zone <20 mm reflex',sub:'MANDATORY when the CSF S. pneumoniae oxacillin 1 µg zone is <20 mm.',abx:['Ceftriaxone MIC','Meropenem MIC'],notes:'For CSF isolates an oxacillin zone <20 mm cannot be reported penicillin-susceptible — penicillin is reported resistant and the third-generation cephalosporin / carbapenem MICs determine therapy. EUCAST meningitis breakpoints: cefotaxime / ceftriaxone S ≤0.5 / R >2 mg/L; meropenem S ≤0.25 / R >1 mg/L; penicillin (meningitis) S ≤0.06 / R >0.06 mg/L if a penicillin MIC is added. Discuss all CSF results with the consultant microbiologist before authorising; refer pneumococci resistant to meropenem, vancomycin, teicoplanin, linezolid, cefotaxime, penicillin or moxifloxacin to AMRHAI (Table 7).'},
+  csf_haem:{title:'CSF Haemophilus panel — H. influenzae from CSF',sub:'EU_HAE (CSF). SEND ALL CSF results to the consultant before authorising.',abx:['Ampicillin 2','Chloramphenicol 30','Ciprofloxacin 5','Ceftriaxone 30','Cefuroxime 30','Co-trimoxazole 25'],notes:'Ceftriaxone (or cefotaxime) is first-line for H. influenzae meningitis. Ampicillin / amoxicillin carry INSUFFICIENT EVIDENCE (IE) for meningitis and depend on β-lactamase status — perform the nitrocefin β-lactamase test and report ampicillin resistant if positive. Meropenem MIC for CSF is added by request only. Testing on HTM agar. Refer isolates resistant to a third-generation cephalosporin or carbapenem to AMRHAI. Authorise only after consultant review.'},
+  csf_listeria:{title:'CSF Listeria panel — L. monocytogenes from CSF',sub:'EU_LIS (CSF). SEND ALL CSF results to the consultant before authorising.',abx:['Ampicillin 2','Penicillin 1','Co-trimoxazole 25'],notes:'Ampicillin (or penicillin) PLUS gentamicin is the treatment standard for Listeria meningitis / rhombencephalitis — add a gentamicin MIC for synergy assessment in severe disease. Penicillin has no specific meningitis breakpoint data (interpret with care, hence ampicillin is preferred). Co-trimoxazole is the penicillin-allergic alternative. CEPHALOSPORINS (ALL generations) ARE INTRINSICALLY INACTIVE — never report them, even if they appear active in vitro. Meropenem MIC for CSF by request only. Authorise only after consultant review.'},
+  csf_gbs:{title:'CSF Group B Strep panel — S. agalactiae from CSF',sub:'EU_BHS (CSF) — neonatal / adult meningitis. SEND ALL CSF results to the consultant before authorising.',abx:['Chloramphenicol 30','Penicillin 1','Rifampicin 5','Co-trimoxazole 25','Teicoplanin 30','Vancomycin 5'],notes:'Confirm GBS (Lancefield group B / CAMP-positive) before reporting. Penicillin (or ampicillin) is first-line and almost universally active — report penicillin and only escalate for confirmed allergy. Vancomycin / teicoplanin for severe penicillin allergy; rifampicin only in combination. Co-trimoxazole and chloramphenicol as alternatives. Refer β-haemolytic strep resistant to penicillin, vancomycin, teicoplanin, linezolid or quinolones to AMRHAI. Authorise only after consultant review.'},
+  csf_ecoli:{title:'CSF Coliform panel — E. coli / Enterobacterales from CSF',sub:'EU_GNB (CSF) — neonatal Gram-negative meningitis. SEND ALL CSF results to the consultant before authorising.',abx:['Chloramphenicol 30','Cefpodoxime 10','Ceftriaxone 30','Cefotaxime 5','Gentamicin 10','Meropenem 10','Norfloxacin 10'],notes:'Cefotaxime / ceftriaxone ± an aminoglycoside is standard for neonatal Gram-negative meningitis; meropenem is the carbapenem of choice for AmpC / ESBL producers and confirmed resistance. Cefpodoxime is the ESBL / AmpC screen — if resistant, run the D-set (D68 / D63) and report ALL cephalosporins resistant irrespective of zone size. Norfloxacin screens fluoroquinolone activity. Carbapenem-reduced isolates trigger D73 carbapenemase typing. Authorise only after consultant review.'},
+  csf_staph:{title:'CSF Staphylococcus panel — staphylococci from CSF / shunt',sub:'EU_STA (CSF) — shunt / device-associated. SEND ALL CSF results to the consultant before authorising.',abx:['Cefoxitin 30','Gentamicin 10','Rifampicin 5','Co-trimoxazole 25','Teicoplanin MIC','Vancomycin MIC'],notes:'Cefoxitin 30 on Mueller-Hinton defines methicillin status (MR → all β-lactams reported resistant). Vancomycin and teicoplanin are by E-test (MIC) for CSF / shunt isolates — glycopeptides are the mainstay for MR staphylococci and device infection. Rifampicin (only in combination) and co-trimoxazole add biofilm / oral step-down options. Many CSF staphylococci are coagulase-negative shunt contaminants rather than true infection — interpret with the clinical picture, repeat isolation and consultant input.'},
 
 
   // ═══ VIROLOGY PANEL ENTRIES ═══
@@ -2203,6 +2274,15 @@ const organismIndexEntries = [
     {name:'Neisseria gonorrhoeae',key:'w_gono',type:'panel'},
     {name:'Actinomyces spp.',key:'w_actino',type:'panel'},
     {name:'Topical ear / eye isolates',key:'w_topical_id',type:'panel'}
+  ]},
+  {section:'CSF pathways (consultant authorises all)',items:[
+    {name:'Neisseria meningitidis',key:'w_meningo',type:'panel'},
+    {name:'Streptococcus pneumoniae',key:'csf_pneumo',type:'panel'},
+    {name:'Haemophilus influenzae',key:'csf_haem',type:'panel'},
+    {name:'Listeria monocytogenes',key:'csf_listeria',type:'panel'},
+    {name:'Group B Streptococcus',key:'csf_gbs',type:'panel'},
+    {name:'E. coli / coliforms',key:'csf_ecoli',type:'panel'},
+    {name:'Staphylococci (shunt)',key:'csf_staph',type:'panel'}
   ]}
 ];
 
@@ -2758,6 +2838,7 @@ const GUIDELINE_VERSIONS = {
   _meta: { appData: 'v29', reviewed: '2026-06-16', nextReview: '2027-01 — EUCAST v17 breakpoints (annual); also re-check AFST v13, QC v16, and Expert Rules' },   // global app data version + last full review
   flow:    { lines:[{label:'EUCAST clinical breakpoints', version:'v16.0 (valid 2026-01-01)'},{label:'UK SMI', version:'B 41 i8.8 · ID/TP 2025'}], reviewed:'2026-06-15' },
   wound:   { lines:[{label:'EUCAST clinical breakpoints', version:'v16.0 (valid 2026-01-01)'},{label:'UK SMI', version:'B 11/B 14/B 17 · ID/TP 2025'}], reviewed:'2026-06-15' },
+  csf:     { lines:[{label:'EUCAST clinical breakpoints', version:'v16.0 (valid 2026-01-01) — meningitis breakpoints'},{label:'UK SMI', version:'B 27 (CSF) · ID/TP 2025'},{label:'Local SOP', version:'PF-MIC-LP-51 Table 4'}], reviewed:'2026-06-16' },
   bactid:  { lines:[{label:'UK SMI ID + TP series', version:'validated against committed issues'}], reviewed:'2026-06-15' },
   interp:  { lines:[{label:'EUCAST clinical breakpoints', version:'v16.0 (valid 2026-01-01)'},{label:'MAST D-set IFUs', version:'local'}], reviewed:'2026-06-15' },
   checker: { lines:[{label:'EUCAST clinical breakpoints', version:'v16.0 (valid 2026-01-01) — zone diameters validated'}], reviewed:'2026-06-15' },

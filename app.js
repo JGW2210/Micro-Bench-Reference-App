@@ -780,7 +780,7 @@ function showBloodTest(idx){
 // classes. The value after the colon is the short label shown on the trigger.
 const navMenus = [
   { id:'sens-menu',  triggerId:'sw-sens',  labelId:'sens-label',  prefix:'Sensitivities',
-    views:{ flow:'Urine', wound:'Wound', interp:'D-sets', rules:'Intrinsic resistance', checker:'S/I/R checker' } },
+    views:{ flow:'Urine', wound:'Wound', csf:'CSF', interp:'D-sets', rules:'Intrinsic resistance', checker:'S/I/R checker' } },
   { id:'class-menu', triggerId:'sw-class', labelId:'class-label', prefix:'Classification',
     views:{ plate:'Colony & Gram', bactid:'Bacterial ID' } },
   { id:'disc-menu',  triggerId:'sw-disc',  labelId:'disc-label',  prefix:'Disciplines',
@@ -892,7 +892,7 @@ function switchView(to,iTabId){
   const toEl=document.getElementById('view-'+to);
   // crude ordering for transition direction, matching the quick-nav numbering:
   // notes < sensitivities(flow,wound,interp) < abx < classification(plate,bactid) < disciplines(virology,blood,myco) < index
-  const order={notes:-1,flow:0,wound:1,interp:2,rules:2.5,checker:2.7,abx:3,plate:4,bactid:5,virology:6,blood:7,myco:8,parasitology:8.4,serology:8.5,index:9};
+  const order={notes:-1,flow:0,wound:1,csf:1.5,interp:2,rules:2.5,checker:2.7,abx:3,plate:4,bactid:5,virology:6,blood:7,myco:8,parasitology:8.4,serology:8.5,index:9};
   const goingRight=order[to]>order[curView];
   fromEl.style.transition='opacity .3s cubic-bezier(.4,0,.2,1),transform .3s cubic-bezier(.4,0,.2,1)';
   fromEl.style.opacity='0';
@@ -996,6 +996,24 @@ function showOrgFlowWound(){
 }
 function clearOrgWound(){
   clearOrgGeneric({selectId:'org-select-wound',targetId:'org-flow-wound',btnId:'org-go-btn-wound'});
+}
+function showOrgFlowCsf(){
+  renderOrgFlowGeneric({selectId:'org-select-csf',flows:orgFlowsCsf,targetId:'org-flow-csf',btnId:'org-go-btn-csf',minWidth:130,refsNum:csfRefs().num,labelCodes:['B 27']});
+}
+function clearOrgCsf(){
+  clearOrgGeneric({selectId:'org-select-csf',targetId:'org-flow-csf',btnId:'org-go-btn-csf'});
+}
+
+// ── Reporting-logic overlay ─────────────────────────────────────────────
+// SOP interpretive/reporting rules are surfaced as highlighted boxes that are
+// hidden by default and revealed together by this toggle (one shared state,
+// reflected on every .reporting-toggle button). Session-only, no persistence.
+function toggleReportingRules(){
+  const on=document.body.classList.toggle('show-reporting');
+  document.querySelectorAll('.reporting-toggle').forEach(b=>{
+    b.setAttribute('aria-pressed',on?'true':'false');
+    const s=b.querySelector('.rt-state'); if(s)s.textContent=on?'ON':'OFF';
+  });
 }
 
 function showDetail(key){
@@ -2409,6 +2427,7 @@ const BACTID_REFS = smiRefIndex(bactIdOrganisms.flatMap(o=>o.smi||[]));
 function plateRefs(){ return plateRefs._ || (plateRefs._ = smiRefIndex(Object.values(smiCitations.mediaByKey).flat())); }
 function flowRefs(){ return flowRefs._ || (flowRefs._ = smiRefIndex(['B 41','ID 7','ID 4','ID 16','ID 17','TP 8','TP 10','TP 26','TP 25','TP 5'])); }
 function woundRefs(){ return woundRefs._ || (woundRefs._ = smiRefIndex(['B 11','B 14','B 17','B 42','B 44','ID 7','ID 4','ID 16','ID 17','ID 12','ID 25','ID 14'])); }
+function csfRefs(){ return csfRefs._ || (csfRefs._ = smiRefIndex(['B 27','B 41','ID 7','ID 4','ID 16','ID 17'])); }
 
 function bidVal(v){return Array.isArray(v)?v:[v];}
 function bidPretty(v){return bidVal(v).filter(x=>x && x !== 'not-recorded').map(x=>String(x).replace('GP','Gram +').replace('GN','Gram −').replace('GV','Gram variable').replace('co2','CO₂').replace('anaerobic','AnO₂').replace('facultative','facultative').replace('microaerophilic','microaerophilic').replace('fermentative','fermentative').replace('oxidative','oxidative').replace('asaccharolytic','asaccharolytic')).join(' / ');}
@@ -3336,7 +3355,7 @@ function stampGuidelineVersions(){
 
 // Section slug ↔ internal view id.
 const viewSlugs = {
-  flow:'urine', wound:'wound', interp:'d-sets', rules:'intrinsic-resistance',
+  flow:'urine', wound:'wound', csf:'csf', interp:'d-sets', rules:'intrinsic-resistance',
   checker:'sir-checker', abx:'antibiotics', plate:'colony-gram', bactid:'bacterial-id',
   virology:'molecular', blood:'blood-science', myco:'mycology',
   parasitology:'parasitology', serology:'serology', index:'index', notes:'bench-notes'

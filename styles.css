@@ -538,6 +538,48 @@ html.cursor-custom,html.cursor-custom *{cursor:none!important}
 .dset-trig b{color:var(--text);font-weight:600}
 
 /* ============================================================
+   REPORTING-LOGIC OVERLAY  (toggleable interpretive rules)
+   ============================================================ */
+.reporting-toggle-bar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:0 0 10px}
+.reporting-toggle{
+  display:inline-flex;align-items:center;gap:7px;font-family:var(--font-mono);font-size:11px;
+  letter-spacing:.06em;text-transform:uppercase;padding:7px 13px;border-radius:var(--border-radius-md);
+  border:1px solid var(--color-border-warning);background:transparent;color:var(--color-text-warning);
+  cursor:pointer;transition:background .15s,border-color .15s,color .15s
+}
+.reporting-toggle:hover{background:var(--color-background-warning)}
+.reporting-toggle[aria-pressed="true"]{background:var(--color-background-warning);border-color:var(--warn)}
+.reporting-toggle .rt-state{font-weight:600}
+.reporting-toggle-hint{font-family:var(--font-mono);font-size:10px;color:var(--text-faint);letter-spacing:.02em}
+
+.reporting-rule{
+  display:none;border:1px solid var(--color-border-warning);border-left-width:3px;
+  border-radius:var(--border-radius-md);background:var(--color-background-warning);
+  padding:10px 13px;margin:8px 0;font-size:11px;color:var(--text-dim);line-height:1.5
+}
+body.show-reporting .reporting-rule{display:block}
+.reporting-rule .rr-head{
+  display:flex;align-items:center;gap:7px;font-family:var(--font-mono);font-size:10px;
+  letter-spacing:.1em;text-transform:uppercase;color:var(--color-text-warning);font-weight:600;margin-bottom:7px
+}
+.reporting-rule strong{color:var(--text);font-weight:600}
+.reporting-rule ul{margin:0;padding-left:16px;display:flex;flex-direction:column;gap:5px}
+.reporting-rule li{line-height:1.5}
+.reporting-rule .rr-code{
+  font-family:var(--font-mono);font-size:.92em;padding:0 4px;border:1px solid var(--color-border-warning);
+  border-radius:var(--border-radius-sm);color:var(--color-text-warning);white-space:nowrap
+}
+
+/* CSF consultant banner — always visible (safety-critical, not toggle-gated) */
+.csf-banner{
+  border:1px solid var(--color-border-warning);border-left-width:3px;border-radius:var(--border-radius-md);
+  background:var(--color-background-warning);padding:10px 13px;margin:0 0 10px;font-size:11px;
+  color:var(--text-dim);line-height:1.5
+}
+.csf-banner strong{color:var(--color-text-warning);font-weight:600}
+.csf-banner i{margin-right:2px}
+
+/* ============================================================
    DETAIL PANEL  (#detail-fc)
    ============================================================ */
 #detail-fc{
