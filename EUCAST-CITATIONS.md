@@ -212,11 +212,30 @@ edit cannot silently break traceability:
 | Corrected cefoxitin medium to EUCAST standard MH (no NaCl); clarified MH + 2% NaCl is the CLSI oxacillin screen | ✅ Done 2026-06-16 |
 | Added S. epidermidis/S. lugdunensis 27/27 CoNS detail; standardised topical "Fucidin" → "Fusidic acid"; flagged mupirocin zones for re-confirmation | ✅ Done 2026-06-16 |
 | Phenotypic screen selection: added per-D-set triggers (D68 cefpodoxime → D69 AmpC/cefoxitin · D63 ESBL confirm · D73 carbapenem-reduced) to urine + wound flows; tightened GP1/IN1 reflex triggers | ✅ Done 2026-06-16 |
+| D-set interpreters validated vs committed MAST IFUs (D63c/D68c/D69c/D73c); fixed d69 `R/S/S` (D69 cannot detect ESBL); added IFU methodology notes | ✅ Done 2026-06-16 |
+| Mupirocin card rewritten for the lab's single 200 µg disc (high-level mupA detection only) | ✅ Done 2026-06-16 |
+| Disc-content sweep vs v16.0 (all panel/routine-set loads correct) + `validateDiscContents` test added | ✅ Done 2026-06-16 |
+| Stenotrophomonas intrinsic-resistance harmonised with S. maltophilia guidance v2 2024 (ceftazidime not reliably reportable) | ✅ Done 2026-06-16 |
+| Enterococcus Expert Rules (2025-11-09) cross-checked — app reflects clindamycin-R E. faecium + HLAR/norfloxacin/vanA-B rules | ✅ Done 2026-06-16 |
 | `data.js` syntax (`node --check`) | ✅ Pass |
 | Data-validation suite (`npm test`) | ✅ Pass |
 | Local microbiologist confirmation vs lab SOP | ☐ **Required before bench use** |
+| Staph / Strep / Pneumococcus Expert Rules (2025-11-09) full re-validation | ☐ Outstanding (Enterococcus done) |
 | Re-check on next annual EUCAST release (bacterial BP) | ☐ Recurring |
 | Re-check on next EUCAST AFST update | ☐ Recurring |
+
+### Recurring re-validation schedule
+
+Tracked in `GUIDELINE_VERSIONS._meta.nextReview`. Trigger a review when EUCAST
+publishes a new edition of any source below:
+
+| Source | Current | Cadence | App structures to re-check |
+|---|---|---|---|
+| Clinical breakpoint tables | v16.0 (2026-01-01) | Annual (~Jan) | `sirBreakpoints` (re-confirm every `ok:true`), `validateDiscContents` canonical loads, `fcPanels` disc panels, `GUIDELINE_VERSIONS` |
+| AFST breakpoints | v12.1 (2026-04-10) | Per release | `fcPanels` `af_*`/`afr_*`, `af_method` |
+| QC tables | v15.0 | Per release | `qcWeeklyOrganisms` / `qcDailyOrganisms` |
+| Expert Rules | Staph/Strep/Entero/Pneumo 2025-11-09; Enterobacterales v3.3 | Per release | `expectedPhenotypes`, intrinsic-R notes in `fcPanels` |
+| MAST D-set IFUs | D63c/D68c/D69c/D73c (2021 V-rev) | On IFU revision | `dconfigs`, `interpretD73mm` thresholds |
 
 > The app remains a reference aid. Before any result is released, breakpoints must
 > be confirmed against the laboratory's own validated SOP, and re-checked whenever
