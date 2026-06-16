@@ -338,6 +338,53 @@ function validateGuidelineVersions() {
   });
 }
 
+function validateDiscContents() {
+  // Canonical EUCAST v16.0 disc contents (display convention: total µg / 'unit').
+  // Verified by manual sweep 2026-06-16; multi-value entries are legitimate
+  // organism-group variants. Locks the loads so a future edit cannot silently
+  // introduce a wrong disc strength. Unknown agents are skipped (not part of the set).
+  const canonical = {
+    'amikacin': ['30'], 'amoxicillin clavulanic acid': ['30', '3'], 'ampicillin': ['10', '2'],
+    'aztreonam': ['30'], 'benzylpenicillin': ['1'], 'cefepime': ['30'], 'cefiderocol': ['30'],
+    'cefotaxime': ['5'], 'cefoxitin': ['30'], 'cefpodoxime': ['10'], 'ceftazidime': ['10'],
+    'ceftazidime avibactam': ['14'], 'ceftolozane tazobactam': ['40'], 'ceftriaxone': ['30'],
+    'cefuroxime': ['30'], 'cephalexin': ['30'], 'chloramphenicol': ['30'], 'ciprofloxacin': ['5'],
+    'clindamycin': ['2'], 'co trimoxazole': ['25'], 'ertapenem': ['10'], 'erythromycin': ['15'],
+    'fosfomycin': ['200'], 'fusidic acid': ['10'], 'gentamicin': ['10', '30'], 'levofloxacin': ['5'],
+    'linezolid': ['10'], 'mecillinam': ['10'], 'meropenem': ['10'], 'mupirocin': ['200'],
+    'nalidixic acid': ['30'], 'nitrofurantoin': ['100'], 'norfloxacin': ['10'], 'novobiocin': ['5'],
+    'oxacillin': ['1'], 'pefloxacin': ['5'], 'piperacillin tazobactam': ['36'], 'rifampicin': ['5'],
+    'teicoplanin': ['30'], 'temocillin': ['30'], 'tetracycline': ['30'],
+    'ticarcillin clavulanic acid': ['85'], 'tigecycline': ['15'], 'tobramycin': ['10'], 'vancomycin': ['5']
+  };
+  const aliases = {
+    'augmentin': 'amoxicillin clavulanic acid', 'tazocin': 'piperacillin tazobactam',
+    'septrin': 'co trimoxazole', 'fucidin': 'fusidic acid', 'penicillin': 'benzylpenicillin',
+    'ticarcillin clavulanate': 'ticarcillin clavulanic acid'
+  };
+  const norm = name => {
+    const n = name.toLowerCase().replace(/[\/\-]/g, ' ').replace(/\s+/g, ' ').trim();
+    return aliases[n] || n;
+  };
+  const re = /^(.*?)\s+(\d[\d.\/-]*)$/;
+  const check = (raw, where) => {
+    if (typeof raw !== 'string') return;
+    const m = raw.match(re);
+    if (!m) return;
+    const agent = norm(m[1]);
+    if (!canonical[agent]) return;
+    assert(canonical[agent].includes(m[2]),
+      `${where}: ${m[1].trim()} disc load "${m[2]}" is not an accepted EUCAST value (expected ${canonical[agent].join(' or ')})`);
+  };
+  Object.entries(data.fcPanels || {}).forEach(([key, p]) => {
+    if (key.startsWith('__') || !p || !Array.isArray(p.abx)) return;
+    p.abx.forEach(a => check(a, `fcPanels.${key}.abx`));
+  });
+  (data.routineSets || []).forEach((g, gi) => (g.sets || []).forEach((s, si) =>
+    (s.antibiotics || []).forEach(a => check(a, `routineSets[${gi}].sets[${si}]`))));
+  (data.rareSets || []).forEach((r, ri) => { if (Array.isArray(r[1])) r[1].forEach(a => check(a, `rareSets[${ri}]`)); });
+}
+
 validateFcPanels();
 validateFlowCollection('orgFlows', data.orgFlows);
 validateFlowCollection('orgFlowsWound', data.orgFlowsWound);
@@ -350,6 +397,7 @@ validateSirBreakpoints();
 validateExpectedPhenotypes();
 validateEucastCitations();
 validateGuidelineVersions();
+validateDiscContents();
 
 if (failures.length) {
   console.error(`Data validation failed (${failures.length}):`);

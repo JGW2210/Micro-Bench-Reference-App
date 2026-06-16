@@ -13,7 +13,7 @@
 <!-- HUD/0S favicon: teal reticle + central plate on dark, inline so there is no extra file dependency -->
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='10' fill='%2305070a'/%3E%3Cg fill='none' stroke='%2338e8d0' stroke-width='2.4'%3E%3Ccircle cx='32' cy='32' r='17'/%3E%3Cpath d='M32 6v9M32 49v9M6 32h9M49 32h9' stroke-linecap='round'/%3E%3C/g%3E%3Ccircle cx='32' cy='32' r='6' fill='%2338e8d0'/%3E%3Cg stroke='%2338e8d0' stroke-width='2' opacity='.5'%3E%3Cpath d='M11 11h7v2M53 11h-7v2M11 53h7v-2M53 53h-7v-2' fill='none' stroke-linecap='round'/%3E%3C/g%3E%3C/svg%3E">
 <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' fill='%2305070a'/%3E%3Cg fill='none' stroke='%2338e8d0' stroke-width='2.4'%3E%3Ccircle cx='32' cy='32' r='17'/%3E%3Cpath d='M32 6v9M32 49v9M6 32h9M49 32h9' stroke-linecap='round'/%3E%3C/g%3E%3Ccircle cx='32' cy='32' r='6' fill='%2338e8d0'/%3E%3C/svg%3E">
-<link rel="stylesheet" href="styles.css?v=20260616c">
+<link rel="stylesheet" href="styles.css?v=20260616d">
 </head>
 <body>
 <div class="fx-particles" aria-hidden="true"></div>
@@ -745,6 +745,7 @@
   </div>
   <div id="ipanel-d68" class="ipanel">
     <div class="section-title">D68 — disc results <span style="font-weight:400;color:var(--color-text-tertiary)">(click disc to toggle S / R)</span><button class="reset-btn" onclick="resetDiscs('d68')">Reset</button></div>
+    <div class="dset-ifu-note">MAST D68C interpretation is by zone-diameter <strong>difference</strong>: inhibitor − cefpodoxime ≥ 5 mm = synergy, all four discs within 2 mm = negative. The S/R toggle below is a simplified teaching proxy — see the committed <code>IFUs/MAST/MAST D68c IFU.pdf</code>.</div>
     <div class="disc-row" id="discs-d68"></div>
     <div class="result-box" id="res-d68"><span style="color:var(--color-text-tertiary);font-size:12px">Set all disc results to see interpretation.</span></div>
     <div class="section-title">Estimated plate appearance <span style="font-weight:400;color:var(--color-text-tertiary)">(MHA · MAST hexagonal carrier)</span></div>
@@ -754,6 +755,7 @@
   </div>
   <div id="ipanel-d69" class="ipanel">
     <div class="section-title">D69 — disc results <span style="font-weight:400;color:var(--color-text-tertiary)">(click disc to toggle S / R)</span><button class="reset-btn" onclick="resetDiscs('d69')">Reset</button></div>
+    <div class="dset-ifu-note">MAST D69C detects <strong>AmpC only</strong>: C − A and C − B ≥ 5 mm = AmpC positive; all within 3 mm = negative. It <strong>cannot</strong> detect ESBL (the ESβL inhibitor only stops ESBL masking the AmpC read) — use D63 for ESBL. S/R toggle is a simplified proxy; see <code>IFUs/MAST/MAST D69c IFU.pdf</code>.</div>
     <div class="disc-row" id="discs-d69"></div>
     <div class="result-box" id="res-d69"><span style="color:var(--color-text-tertiary);font-size:12px">Set all disc results to see interpretation.</span></div>
     <div class="section-title">Estimated plate appearance <span style="font-weight:400;color:var(--color-text-tertiary)">(MHA · MAST hexagonal carrier)</span></div>
@@ -763,6 +765,7 @@
   </div>
   <div id="ipanel-d63" class="ipanel">
     <div class="section-title">D63 — disc results <span style="font-weight:400;color:var(--color-text-tertiary)">(click disc to toggle S / R)</span><button class="reset-btn" onclick="resetDiscs('d63')">Reset</button></div>
+    <div class="dset-ifu-note">MAST D63C: cefepime+clavulanate − cefepime ≥ 5 mm = ESBL positive (cefepime resists AmpC, so the synergy is ESBL-specific). See <code>IFUs/MAST/MAST D63c IFU.pdf</code>.</div>
     <div class="disc-row" id="discs-d63"></div>
     <div class="result-box" id="res-d63"><span style="color:var(--color-text-tertiary);font-size:12px">Set all disc results to see interpretation.</span></div>
     <div class="section-title">Estimated plate appearance <span style="font-weight:400;color:var(--color-text-tertiary)">(MHA · MAST hexagonal carrier)</span></div>
@@ -772,6 +775,7 @@
   </div>
   <div id="ipanel-d73" class="ipanel">
     <div class="section-title">D73 — zone diameters (mm) <span style="font-weight:400;color:var(--color-text-tertiary)">(enter measured diameter for each disc)</span><button class="reset-btn" onclick="resetD73mm()">Reset</button></div>
+    <div class="dset-ifu-note">MAST D73C zone-difference method (ignore microcolonies in the zone; no zone = record 6 mm). Thresholds below are transcribed from the committed <code>IFUs/MAST/MAST D73c IFU.pdf</code>.</div>
     <div class="zone-input-grid" id="d73mm-inputs"></div>
     <div class="result-box" id="res-d73mm"><span style="color:var(--color-text-tertiary);font-size:12px">Enter all five zone diameters (mm) to see interpretation.</span></div>
     <div class="section-title">Estimated plate appearance <span style="font-weight:400;color:var(--color-text-tertiary)">(MHA · MAST hexagonal carrier)</span></div>
@@ -1029,8 +1033,8 @@
 <div class="app-version" id="app-version" aria-label="App version"></div>
 
 <!-- Scripts: load order matters — data.js defines the datasets that app.js uses. -->
-<script src="data.js?v=20260616c"></script>
-<script src="app.js?v=20260616c"></script>
+<script src="data.js?v=20260616d"></script>
+<script src="app.js?v=20260616d"></script>
 
 <!-- HUD/0S chrome: background particle field, theme toggle, custom reticle cursor.
      Self-contained; app.js owns search + keyboard handlers, so nothing here duplicates them. -->

@@ -601,6 +601,9 @@ html.cursor-custom,html.cursor-custom *{cursor:none!important}
 }
 .reset-btn:hover{border-color:var(--accent);color:var(--accent)}
 
+.dset-ifu-note{font-size:11px;line-height:1.5;color:var(--text-dim);border:1px dashed var(--line-strong);border-radius:var(--border-radius-md);padding:7px 10px;margin:0 0 12px}
+.dset-ifu-note strong{color:var(--text);font-weight:600}
+.dset-ifu-note code{font-family:var(--font-mono);font-size:10px;background:var(--bg-elev-2);padding:1px 4px;border-radius:4px}
 .disc-row{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:1rem}
 .disc{display:flex;flex-direction:column;align-items:center;gap:6px;flex:1;min-width:80px}
 .disc-letter{font-family:var(--font-mono);font-size:10px;font-weight:500;color:var(--text-faint);letter-spacing:.06em;margin-bottom:2px}
