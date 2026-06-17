@@ -13,7 +13,7 @@
 <!-- HUD/0S favicon: teal reticle + central plate on dark, inline so there is no extra file dependency -->
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='10' fill='%2305070a'/%3E%3Cg fill='none' stroke='%2338e8d0' stroke-width='2.4'%3E%3Ccircle cx='32' cy='32' r='17'/%3E%3Cpath d='M32 6v9M32 49v9M6 32h9M49 32h9' stroke-linecap='round'/%3E%3C/g%3E%3Ccircle cx='32' cy='32' r='6' fill='%2338e8d0'/%3E%3Cg stroke='%2338e8d0' stroke-width='2' opacity='.5'%3E%3Cpath d='M11 11h7v2M53 11h-7v2M11 53h7v-2M53 53h-7v-2' fill='none' stroke-linecap='round'/%3E%3C/g%3E%3C/svg%3E">
 <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' fill='%2305070a'/%3E%3Cg fill='none' stroke='%2338e8d0' stroke-width='2.4'%3E%3Ccircle cx='32' cy='32' r='17'/%3E%3Cpath d='M32 6v9M32 49v9M6 32h9M49 32h9' stroke-linecap='round'/%3E%3C/g%3E%3Ccircle cx='32' cy='32' r='6' fill='%2338e8d0'/%3E%3C/svg%3E">
-<link rel="stylesheet" href="styles.css?v=20260617a">
+<link rel="stylesheet" href="styles.css?v=20260617b">
 </head>
 <body>
 <div class="fx-particles" aria-hidden="true"></div>
@@ -933,16 +933,16 @@
       <table class="plating-table">
         <thead><tr><th>Gram result</th><th>Media</th><th>Atmosphere</th><th>Number of drops</th><th>Sens required</th><th>Additional instruction</th></tr></thead>
         <tbody>
-          <tr><td>Gram positive cocci (Staph)</td><td>BA<br>Aria</td><td>CO<sub>2</sub><br>AnO<sub>2</sub></td><td>2</td><td>Staph 1</td><td></td></tr>
-          <tr><td>Gram positive cocci (Strep)</td><td>BA + opt<br>Aria</td><td>CO<sub>2</sub><br>AnO<sub>2</sub></td><td>3</td><td>Strep / Pneumo</td><td></td></tr>
-          <tr><td>Gram negative rod (Coli / Pseudo)</td><td>BA<br>Chromogenic UTI<br>Aria</td><td>CO<sub>2</sub><br>O<sub>2</sub><br>AnO<sub>2</sub></td><td>1</td><td>Coli 1 &amp; 2</td><td><em>S. typhi</em> / <em>S. paratyphi</em> are Hazard Group 3 organisms &ndash; always use a Class 1 MSC.</td></tr>
-          <tr><td>Gram negative rod &ndash; small / coccobacilli (Possible Haemophilus)</td><td>BA<br>CHOC<br>Chromogenic UTI<br>Aria</td><td>CO<sub>2</sub><br>CO<sub>2</sub><br>O<sub>2</sub><br>AnO<sub>2</sub></td><td>3</td><td>Coli 1 &amp; 2 &amp; Haemophilus</td><td></td></tr>
-          <tr><td>Gram positive rod</td><td>BA<br>Aria</td><td>CO<sub>2</sub><br>AnO<sub>2</sub></td><td>3</td><td>GPB</td><td></td></tr>
-          <tr><td>Mixed Gram negative and Gram positive</td><td>BA<br>UTI<br>CNA<br>Aria</td><td>CO<sub>2</sub><br>O<sub>2</sub><br>O<sub>2</sub><br>AnO<sub>2</sub></td><td>N/A</td><td>N/A</td><td>MALDI &amp; sensitivity to be done from isolated colonies on Day 2.</td></tr>
-          <tr><td>Gram negative cocci (possible Neisseria)</td><td>BA<br>CHOC<br>Aria</td><td>CO<sub>2</sub><br>CO<sub>2</sub><br>AnO<sub>2</sub></td><td>1</td><td>N. meningitidis</td><td><em>N. meningitidis</em> &ndash; always use a Class 1 MSC.</td></tr>
-          <tr><td>No organisms seen</td><td>BA<br>CHOC<br>Aria</td><td>CO<sub>2</sub><br>CO<sub>2</sub><br>AnO<sub>2</sub></td><td>1</td><td>N/A</td><td><ul><li>Add additional plates if indicated, eg. SAB, Campylobacter plates.</li><li>Re-incubate bottle on FX 40 then do a terminal sub at end of protocol (see below).</li></ul></td></tr>
-          <tr><td>Yeasts</td><td>BA<br>SAB</td><td>O<sub>2</sub></td><td>1</td><td>Slope and send to ref lab for sensitivity</td><td></td></tr>
-          <tr><td>Terminal subculture</td><td>BA<br>CHOC<br>Aria</td><td>CO<sub>2</sub><br>CO<sub>2</sub><br>AnO<sub>2</sub></td><td>1</td><td>N/A</td><td>Add additional plates if indicated, eg. SAB, Campylobacter plates etc.</td></tr>
+          <tr><td>Gram positive cocci (Staph)</td><td class="plate-cell"><div class="plate-stack"><span class="pl-line"><span class="plate p-cba">CBA</span></span><span class="pl-line"><span class="plate p-aria">ARIA</span></span></div></td><td><div class="plate-stack"><span class="pl-line"><span class="atmo">CO₂</span></span><span class="pl-line"><span class="atmo">AnO₂</span></span></div></td><td>2</td><td>Staph 1</td><td></td></tr>
+          <tr><td>Gram positive cocci (Strep)</td><td class="plate-cell"><div class="plate-stack"><span class="pl-line"><span class="plate p-cba">CBA</span> <span class="plate-note">+ opt</span></span><span class="pl-line"><span class="plate p-aria">ARIA</span></span></div></td><td><div class="plate-stack"><span class="pl-line"><span class="atmo">CO₂</span></span><span class="pl-line"><span class="atmo">AnO₂</span></span></div></td><td>3</td><td>Strep / Pneumo</td><td></td></tr>
+          <tr><td>Gram negative rod (Coli / Pseudo)</td><td class="plate-cell"><div class="plate-stack"><span class="pl-line"><span class="plate p-cba">CBA</span></span><span class="pl-line"><span class="plate p-uti">Chromogenic UTI</span></span><span class="pl-line"><span class="plate p-aria">ARIA</span></span></div></td><td><div class="plate-stack"><span class="pl-line"><span class="atmo">CO₂</span></span><span class="pl-line"><span class="atmo">O₂</span></span><span class="pl-line"><span class="atmo">AnO₂</span></span></div></td><td>1</td><td>Coli 1 &amp; 2</td><td><em>S. typhi</em> / <em>S. paratyphi</em> are Hazard Group 3 organisms &ndash; always use a Class 1 MSC.</td></tr>
+          <tr><td>Gram negative rod &ndash; small / coccobacilli (Possible Haemophilus)</td><td class="plate-cell"><div class="plate-stack"><span class="pl-line"><span class="plate p-cba">CBA</span></span><span class="pl-line"><span class="plate p-choc">CHOC</span></span><span class="pl-line"><span class="plate p-uti">Chromogenic UTI</span></span><span class="pl-line"><span class="plate p-aria">ARIA</span></span></div></td><td><div class="plate-stack"><span class="pl-line"><span class="atmo">CO₂</span></span><span class="pl-line"><span class="atmo">CO₂</span></span><span class="pl-line"><span class="atmo">O₂</span></span><span class="pl-line"><span class="atmo">AnO₂</span></span></div></td><td>3</td><td>Coli 1 &amp; 2 &amp; Haemophilus</td><td></td></tr>
+          <tr><td>Gram positive rod</td><td class="plate-cell"><div class="plate-stack"><span class="pl-line"><span class="plate p-cba">CBA</span></span><span class="pl-line"><span class="plate p-aria">ARIA</span></span></div></td><td><div class="plate-stack"><span class="pl-line"><span class="atmo">CO₂</span></span><span class="pl-line"><span class="atmo">AnO₂</span></span></div></td><td>3</td><td>GPB</td><td></td></tr>
+          <tr><td>Mixed Gram negative and Gram positive</td><td class="plate-cell"><div class="plate-stack"><span class="pl-line"><span class="plate p-cba">CBA</span></span><span class="pl-line"><span class="plate p-uti">Chromogenic UTI</span></span><span class="pl-line"><span class="plate p-cna">CNA</span></span><span class="pl-line"><span class="plate p-aria">ARIA</span></span></div></td><td><div class="plate-stack"><span class="pl-line"><span class="atmo">CO₂</span></span><span class="pl-line"><span class="atmo">O₂</span></span><span class="pl-line"><span class="atmo">O₂</span></span><span class="pl-line"><span class="atmo">AnO₂</span></span></div></td><td>N/A</td><td>N/A</td><td>MALDI &amp; sensitivity to be done from isolated colonies on Day 2.</td></tr>
+          <tr><td>Gram negative cocci (possible Neisseria)</td><td class="plate-cell"><div class="plate-stack"><span class="pl-line"><span class="plate p-cba">CBA</span></span><span class="pl-line"><span class="plate p-choc">CHOC</span></span><span class="pl-line"><span class="plate p-aria">ARIA</span></span></div></td><td><div class="plate-stack"><span class="pl-line"><span class="atmo">CO₂</span></span><span class="pl-line"><span class="atmo">CO₂</span></span><span class="pl-line"><span class="atmo">AnO₂</span></span></div></td><td>1</td><td>N. meningitidis</td><td><em>N. meningitidis</em> &ndash; always use a Class 1 MSC.</td></tr>
+          <tr><td>No organisms seen</td><td class="plate-cell"><div class="plate-stack"><span class="pl-line"><span class="plate p-cba">CBA</span></span><span class="pl-line"><span class="plate p-choc">CHOC</span></span><span class="pl-line"><span class="plate p-aria">ARIA</span></span></div></td><td><div class="plate-stack"><span class="pl-line"><span class="atmo">CO₂</span></span><span class="pl-line"><span class="atmo">CO₂</span></span><span class="pl-line"><span class="atmo">AnO₂</span></span></div></td><td>1</td><td>N/A</td><td><ul><li>Add additional plates if indicated, eg. SAB, Campylobacter plates.</li><li>Re-incubate bottle on FX 40 then do a terminal sub at end of protocol (see below).</li></ul></td></tr>
+          <tr><td>Yeasts</td><td class="plate-cell"><div class="plate-stack"><span class="pl-line"><span class="plate p-cba">CBA</span></span><span class="pl-line"><span class="plate p-sab">SAB</span></span></div></td><td><div class="plate-stack"><span class="pl-line"><span class="atmo">O₂</span></span></div></td><td>1</td><td>Slope and send to ref lab for sensitivity</td><td></td></tr>
+          <tr><td>Terminal subculture</td><td class="plate-cell"><div class="plate-stack"><span class="pl-line"><span class="plate p-cba">CBA</span></span><span class="pl-line"><span class="plate p-choc">CHOC</span></span><span class="pl-line"><span class="plate p-aria">ARIA</span></span></div></td><td><div class="plate-stack"><span class="pl-line"><span class="atmo">CO₂</span></span><span class="pl-line"><span class="atmo">CO₂</span></span><span class="pl-line"><span class="atmo">AnO₂</span></span></div></td><td>1</td><td>N/A</td><td>Add additional plates if indicated, eg. SAB, Campylobacter plates etc.</td></tr>
         </tbody>
       </table>
     </div>
@@ -956,41 +956,41 @@
       <table class="plating-table">
         <thead><tr><th>Sample type</th><th>Code for form</th><th>Plates</th></tr></thead>
         <tbody>
-          <tr><td>Deep ear</td><td>DEAR</td><td>CBA, BACH, CLED, CNA/SAB, ANO<sub>2</sub> Bi-plate, ARIA</td></tr>
-          <tr><td>Deep wound swab</td><td>DEEP</td><td>CBA, CLED, CNA, ANO<sub>2</sub> Bi-plate, ARIA, FAB, GRAM</td></tr>
-          <tr><td>Ear swab</td><td>EAR</td><td>CBA, BACH, CLED, CNA/SAB</td></tr>
-          <tr><td>Eye swab</td><td>EYE</td><td>CBA, CHOC</td></tr>
-          <tr><td>Neonatal eye</td><td>BEYE</td><td>CBA, CHOC, VCAT, GRAM</td></tr>
-          <tr><td>Mouth swab</td><td>MS</td><td>CBA, SAB</td></tr>
-          <tr><td>Recurrent sore throat</td><td>RTS</td><td>CBA, ANO<sub>2</sub> Bi-plate</td></tr>
-          <tr><td>Throat swab</td><td>TS</td><td>CBA</td></tr>
-          <tr><td>Routine wound swab</td><td>R</td><td>CBA, CLED, CNA, ANO<sub>2</sub> Bi-plate</td></tr>
-          <tr><td>Superficial wound swab</td><td>SUP</td><td>CBA, CLED, CNA</td></tr>
-          <tr><td>Urogenital sample (&lt;14 years old)</td><td>CURO</td><td>CBA, CHOC, CLED, CNA/SAB</td></tr>
-          <tr><td>Endocervical / cervical</td><td>CX</td><td>VCAT</td></tr>
-          <tr><td>Urethral swab</td><td>URET</td><td>VCAT</td></tr>
-          <tr><td>Penis</td><td>GTL</td><td>CNA/SAB (CBA, CLED, ANo<sub>2</sub> Bi-plate, VCAT added if required)</td></tr>
-          <tr><td>HVS swab</td><td>HVS</td><td>CNA/SAB, GRAM (TV if needed)</td></tr>
-          <tr><td>Nose swab</td><td>NS</td><td>CBA</td></tr>
-          <tr><td>Routine sputum sample</td><td>SPT</td><td>CBA, BACH</td></tr>
-          <tr><td>Immunocompromised sputum sample</td><td>IMM</td><td>CBA, BACH, CLED, SAB</td></tr>
-          <tr><td>Cough swab or sputum from cystic fibrosis patient</td><td>CF</td><td>CBA, BACH, CLED, SAB, BURK</td></tr>
-          <tr><td>COPD / bronchiectasis sputum</td><td>COPD</td><td>CBA, BACH, CLED, SAB</td></tr>
-          <tr><td>Bronchial washing / lavage</td><td>BAL</td><td>CBA, BACH, CLED, SAB, 2× 5-day SAB, BCYE (consultant request only)</td></tr>
-          <tr><td>Aspiration pneumonia, lung abscess cat 3 samples</td><td>ASP</td><td>CBA, BACH, CLED, SAB, ANO<sub>2</sub> Bi-plate, FAB (if pus-like)</td></tr>
-          <tr><td>Pleural fluid</td><td>PF</td><td>CBA, CHOC, ARIA, GRAM</td></tr>
-          <tr><td>EBUS</td><td>EBUS</td><td>CBA, CHOC, ARIA</td></tr>
-          <tr><td>Rectal (other than baby)</td><td>RECT</td><td>MRSA, CRE, C3GR</td></tr>
-          <tr><td>Weekly baby screen (Ear + Nose + Perineum)</td><td>NEW</td><td>MRSA, C3GR</td></tr>
-          <tr><td>Baby admission screen &ndash; Ear</td><td>NASE</td><td>MRSA, VCAT, CNA</td></tr>
-          <tr><td>Baby admission screen &ndash; Nose</td><td>NASN</td><td>MRSA, VCAT, CNA</td></tr>
-          <tr><td>Baby admission screen &ndash; Perineum</td><td>NASP</td><td>MRSA, CNA</td></tr>
-          <tr><td>Baby admission screen &ndash; Rectal</td><td>NASR</td><td>C3GR</td></tr>
-          <tr><td>Baby transfer screen &ndash; Ear</td><td>NTRE</td><td>MRSA, VCAT, CNA</td></tr>
-          <tr><td>Baby transfer screen &ndash; Nose</td><td>NTRN</td><td>MRSA, VCAT, CNA</td></tr>
-          <tr><td>Baby transfer screen &ndash; Perineum</td><td>NTRP</td><td>MRSA, CNA</td></tr>
-          <tr><td>Baby transfer screen &ndash; Rectal</td><td>NTSR</td><td>C3GR, CRE</td></tr>
-          <tr><td>Candida auris screen</td><td>CAUR</td><td>SAB</td></tr>
+          <tr><td>Deep ear</td><td>DEAR</td><td><div class="plate-row"><span class="plate p-cba">CBA</span><span class="plate p-bach">BACH</span><span class="plate p-cled">CLED</span><span class="plate p-cna">CNA</span><span class="plate-sep">/</span><span class="plate p-sab">SAB</span><span class="plate p-ano2">ANO₂ Bi-plate</span><span class="plate p-aria">ARIA</span></div></td></tr>
+          <tr><td>Deep wound swab</td><td>DEEP</td><td><div class="plate-row"><span class="plate p-cba">CBA</span><span class="plate p-cled">CLED</span><span class="plate p-cna">CNA</span><span class="plate p-ano2">ANO₂ Bi-plate</span><span class="plate p-aria">ARIA</span><span class="plate p-fab">FAB</span><span class="plate p-gram">GRAM</span></div></td></tr>
+          <tr><td>Ear swab</td><td>EAR</td><td><div class="plate-row"><span class="plate p-cba">CBA</span><span class="plate p-bach">BACH</span><span class="plate p-cled">CLED</span><span class="plate p-cna">CNA</span><span class="plate-sep">/</span><span class="plate p-sab">SAB</span></div></td></tr>
+          <tr><td>Eye swab</td><td>EYE</td><td><div class="plate-row"><span class="plate p-cba">CBA</span><span class="plate p-choc">CHOC</span></div></td></tr>
+          <tr><td>Neonatal eye</td><td>BEYE</td><td><div class="plate-row"><span class="plate p-cba">CBA</span><span class="plate p-choc">CHOC</span><span class="plate p-vcat">VCAT</span><span class="plate p-gram">GRAM</span></div></td></tr>
+          <tr><td>Mouth swab</td><td>MS</td><td><div class="plate-row"><span class="plate p-cba">CBA</span><span class="plate p-sab">SAB</span></div></td></tr>
+          <tr><td>Recurrent sore throat</td><td>RTS</td><td><div class="plate-row"><span class="plate p-cba">CBA</span><span class="plate p-ano2">ANO₂ Bi-plate</span></div></td></tr>
+          <tr><td>Throat swab</td><td>TS</td><td><div class="plate-row"><span class="plate p-cba">CBA</span></div></td></tr>
+          <tr><td>Routine wound swab</td><td>R</td><td><div class="plate-row"><span class="plate p-cba">CBA</span><span class="plate p-cled">CLED</span><span class="plate p-cna">CNA</span><span class="plate p-ano2">ANO₂ Bi-plate</span></div></td></tr>
+          <tr><td>Superficial wound swab</td><td>SUP</td><td><div class="plate-row"><span class="plate p-cba">CBA</span><span class="plate p-cled">CLED</span><span class="plate p-cna">CNA</span></div></td></tr>
+          <tr><td>Urogenital sample (&lt;14 years old)</td><td>CURO</td><td><div class="plate-row"><span class="plate p-cba">CBA</span><span class="plate p-choc">CHOC</span><span class="plate p-cled">CLED</span><span class="plate p-cna">CNA</span><span class="plate-sep">/</span><span class="plate p-sab">SAB</span></div></td></tr>
+          <tr><td>Endocervical / cervical</td><td>CX</td><td><div class="plate-row"><span class="plate p-vcat">VCAT</span></div></td></tr>
+          <tr><td>Urethral swab</td><td>URET</td><td><div class="plate-row"><span class="plate p-vcat">VCAT</span></div></td></tr>
+          <tr><td>Penis</td><td>GTL</td><td><div class="plate-row"><span class="plate p-cna">CNA</span><span class="plate-sep">/</span><span class="plate p-sab">SAB</span><span class="plate-note">(</span><span class="plate p-cba">CBA</span><span class="plate p-cled">CLED</span><span class="plate p-ano2">ANO₂ Bi-plate</span><span class="plate p-vcat">VCAT</span><span class="plate-note">added if required)</span></div></td></tr>
+          <tr><td>HVS swab</td><td>HVS</td><td><div class="plate-row"><span class="plate p-cna">CNA</span><span class="plate-sep">/</span><span class="plate p-sab">SAB</span><span class="plate p-gram">GRAM</span><span class="plate-note">(TV if needed)</span></div></td></tr>
+          <tr><td>Nose swab</td><td>NS</td><td><div class="plate-row"><span class="plate p-cba">CBA</span></div></td></tr>
+          <tr><td>Routine sputum sample</td><td>SPT</td><td><div class="plate-row"><span class="plate p-cba">CBA</span><span class="plate p-bach">BACH</span></div></td></tr>
+          <tr><td>Immunocompromised sputum sample</td><td>IMM</td><td><div class="plate-row"><span class="plate p-cba">CBA</span><span class="plate p-bach">BACH</span><span class="plate p-cled">CLED</span><span class="plate p-sab">SAB</span></div></td></tr>
+          <tr><td>Cough swab or sputum from cystic fibrosis patient</td><td>CF</td><td><div class="plate-row"><span class="plate p-cba">CBA</span><span class="plate p-bach">BACH</span><span class="plate p-cled">CLED</span><span class="plate p-sab">SAB</span><span class="plate p-burk">BURK</span></div></td></tr>
+          <tr><td>COPD / bronchiectasis sputum</td><td>COPD</td><td><div class="plate-row"><span class="plate p-cba">CBA</span><span class="plate p-bach">BACH</span><span class="plate p-cled">CLED</span><span class="plate p-sab">SAB</span></div></td></tr>
+          <tr><td>Bronchial washing / lavage</td><td>BAL</td><td><div class="plate-row"><span class="plate p-cba">CBA</span><span class="plate p-bach">BACH</span><span class="plate p-cled">CLED</span><span class="plate p-sab">SAB</span><span class="plate-note">2× 5-day</span><span class="plate p-sab">SAB</span><span class="plate p-bcye">BCYE</span><span class="plate-note">(consultant request only)</span></div></td></tr>
+          <tr><td>Aspiration pneumonia, lung abscess cat 3 samples</td><td>ASP</td><td><div class="plate-row"><span class="plate p-cba">CBA</span><span class="plate p-bach">BACH</span><span class="plate p-cled">CLED</span><span class="plate p-sab">SAB</span><span class="plate p-ano2">ANO₂ Bi-plate</span><span class="plate p-fab">FAB</span><span class="plate-note">(if pus-like)</span></div></td></tr>
+          <tr><td>Pleural fluid</td><td>PF</td><td><div class="plate-row"><span class="plate p-cba">CBA</span><span class="plate p-choc">CHOC</span><span class="plate p-aria">ARIA</span><span class="plate p-gram">GRAM</span></div></td></tr>
+          <tr><td>EBUS</td><td>EBUS</td><td><div class="plate-row"><span class="plate p-cba">CBA</span><span class="plate p-choc">CHOC</span><span class="plate p-aria">ARIA</span></div></td></tr>
+          <tr><td>Rectal (other than baby)</td><td>RECT</td><td><div class="plate-row"><span class="plate p-mrsa">MRSA</span><span class="plate p-cre">CRE</span><span class="plate p-c3gr">C3GR</span></div></td></tr>
+          <tr><td>Weekly baby screen (Ear + Nose + Perineum)</td><td>NEW</td><td><div class="plate-row"><span class="plate p-mrsa">MRSA</span><span class="plate p-c3gr">C3GR</span></div></td></tr>
+          <tr><td>Baby admission screen &ndash; Ear</td><td>NASE</td><td><div class="plate-row"><span class="plate p-mrsa">MRSA</span><span class="plate p-vcat">VCAT</span><span class="plate p-cna">CNA</span></div></td></tr>
+          <tr><td>Baby admission screen &ndash; Nose</td><td>NASN</td><td><div class="plate-row"><span class="plate p-mrsa">MRSA</span><span class="plate p-vcat">VCAT</span><span class="plate p-cna">CNA</span></div></td></tr>
+          <tr><td>Baby admission screen &ndash; Perineum</td><td>NASP</td><td><div class="plate-row"><span class="plate p-mrsa">MRSA</span><span class="plate p-cna">CNA</span></div></td></tr>
+          <tr><td>Baby admission screen &ndash; Rectal</td><td>NASR</td><td><div class="plate-row"><span class="plate p-c3gr">C3GR</span></div></td></tr>
+          <tr><td>Baby transfer screen &ndash; Ear</td><td>NTRE</td><td><div class="plate-row"><span class="plate p-mrsa">MRSA</span><span class="plate p-vcat">VCAT</span><span class="plate p-cna">CNA</span></div></td></tr>
+          <tr><td>Baby transfer screen &ndash; Nose</td><td>NTRN</td><td><div class="plate-row"><span class="plate p-mrsa">MRSA</span><span class="plate p-vcat">VCAT</span><span class="plate p-cna">CNA</span></div></td></tr>
+          <tr><td>Baby transfer screen &ndash; Perineum</td><td>NTRP</td><td><div class="plate-row"><span class="plate p-mrsa">MRSA</span><span class="plate p-cna">CNA</span></div></td></tr>
+          <tr><td>Baby transfer screen &ndash; Rectal</td><td>NTSR</td><td><div class="plate-row"><span class="plate p-c3gr">C3GR</span><span class="plate p-cre">CRE</span></div></td></tr>
+          <tr><td>Candida auris screen</td><td>CAUR</td><td><div class="plate-row"><span class="plate p-sab">SAB</span></div></td></tr>
         </tbody>
       </table>
     </div>
@@ -1214,8 +1214,8 @@
 <div class="app-version" id="app-version" aria-label="App version"></div>
 
 <!-- Scripts: load order matters — data.js defines the datasets that app.js uses. -->
-<script src="data.js?v=20260617a"></script>
-<script src="app.js?v=20260617a"></script>
+<script src="data.js?v=20260617b"></script>
+<script src="app.js?v=20260617b"></script>
 
 <!-- HUD/0S chrome: background particle field, theme toggle, custom reticle cursor.
      Self-contained; app.js owns search + keyboard handlers, so nothing here duplicates them. -->

@@ -1026,6 +1026,30 @@ body.show-reporting .reporting-rule{display:block}
 #view-myco .myco-flow-col .arrow-down{margin:2px 0}
 @media(max-width:720px){#view-myco .myco-panel-grid{grid-template-columns:1fr}#view-myco .myco-micro-svg{min-height:150px}#view-myco .myco-flow-cols{grid-template-columns:1fr}#view-myco .myco-flow-subcols{grid-template-columns:1fr}#view-myco .myco-tab{min-width:0}}
 
+/* ---- plating protocols: per-plate colour palette ----
+   Theme-independent hues; each chip tints its background/border from the hue
+   via color-mix against the current --bg-elev, so they read in light + dark.
+   Adjust a single value here to recolour a plate everywhere it appears. */
+:root{
+  --plate-cba:#e0555b;   /* Columbia blood agar — red   */
+  --plate-choc:#9a6b3d;  /* Chocolate agar — brown      */
+  --plate-cled:#3f86d6;  /* CLED — blue                 */
+  --plate-cna:#d6539e;   /* CNA — pink/magenta          */
+  --plate-sab:#c89028;   /* Sabouraud — amber           */
+  --plate-aria:#2fa3a3;  /* ARIA — teal                 */
+  --plate-uti:#4a9e54;   /* Chromogenic UTI — green     */
+  --plate-bach:#b05274;  /* BACH — rose/maroon          */
+  --plate-vcat:#8a63c8;  /* VCAT — violet               */
+  --plate-fab:#b3504a;   /* FAB — brick red             */
+  --plate-gram:#7d8a93;  /* Gram film — slate grey      */
+  --plate-ano2:#6366d8;  /* Anaerobic bi-plate — indigo */
+  --plate-c3gr:#3f9e86;  /* C3GR — sea green            */
+  --plate-mrsa:#3b5b9e;  /* MRSA — denim blue           */
+  --plate-cre:#d6792e;   /* CRE — orange                */
+  --plate-burk:#8a9a2e;  /* BURK — olive                */
+  --plate-bcye:#5e6b73;  /* BCYE — charcoal             */
+}
+
 /* ---- plating protocols (reuses the Mycology tab + Virology table styling) ---- */
 #view-plating .myco-tabs{display:flex;gap:6px;flex-wrap:wrap;margin:0 0 14px;padding:5px;border:1px solid var(--line);border-radius:var(--border-radius-lg);background:var(--bg-elev-2)}
 #view-plating .myco-tab{flex:1;min-width:200px;display:inline-flex;align-items:center;justify-content:center;gap:7px;font-family:var(--font-mono);font-size:11px;letter-spacing:.04em;padding:9px 12px;border:1px solid transparent;border-radius:var(--border-radius-md);background:transparent;color:var(--text-dim);cursor:pointer;transition:background .15s,color .15s,border-color .15s}
@@ -1047,6 +1071,32 @@ body.show-reporting .reporting-rule{display:block}
 #view-plating #plating-pane-specimens .plating-table td:nth-child(2){font-family:var(--font-mono);letter-spacing:.04em;color:var(--accent);white-space:nowrap}
 #view-plating .plating-table ul{margin:0;padding-left:16px}
 #view-plating .plating-table ul li{margin:2px 0}
+/* coloured plate chips + stacks (media column stacks vertically and lines up
+   with the atmosphere column; the sample-type plate list wraps horizontally) */
+#view-plating .plate{display:inline-flex;align-items:center;min-height:20px;box-sizing:border-box;font-family:var(--font-mono);font-size:10px;font-weight:600;letter-spacing:.02em;line-height:1.5;padding:1px 6px;border-radius:var(--border-radius-md);border:1px solid;white-space:nowrap;color:var(--pc,var(--text));border-color:color-mix(in srgb,var(--pc,var(--line)) 45%,transparent);background:color-mix(in srgb,var(--pc,var(--bg-elev)) 14%,var(--bg-elev))}
+#view-plating .plate.p-cba{--pc:var(--plate-cba)}
+#view-plating .plate.p-choc{--pc:var(--plate-choc)}
+#view-plating .plate.p-cled{--pc:var(--plate-cled)}
+#view-plating .plate.p-cna{--pc:var(--plate-cna)}
+#view-plating .plate.p-sab{--pc:var(--plate-sab)}
+#view-plating .plate.p-aria{--pc:var(--plate-aria)}
+#view-plating .plate.p-uti{--pc:var(--plate-uti)}
+#view-plating .plate.p-bach{--pc:var(--plate-bach)}
+#view-plating .plate.p-vcat{--pc:var(--plate-vcat)}
+#view-plating .plate.p-fab{--pc:var(--plate-fab)}
+#view-plating .plate.p-gram{--pc:var(--plate-gram)}
+#view-plating .plate.p-ano2{--pc:var(--plate-ano2)}
+#view-plating .plate.p-c3gr{--pc:var(--plate-c3gr)}
+#view-plating .plate.p-mrsa{--pc:var(--plate-mrsa)}
+#view-plating .plate.p-cre{--pc:var(--plate-cre)}
+#view-plating .plate.p-burk{--pc:var(--plate-burk)}
+#view-plating .plate.p-bcye{--pc:var(--plate-bcye)}
+#view-plating .plate-stack{display:flex;flex-direction:column;gap:4px;align-items:flex-start}
+#view-plating .pl-line{display:inline-flex;align-items:center;gap:4px;min-height:20px}
+#view-plating .atmo{font-family:var(--font-mono);font-size:10px;color:var(--text-dim)}
+#view-plating .plate-row{display:flex;flex-wrap:wrap;gap:4px;align-items:center}
+#view-plating .plate-sep{color:var(--text-faint);font-family:var(--font-mono);font-size:10px}
+#view-plating .plate-note{color:var(--text-dim);font-size:10.5px;line-height:1.4}
 @media(max-width:720px){#view-plating .myco-tab{min-width:0}#view-plating .plating-table-wrap{overflow-x:auto}}
 
 /* ---- parasitology (reuses the Mycology card / panel styling) ---- */
