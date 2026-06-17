@@ -966,16 +966,17 @@ body.show-reporting .reporting-rule{display:block}
 /* ============================================================
    MYCOLOGY / BLOOD / VIROLOGY  hero blocks
    ============================================================ */
-#view-myco .myco-hero,#view-blood .blood-hero,#view-virology .viro-hero,#view-plate .myco-hero,#view-rules .myco-hero{
+#view-myco .myco-hero,#view-blood .blood-hero,#view-virology .viro-hero,#view-plate .myco-hero,#view-rules .myco-hero,#view-plating .myco-hero{
   position:relative;border:1px solid var(--line-strong);border-radius:var(--border-radius-lg);
   padding:15px 17px;margin-bottom:14px;background:var(--bg-elev-2)
 }
-#view-myco .myco-hero::before,#view-blood .blood-hero::before,#view-virology .viro-hero::before,#view-plate .myco-hero::before,#view-rules .myco-hero::before{
+#view-myco .myco-hero::before,#view-blood .blood-hero::before,#view-virology .viro-hero::before,#view-plate .myco-hero::before,#view-rules .myco-hero::before,#view-plating .myco-hero::before{
   content:"";position:absolute;top:-1px;left:-1px;width:14px;height:14px;border:1px solid var(--accent);border-right:0;border-bottom:0;pointer-events:none
 }
-#view-myco .myco-hero h2,#view-blood .blood-hero h2,#view-virology .viro-hero h2,#view-plate .myco-hero h2,#view-rules .myco-hero h2{font-size:16px;font-weight:700;margin:0 0 5px;color:var(--text);display:flex;align-items:center;gap:8px}
-#view-myco .myco-hero h2 i,#view-blood .blood-hero h2 i,#view-virology .viro-hero h2 i,#view-plate .myco-hero h2 i,#view-rules .myco-hero h2 i{color:var(--accent)}
-#view-myco .myco-hero p,#view-blood .blood-hero p,#view-virology .viro-hero p,#view-plate .myco-hero p,#view-rules .myco-hero p{font-size:12px;line-height:1.6;color:var(--text-dim);margin:0}
+#view-myco .myco-hero h2,#view-blood .blood-hero h2,#view-virology .viro-hero h2,#view-plate .myco-hero h2,#view-rules .myco-hero h2,#view-plating .myco-hero h2{font-size:16px;font-weight:700;margin:0 0 5px;color:var(--text);display:flex;align-items:center;gap:8px}
+#view-myco .myco-hero h2 i,#view-blood .blood-hero h2 i,#view-virology .viro-hero h2 i,#view-plate .myco-hero h2 i,#view-rules .myco-hero h2 i,#view-plating .myco-hero h2 i{color:var(--accent)}
+#view-myco .myco-hero p,#view-blood .blood-hero p,#view-virology .viro-hero p,#view-plate .myco-hero p,#view-rules .myco-hero p,#view-plating .myco-hero p{font-size:12px;line-height:1.6;color:var(--text-dim);margin:0}
+#view-plating .myco-hero strong{color:var(--text)}
 
 /* ---- mycology ---- */
 #view-myco .myco-controls{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:12px;padding:11px 13px;border:1px solid var(--line);border-radius:var(--border-radius-lg);background:var(--bg-elev-2)}
@@ -1024,6 +1025,29 @@ body.show-reporting .reporting-rule{display:block}
 #view-myco .myco-flow-leaves .card .name{font-size:11px}
 #view-myco .myco-flow-col .arrow-down{margin:2px 0}
 @media(max-width:720px){#view-myco .myco-panel-grid{grid-template-columns:1fr}#view-myco .myco-micro-svg{min-height:150px}#view-myco .myco-flow-cols{grid-template-columns:1fr}#view-myco .myco-flow-subcols{grid-template-columns:1fr}#view-myco .myco-tab{min-width:0}}
+
+/* ---- plating protocols (reuses the Mycology tab + Virology table styling) ---- */
+#view-plating .myco-tabs{display:flex;gap:6px;flex-wrap:wrap;margin:0 0 14px;padding:5px;border:1px solid var(--line);border-radius:var(--border-radius-lg);background:var(--bg-elev-2)}
+#view-plating .myco-tab{flex:1;min-width:200px;display:inline-flex;align-items:center;justify-content:center;gap:7px;font-family:var(--font-mono);font-size:11px;letter-spacing:.04em;padding:9px 12px;border:1px solid transparent;border-radius:var(--border-radius-md);background:transparent;color:var(--text-dim);cursor:pointer;transition:background .15s,color .15s,border-color .15s}
+#view-plating .myco-tab:hover{color:var(--text);background:var(--bg-elev)}
+#view-plating .myco-tab.active{color:var(--accent-ink);background:var(--accent);border-color:var(--accent)}
+#view-plating .myco-tab.active i{color:var(--accent-ink)}
+#view-plating .myco-tab i{color:var(--accent)}
+#view-plating .myco-pane.is-hidden{display:none}
+#view-plating .myco-flow-note{display:flex;gap:8px;align-items:flex-start;font-size:11px;line-height:1.55;color:var(--text-dim);margin:0 0 14px;padding:9px 12px;border:1px solid color-mix(in srgb,var(--warn) 40%,transparent);border-radius:var(--border-radius-md);background:color-mix(in srgb,var(--warn) 9%,var(--bg-elev))}
+#view-plating .myco-flow-note i{color:var(--warn);font-size:14px;margin-top:1px;flex-shrink:0}
+#view-plating .myco-flow-note strong{color:var(--warn)}
+#view-plating .plating-table-wrap{border:1px solid var(--line);border-radius:var(--border-radius-md);overflow:hidden;background:var(--bg-elev);margin:8px 0 14px}
+#view-plating .plating-table{width:100%;border-collapse:collapse;font-size:11px}
+#view-plating .plating-table th{padding:9px 11px;text-align:left;font-family:var(--font-mono);font-weight:500;font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--accent);background:var(--bg-elev-2);border-bottom:1px solid var(--line-strong)}
+#view-plating .plating-table td{padding:9px 11px;border-bottom:1px solid var(--line);vertical-align:top;color:var(--text-dim);line-height:1.5}
+#view-plating .plating-table tbody tr:last-child td{border-bottom:none}
+#view-plating .plating-table tbody tr:hover td{background:var(--bg-elev-2)}
+#view-plating .plating-table td:first-child{color:var(--text);font-weight:600}
+#view-plating #plating-pane-specimens .plating-table td:nth-child(2){font-family:var(--font-mono);letter-spacing:.04em;color:var(--accent);white-space:nowrap}
+#view-plating .plating-table ul{margin:0;padding-left:16px}
+#view-plating .plating-table ul li{margin:2px 0}
+@media(max-width:720px){#view-plating .myco-tab{min-width:0}#view-plating .plating-table-wrap{overflow-x:auto}}
 
 /* ---- parasitology (reuses the Mycology card / panel styling) ---- */
 #view-parasitology .myco-hero{position:relative;overflow:hidden;margin-bottom:14px;padding:14px 16px;border:1px solid var(--line);border-radius:var(--border-radius-lg);background:var(--bg-elev-2)}

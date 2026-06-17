@@ -576,6 +576,21 @@ function setMycoTab(tab){
   writeHash('myco',tab);
 }
 
+// Plating-protocols view: two toggleable panes (positive blood cultures and
+// sample-type → primary-plate list), mirroring the Mycology tab behaviour.
+function setPlatingTab(tab){
+  const tabs = ['blood','specimens'];
+  if(tabs.indexOf(tab) === -1) tab = 'blood';
+  tabs.forEach(t=>{
+    const pane = document.getElementById('plating-pane-'+t);
+    const btn  = document.getElementById('plating-tab-'+t);
+    const on = (t === tab);
+    if(pane) pane.classList.toggle('is-hidden', !on);
+    if(btn){ btn.classList.toggle('active', on); btn.setAttribute('aria-selected', on ? 'true' : 'false'); }
+  });
+  writeHash('plating',tab);
+}
+
 function showMycoFungus(key){
   const f=mycoFungi[key]; if(!f)return;
   if(typeof pushRecent === 'function') pushRecent('fungus', key, f.name);
@@ -892,7 +907,7 @@ function switchView(to,iTabId){
   const toEl=document.getElementById('view-'+to);
   // crude ordering for transition direction, matching the quick-nav numbering:
   // notes < sensitivities(flow,wound,interp) < abx < classification(plate,bactid) < disciplines(virology,blood,myco) < index
-  const order={notes:-1,flow:0,wound:1,csf:1.5,interp:2,rules:2.5,checker:2.7,abx:3,plate:4,bactid:5,virology:6,blood:7,myco:8,parasitology:8.4,serology:8.5,index:9};
+  const order={notes:-1,flow:0,wound:1,csf:1.5,interp:2,rules:2.5,checker:2.7,abx:3,plating:3.5,plate:4,bactid:5,virology:6,blood:7,myco:8,parasitology:8.4,serology:8.5,index:9};
   const goingRight=order[to]>order[curView];
   fromEl.style.transition='opacity .3s cubic-bezier(.4,0,.2,1),transform .3s cubic-bezier(.4,0,.2,1)';
   fromEl.style.opacity='0';
@@ -3016,6 +3031,24 @@ function buildSearchIndex(){
     });
   }
 
+  // ── Plating protocols (static reference view) ──
+  out.push({
+    kind:'plating',
+    key:'plating_blood',
+    name:'Positive blood cultures — plating protocol',
+    snippet:'Gram-led media, atmosphere, drops & sensitivity set',
+    hay:'plating protocol positive blood culture gram staph strep coli pseudomonas haemophilus neisseria yeast terminal subculture media atmosphere drops sensitivity class 1 msc containment level 3'.toLowerCase(),
+    action:()=>{switchView('plating');setTimeout(()=>setPlatingTab('blood'),340);}
+  });
+  out.push({
+    kind:'plating',
+    key:'plating_specimens',
+    name:'Sample types & primary plates — plating protocol',
+    snippet:'Specimen → request code → routine plate set',
+    hay:'plating protocol sample type specimen request code primary plates cba choc cled cna sab vcat mrsa baby screen wound swab sputum ear eye throat hvs penis bronchial candida auris'.toLowerCase(),
+    action:()=>{switchView('plating');setTimeout(()=>setPlatingTab('specimens'),340);}
+  });
+
   return out;
 }
 
@@ -3656,7 +3689,7 @@ function stampGuidelineVersions(){
 // Section slug ↔ internal view id.
 const viewSlugs = {
   flow:'urine', wound:'wound', csf:'csf', interp:'d-sets', rules:'intrinsic-resistance',
-  checker:'sir-checker', abx:'antibiotics', plate:'colony-gram', bactid:'bacterial-id',
+  checker:'sir-checker', abx:'antibiotics', plating:'plating-protocols', plate:'colony-gram', bactid:'bacterial-id',
   virology:'molecular', blood:'blood-science', myco:'mycology',
   parasitology:'parasitology', serology:'serology', index:'index', notes:'bench-notes'
 };
@@ -3668,7 +3701,8 @@ Object.keys(viewSlugs).forEach(v => { slugToView[viewSlugs[v]] = v; });
 // tab id directly as the slug (e.g. d68, gloss).
 const subSlugMaps = {
   myco:  { derm:'dermatophytes', flow:'flowchart', afst:'antifungals' },
-  plate: { plate:'plates', gram:'gram' }
+  plate: { plate:'plates', gram:'gram' },
+  plating: { blood:'blood-cultures', specimens:'sample-types' }
 };
 function subKeyToSlug(view, key){ const m = subSlugMaps[view]; return m ? (m[key] || key) : key; }
 function subSlugToKey(view, slug){
@@ -3696,6 +3730,7 @@ function writeHash(view, subKey){
 function applySubRoute(view, subSlug){
   const key = subSlugToKey(view, subSlug);
   if(view === 'myco') setMycoTab(key);
+  else if(view === 'plating') setPlatingTab(key);
   else if(view === 'plate') setPlateSection(key);
   else if(view === 'interp'){ if(document.getElementById('itab-' + key)) setITab(key); }
   else if(view === 'index'){ if(document.getElementById('idxtab-' + key)) setIdxTab(key); }
