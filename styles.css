@@ -1097,6 +1097,15 @@ body.show-reporting .reporting-rule{display:block}
 #view-plating .plate-row{display:flex;flex-wrap:wrap;gap:4px;align-items:center}
 #view-plating .plate-sep{color:var(--text-faint);font-family:var(--font-mono);font-size:10px}
 #view-plating .plate-note{color:var(--text-dim);font-size:10.5px;line-height:1.4}
+/* Bi-plate: two coloured halves sharing one bordered box */
+#view-plating .plate-bi{display:inline-flex;align-items:stretch;border-radius:var(--border-radius-md);border:1px solid color-mix(in srgb,var(--line-strong) 55%,transparent);overflow:hidden;font-family:var(--font-mono);font-size:10px;font-weight:600;letter-spacing:.02em;line-height:1.5}
+#view-plating .plate-bi .bi-half{display:inline-flex;align-items:center;min-height:20px;box-sizing:border-box;padding:1px 6px;white-space:nowrap;color:var(--pc,var(--text));background:color-mix(in srgb,var(--pc,var(--bg-elev)) 14%,var(--bg-elev))}
+#view-plating .plate-bi .bi-half+.bi-half{border-left:1px solid color-mix(in srgb,var(--line-strong) 55%,transparent)}
+#view-plating .plate-bi .bi-half.p-cna{--pc:var(--plate-cna)}
+#view-plating .plate-bi .bi-half.p-sab{--pc:var(--plate-sab)}
+/* Bordered group for conditional / bracketed plate sets */
+#view-plating .plate-group{display:inline-flex;align-items:center;gap:4px;padding:3px 7px;border:1px dashed color-mix(in srgb,var(--line-strong) 70%,transparent);border-radius:var(--border-radius-md)}
+#view-plating .plate-group-label{font-size:9.5px;color:var(--text-faint);font-style:italic;margin-right:1px;white-space:nowrap}
 @media(max-width:720px){#view-plating .myco-tab{min-width:0}#view-plating .plating-table-wrap{overflow-x:auto}}
 
 /* ---- parasitology (reuses the Mycology card / panel styling) ---- */
