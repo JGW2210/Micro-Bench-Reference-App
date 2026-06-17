@@ -2868,7 +2868,7 @@ const ifuCitations = {
    ════════════════════════════════════════════════════════════════════ */
 const GUIDELINE_VERSIONS = {
   // nextReview: recurring EUCAST re-validation cadence (see EUCAST-CITATIONS.md §"Recurring re-validation schedule").
-  _meta: { appData: 'v32', reviewed: '2026-06-17', nextReview: '2027-01 — EUCAST v17 breakpoints (annual); also re-check AFST v13, QC v16, and Expert Rules' },   // global app data version + last full review
+  _meta: { appData: 'v33', reviewed: '2026-06-17', nextReview: '2027-01 — EUCAST v17 breakpoints (annual); also re-check AFST v13, QC v16, and Expert Rules' },   // global app data version + last full review
   flow:    { lines:[{label:'EUCAST clinical breakpoints', version:'v16.0 (valid 2026-01-01)'},{label:'UK SMI', version:'B 41 i8.8 · ID/TP 2025'}], reviewed:'2026-06-15' },
   wound:   { lines:[{label:'EUCAST clinical breakpoints', version:'v16.0 (valid 2026-01-01)'},{label:'UK SMI', version:'B 11/B 14/B 17 · ID/TP 2025'}], reviewed:'2026-06-15' },
   csf:     { lines:[{label:'EUCAST clinical breakpoints', version:'v16.0 (valid 2026-01-01) — meningitis breakpoints'},{label:'UK SMI', version:'B 27 (CSF) · ID/TP 2025'},{label:'Local SOP', version:'PF-MIC-LP-51 Table 4'}], reviewed:'2026-06-16' },
