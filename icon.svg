@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Microbiology Bench Reference">
+  <!-- HUD/0S app icon: teal reticle + central plate on dark. Full-bleed so it
+       doubles as a maskable icon (safe zone keeps the reticle within ~80%). -->
+  <rect width="64" height="64" fill="#05070a"/>
+  <g fill="none" stroke="#38e8d0" stroke-width="2.4">
+    <circle cx="32" cy="32" r="14"/>
+    <path d="M32 10v8M32 46v8M10 32h8M46 32h8" stroke-linecap="round"/>
+  </g>
+  <circle cx="32" cy="32" r="5" fill="#38e8d0"/>
+  <g stroke="#38e8d0" stroke-width="2" opacity=".5" fill="none">
+    <path d="M14 14h6v2M50 14h-6v2M14 50h6v-2M50 50h-6v-2" stroke-linecap="round"/>
+  </g>
+</svg>
