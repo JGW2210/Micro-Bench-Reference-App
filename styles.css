@@ -1220,6 +1220,7 @@ body.show-reporting .reporting-rule{display:block}
 @media(max-width:720px){#view-faeces .myco-tab{min-width:0}#view-faeces .plating-table-wrap{overflow-x:auto}#view-faeces .faeces-guide-table{min-width:760px}#view-faeces .faeces-media-table{min-width:640px}}
 
 /* ---- faeces guide: view toggle ---- */
+#view-faeces #faeces-guide-table-view.is-hidden,#view-faeces #faeces-guide-fc-view.is-hidden{display:none}
 #view-faeces .guide-view-toggle{display:flex;gap:4px;margin-bottom:12px}
 #view-faeces .guide-toggle-btn{display:inline-flex;align-items:center;gap:5px;font-family:var(--font-mono);font-size:11px;padding:6px 12px;border:1px solid var(--line-strong);border-radius:var(--border-radius-md);background:var(--bg-elev);color:var(--text-dim);cursor:pointer;transition:background .15s,color .15s,border-color .15s}
 #view-faeces .guide-toggle-btn:hover{color:var(--text);border-color:var(--accent)}
