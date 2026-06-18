@@ -1238,23 +1238,24 @@ body.show-reporting .reporting-rule{display:block}
 #view-faeces .fc-start i{color:var(--accent-ink)}
 #view-faeces .fc-decide{background:color-mix(in srgb,var(--accent) 11%,var(--bg-elev-2));border-color:color-mix(in srgb,var(--accent) 50%,transparent);font-size:11px}
 #view-faeces .fc-decide-ob{background:color-mix(in srgb,var(--danger) 11%,var(--bg-elev-2));border-color:color-mix(in srgb,var(--danger) 50%,transparent)}
-/* T-junction fork: trunk (from OUTBREAK? box at 50%) hits horizontal bar; stubs drop to each branch */
-#view-faeces .fc-fork{display:flex;gap:12px;align-items:flex-end;padding-bottom:8px;position:relative}
+/* T-junction fork: each cell is a flex-column holding label + stub + branch panel */
+#view-faeces .fc-fork{display:flex;gap:12px;align-items:flex-start;position:relative}
 #view-faeces .fc-fork-no,
-#view-faeces .fc-fork-yes{flex:1;position:relative;display:flex;justify-content:center;align-items:flex-end}
-/* Horizontal bar: each cell draws half the bar from its own center outward to the gap midpoint */
+#view-faeces .fc-fork-yes{flex:1;display:flex;flex-direction:column;align-items:center;position:relative}
+/* Horizontal bar: half drawn by each cell from its centre outward to the gap midpoint */
 #view-faeces .fc-fork-no::before{content:'';position:absolute;top:0;left:50%;right:-6px;height:2px;background:var(--line-strong)}
 #view-faeces .fc-fork-yes::before{content:'';position:absolute;top:0;left:-6px;right:50%;height:2px;background:var(--line-strong)}
-/* Vertical stubs: from top (= horizontal bar) down to branch panel */
-#view-faeces .fc-fork-no::after{content:'';position:absolute;top:0;left:50%;transform:translateX(-50%);width:2px;height:100%;background:var(--line-strong)}
-#view-faeces .fc-fork-yes::after{content:'';position:absolute;top:0;left:50%;transform:translateX(-50%);width:2px;height:100%;background:var(--line-strong)}
+/* Vertical nub: from horizontal bar down to the label */
+#view-faeces .fc-fork-no::after{content:'';position:absolute;top:0;left:50%;transform:translateX(-50%);width:2px;height:14px;background:var(--line-strong)}
+#view-faeces .fc-fork-yes::after{content:'';position:absolute;top:0;left:50%;transform:translateX(-50%);width:2px;height:14px;background:var(--line-strong)}
+/* fc-conn-stub: short line below label into branch panel */
+#view-faeces .fc-conn-stub{height:10px}
+/* Branch tags — opaque background so nub doesn't bleed through */
+#view-faeces .fc-branch-tag{font-family:var(--font-mono);font-size:10px;letter-spacing:.05em;font-weight:700;padding:5px 12px;border-radius:var(--border-radius-sm);margin-top:14px;position:relative;z-index:1}
+#view-faeces .fc-tag-no{background:color-mix(in srgb,var(--accent) 18%,var(--bg));color:var(--accent)}
+#view-faeces .fc-tag-yes{background:color-mix(in srgb,var(--danger) 18%,var(--bg));color:var(--danger)}
 /* Branch panels */
-#view-faeces .fc-branch-tag{font-family:var(--font-mono);font-size:10px;letter-spacing:.05em;font-weight:700;padding:5px 12px;border-radius:var(--border-radius-sm);position:relative;z-index:1;background:var(--bg)}
-#view-faeces .fc-tag-no{background:color-mix(in srgb,var(--accent) 14%,transparent);color:var(--accent)}
-#view-faeces .fc-tag-yes{background:color-mix(in srgb,var(--danger) 14%,transparent);color:var(--danger)}
-/* Two-branch split container */
-#view-faeces .fc-two-branch{display:flex;gap:12px;align-items:flex-start;margin-top:0}
-#view-faeces .fc-branch{flex:1;display:flex;flex-direction:column;align-items:center;padding:12px 10px 10px;border-radius:var(--border-radius-lg);border:1px solid var(--line)}
+#view-faeces .fc-branch{width:100%;display:flex;flex-direction:column;align-items:center;padding:12px 10px 10px;border-radius:var(--border-radius-lg);border:1px solid var(--line)}
 #view-faeces .fc-branch-main{border-color:color-mix(in srgb,var(--accent) 35%,transparent);background:color-mix(in srgb,var(--accent) 4%,var(--bg))}
 #view-faeces .fc-branch-outbreak{border-color:color-mix(in srgb,var(--danger) 35%,transparent);background:color-mix(in srgb,var(--danger) 4%,var(--bg))}
 /* Outcome columns */
