@@ -1199,6 +1199,8 @@ body.show-reporting .reporting-rule{display:block}
 #view-faeces .faeces-outbreak-row td:first-child{color:var(--accent);text-transform:uppercase;letter-spacing:.03em;font-size:10px}
 #view-faeces .faeces-footnotes{margin:-6px 0 14px;padding:0 2px;font-size:10.5px;line-height:1.5;color:var(--text-faint)}
 #view-faeces .faeces-footnotes p{margin:2px 0}
+#view-faeces .faeces-footnote-link{color:var(--accent);text-decoration:none;white-space:nowrap}
+#view-faeces .faeces-footnote-link:hover{text-decoration:underline}
 /* overview / wet-prep prose blocks */
 #view-faeces .faeces-prose{font-size:12px;line-height:1.6;color:var(--text-dim)}
 #view-faeces .faeces-block{margin:0 0 16px;padding:0 0 14px;border-bottom:1px solid var(--line)}
