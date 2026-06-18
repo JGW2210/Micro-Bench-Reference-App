@@ -1239,12 +1239,12 @@ body.show-reporting .reporting-rule{display:block}
 #view-faeces .fc-decide{background:color-mix(in srgb,var(--accent) 11%,var(--bg-elev-2));border-color:color-mix(in srgb,var(--accent) 50%,transparent);font-size:11px}
 #view-faeces .fc-decide-ob{background:color-mix(in srgb,var(--danger) 11%,var(--bg-elev-2));border-color:color-mix(in srgb,var(--danger) 50%,transparent)}
 /* T-junction fork: each cell is a flex-column holding label + stub + branch panel */
-#view-faeces .fc-fork{display:flex;gap:12px;align-items:flex-start;position:relative}
+#view-faeces .fc-fork{--fc-gap:12px;display:flex;gap:var(--fc-gap);align-items:flex-start;position:relative}
 #view-faeces .fc-fork-no,
 #view-faeces .fc-fork-yes{flex:1;display:flex;flex-direction:column;align-items:center;position:relative}
 /* Horizontal bar: half drawn by each cell from its centre outward to the gap midpoint */
-#view-faeces .fc-fork-no::before{content:'';position:absolute;top:0;left:50%;right:-6px;height:2px;background:var(--line-strong)}
-#view-faeces .fc-fork-yes::before{content:'';position:absolute;top:0;left:-6px;right:50%;height:2px;background:var(--line-strong)}
+#view-faeces .fc-fork-no::before{content:'';position:absolute;top:0;left:50%;right:calc(-1 * var(--fc-gap) / 2);height:2px;background:var(--line-strong)}
+#view-faeces .fc-fork-yes::before{content:'';position:absolute;top:0;left:calc(-1 * var(--fc-gap) / 2);right:50%;height:2px;background:var(--line-strong)}
 /* Vertical nub: from horizontal bar down to the label */
 #view-faeces .fc-fork-no::after{content:'';position:absolute;top:0;left:50%;transform:translateX(-50%);width:2px;height:14px;background:var(--line-strong)}
 #view-faeces .fc-fork-yes::after{content:'';position:absolute;top:0;left:50%;transform:translateX(-50%);width:2px;height:14px;background:var(--line-strong)}
