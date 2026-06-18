@@ -12,8 +12,12 @@
  *     runtime-cached cache-first so the UI icons and fonts survive offline
  *     after the first online load.
  *
- * Bump SHELL_VERSION whenever the precached shell list changes; the activate
- * handler deletes any cache that is not in the current allowlist.
+ * Bump SHELL_VERSION on every deploy that changes any shell asset (i.e.
+ * whenever you bump the "?v=" cache-bust in index.html). Because shell fetches
+ * are cache-first with ignoreSearch, returning installs only pick up new
+ * assets when the SW itself changes — bumping SHELL_VERSION changes this file,
+ * triggering the update + a fresh precache, and the activate handler deletes
+ * any cache no longer in the allowlist.
  */
 
 const SHELL_VERSION = 'v1';
