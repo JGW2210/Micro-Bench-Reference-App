@@ -6,6 +6,21 @@
 <title>Microbiology bench reference — HUD/0S</title>
 <meta name="theme-color" content="#f3f6f8" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#05070a" media="(prefers-color-scheme: dark)">
+<!-- Resolve theme before first paint to avoid a flash: saved value → OS preference → light.
+     Mirrors the THEME TOGGLE storage key (mbr-theme) used near the bottom of this file. -->
+<script>
+(function(){
+  var theme='light';
+  try{
+    var saved=localStorage.getItem('mbr-theme');
+    if(saved==='light'||saved==='dark'){theme=saved;}
+    else if(window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches){theme='dark';}
+  }catch(e){
+    if(window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches){theme='dark';}
+  }
+  document.documentElement.setAttribute('data-theme',theme);
+})();
+</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap">
@@ -1637,19 +1652,29 @@
   el.textContent='v'+(m?m[1]:'dev');
 })();
 
-/* ---- THEME TOGGLE (in-memory, no storage) ---- */
+/* ---- THEME TOGGLE (persisted to localStorage, key mbr-theme) ----
+   The early <head> script already resolved the theme (saved → OS → light)
+   and applied it to <html data-theme>. Here we sync the control to that
+   resolved value, persist on change, and reflect state via aria-pressed. */
 (function(){
   const root=document.documentElement,
         tg=document.getElementById('themeToggle'),
         lbl=document.getElementById('themeLabel');
   if(!tg||!lbl)return;
-  function setTheme(dark){
-    root.setAttribute('data-theme',dark?'dark':'light');
+  function save(theme){
+    try{localStorage.setItem('mbr-theme',theme);}catch(e){/* private mode: skip */}
+  }
+  function setTheme(dark,persist){
+    const theme=dark?'dark':'light';
+    root.setAttribute('data-theme',theme);
     lbl.textContent=dark?'DARK':'LIGHT';
     tg.checked=!dark;
+    tg.setAttribute('aria-pressed',dark?'true':'false');
+    if(persist)save(theme);
   }
-  setTheme(false);
-  tg.addEventListener('change',()=>setTheme(!tg.checked));
+  // Initialise from the already-applied theme (set before first paint).
+  setTheme(root.getAttribute('data-theme')==='dark',false);
+  tg.addEventListener('change',()=>setTheme(!tg.checked,true));
 })();
 
 /* ---- PARTICLE FIELD: scatter squares, count scaled to viewport ---- */
