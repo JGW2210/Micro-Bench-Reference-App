@@ -1232,6 +1232,7 @@ body.show-reporting .reporting-rule{display:block}
 #view-faeces .fc-diagram{min-width:960px;padding:4px 0 10px}
 #view-faeces .fc-row-center{display:flex;justify-content:center}
 #view-faeces .fc-conn-v{width:2px;height:18px;background:var(--line-strong);margin:0 auto}
+#view-faeces .fc-conn-split{height:28px}
 /* Decision / start nodes */
 #view-faeces .fc-box{display:inline-flex;align-items:center;gap:6px;padding:8px 16px;border:1px solid var(--line-strong);border-radius:var(--border-radius-md);background:var(--bg-elev-2);font-size:12px;font-weight:600;color:var(--text);white-space:nowrap}
 #view-faeces .fc-start{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
@@ -1239,17 +1240,17 @@ body.show-reporting .reporting-rule{display:block}
 #view-faeces .fc-decide{background:color-mix(in srgb,var(--accent) 11%,var(--bg-elev-2));border-color:color-mix(in srgb,var(--accent) 50%,transparent);font-size:11px}
 #view-faeces .fc-decide-ob{background:color-mix(in srgb,var(--danger) 11%,var(--bg-elev-2));border-color:color-mix(in srgb,var(--danger) 50%,transparent)}
 /* Two-branch split container */
-#view-faeces .fc-two-branch{display:flex;gap:10px;align-items:flex-start;margin-top:0}
-#view-faeces .fc-branch{flex:1;display:flex;flex-direction:column;align-items:center;padding:10px 8px 8px;border-radius:var(--border-radius-lg);border:1px solid var(--line)}
+#view-faeces .fc-two-branch{display:flex;gap:12px;align-items:flex-start;margin-top:0}
+#view-faeces .fc-branch{flex:1;display:flex;flex-direction:column;align-items:center;padding:12px 10px 10px;border-radius:var(--border-radius-lg);border:1px solid var(--line)}
 #view-faeces .fc-branch-main{border-color:color-mix(in srgb,var(--accent) 35%,transparent);background:color-mix(in srgb,var(--accent) 4%,var(--bg))}
-#view-faeces .fc-branch-outbreak{flex:0 0 auto;width:340px;border-color:color-mix(in srgb,var(--danger) 35%,transparent);background:color-mix(in srgb,var(--danger) 4%,var(--bg))}
-#view-faeces .fc-branch-tag{font-family:var(--font-mono);font-size:10px;letter-spacing:.05em;font-weight:700;padding:3px 9px;border-radius:var(--border-radius-sm);margin-bottom:8px;align-self:flex-start}
+#view-faeces .fc-branch-outbreak{flex:0 0 auto;width:350px;border-color:color-mix(in srgb,var(--danger) 35%,transparent);background:color-mix(in srgb,var(--danger) 4%,var(--bg))}
+#view-faeces .fc-branch-tag{font-family:var(--font-mono);font-size:10px;letter-spacing:.05em;font-weight:700;padding:5px 12px;border-radius:var(--border-radius-sm);margin-bottom:10px;align-self:stretch;text-align:center}
 #view-faeces .fc-tag-no{background:color-mix(in srgb,var(--accent) 14%,transparent);color:var(--accent)}
 #view-faeces .fc-tag-yes{background:color-mix(in srgb,var(--danger) 14%,transparent);color:var(--danger)}
 /* Outcome columns */
-#view-faeces .fc-cols{display:flex;gap:6px;width:100%;margin-top:8px}
+#view-faeces .fc-cols{display:flex;gap:6px;width:100%;margin-top:10px}
 #view-faeces .fc-outcome-col{flex:1;min-width:0;display:flex;flex-direction:column;border:1px solid var(--line);border-radius:var(--border-radius-md);overflow:hidden;background:var(--bg-elev)}
-#view-faeces .fc-outcome-head{padding:7px 8px;font-size:10px;font-weight:700;color:var(--text);background:var(--bg-elev-2);border-bottom:1px solid var(--line);line-height:1.4}
+#view-faeces .fc-outcome-head{padding:7px 8px;font-size:10px;font-weight:700;color:var(--text);background:var(--bg-elev-2);border-bottom:1px solid var(--line);line-height:1.4;text-align:center}
 #view-faeces .fc-col-ob .fc-outcome-head{background:color-mix(in srgb,var(--danger) 13%,var(--bg-elev-2));color:var(--danger)}
 /* Test result items */
 #view-faeces .fc-tests{display:flex;flex-direction:column;gap:3px;padding:7px 7px}
