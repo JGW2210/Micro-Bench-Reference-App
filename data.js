@@ -2562,6 +2562,106 @@ const smiCitations = {
       'TP 40':{title:'MALDI-TOF MS test procedure'}
     }
   },
+  // Disk file map — every B/S/ID/TP catalogue code → the PDF committed under
+  // SMIs/, verified to exist by tests/validate-data.js (ISO 15189 / UKAS
+  // traceability). Mirrors the file:-on-disk model used by eucastCitations /
+  // ifuCitations. Keys here MUST match documents.{B,S,ID,TP}; the V (virology)
+  // series is a separate stream and is intentionally not catalogued here.
+  files: {
+    B: {
+      "B 4":'SMIs/B -Bacteriology/UK SMI B4-Investigation-of-superficial-mouth-samples-October-2025.pdf',
+      "B 5":'SMIs/B -Bacteriology/uk-smi-b-05i8-1-investigation-of-samples-from-paranasal-sinuses-february-2026pdf.pdf',
+      "B 6":'SMIs/B -Bacteriology/UK-SMI-B-6i9-May-2018-Investigation-of-whooping-cough.pdf',
+      "B 9":'SMIs/B -Bacteriology/uk-smi-b-9i9-1-investigation-of-throat-related-specimens-october-2025-pdf.pdf',
+      "B 10":'SMIs/B -Bacteriology/UK-SMI-B-10i2-Investigation-of-faecal-specimens-for-Clostridioides-difficile-March-2025.pdf',
+      "B 11":'SMIs/B -Bacteriology/UK-SMI-B-11i66-Investigation-of-swabs-from-skin-and-superficial-soft-tissue-infections-october-2025.pdf',
+      "B 14":'SMIs/B -Bacteriology/UK-SMI-B-14i63-Investigation-of-pus-and-exudates-october-2025.pdf',
+      "B 15":'SMIs/B -Bacteriology/UK-SMI-B-15i7-1-Investigation-of-bile-october-2025.pdf',
+      "B 17":'SMIs/B -Bacteriology/UK-SMI-B-17i64-Investigation-of-tissues-and-biopsies-from-deep-seated-sites-and-organs-october-2025.pdf',
+      "B 20":'SMIs/B -Bacteriology/UK-SMI-B-20i62-Investigation-of-intravascular-cannulae-and-associated-specimens-october-2025.pdf',
+      "B 22":'SMIs/B -Bacteriology/UK-SMI-B-22i62-october-2025-Investigation-of-Cerebrospinal-Fluid-Shunts.pdf',
+      "B 25":'SMIs/B -Bacteriology/UK-SMI-B-25i61-Investigation-of-continuous-ambulatory-peritoneal-dialysis-fluid-october-2025.pdf',
+      "B 26":'SMIs/B -Bacteriology/UK-SMI-B-26i63-Investigation-of-fluids-from-normally-sterile-sites-October-2025.pdf',
+      "B 27":'SMIs/B -Bacteriology/UK-SMI-B-27i62-Investigation-of-cerebrospinal-fluid-October-2025.pdf',
+      "B 29":'SMIs/B -Bacteriology/UK-SMI-B-29i7-1-Investigation-of-specimens-for-screening-for-MRSA-october-2025.pdf',
+      "B 31":'SMIs/B -Bacteriology/UK-SMI-B-31i52-Investigation-of-specimens-other-than-blood-for-parasites-October-2025.pdf',
+      "B 38":'SMIs/B -Bacteriology/uk-smi-b-38i21-investigation-of-bone-marrow-october-2025.pdf',
+      "B 39":'SMIs/B -Bacteriology/UK-SMI-B-39i32-Investigation-of-dermatological-specimens-for-superficial-mycoses-October-2025.pdf',
+      "B 40":'SMIs/B -Bacteriology/UK-SMI-B-40i74-Investigation-of-specimens-for-Mycobacterium-species-december-2025.pdf',
+      "B 41":'SMIs/B -Bacteriology/uk-smi-b-41i88-investigation-of-urine-december-2025pdf.pdf',
+      "B 42":'SMIs/B -Bacteriology/uk-smi-b-42i21-investigation-of-bone-and-soft-tissue-associated-with-osteomyelitis-december-2025pdf.pdf',
+      "B 44":'SMIs/B -Bacteriology/UK-SMI-B-44i22-Investigation-of-orthopaedic-implant-associated-infections-december-2025.pdf',
+      "B 51":'SMIs/B -Bacteriology/uk-smi-b-51i21-screening-for-neisseria-meningitidis-december-2025pdf.pdf',
+      "B 55":'SMIs/B -Bacteriology/UK-SMI-B-55i71-Investigation-of-infectious-causes-of-dyspepsia-December-2025.pdf',
+      "B 57":'SMIs/B -Bacteriology/UK-SMI-B-57i35-May-2019-Investigation-of-bronchoalveolar-lavage-sputum-and-associated-specimens.pdf',
+      "B 58":'SMIs/B -Bacteriology/uk-smi-b-58i32-detection-of-carriage-of-group-b-streptococci-february-2026pdf.pdf',
+      "B 59":'SMIs/B -Bacteriology/uk-smi-b-59i4-2-detection-of-enterobacteriaceae-producing-extended-spectrum-lactamases-june-2026-pdf.pdf',
+      "B 60":'SMIs/B -Bacteriology/uk-smi-b-60i32-detection-of-bacteria-with-carbapenem-hydrolysing-b-lactamases-carbapenemases-february-2026pdf.pdf',
+      "B 61":'SMIs/B -Bacteriology/uk-smi-b-61i23-investigation-of-specimens-for-ectoparasites-february-2026pdf.pdf',
+      "B 62":'SMIs/B -Bacteriology/uk-smi-b-62i11-abdominal-organ-transport-fluid-testing-february-2026pdf.pdf'
+    },
+    S: {
+      "S 1":'SMIs/S - Syndromic/UK SMI S1-Acute-infective-hepatitis-april-2025.pdf',
+      "S 2":'SMIs/S - Syndromic/UK SMI S2-Pneumonia-april-2025.pdf',
+      "S 5":'SMIs/S - Syndromic/UK SMI S5-Meningoencephalitis-april-2025-pdf.pdf',
+      "S 6":'SMIs/S - Syndromic/UK SMI S6-Infectious-syndromes-affecting-the-genitourinary-tract-and-reproductive-organs-February-2025.pdf',
+      "S 7":'SMIs/S - Syndromic/UK SMI S7-Gastroenteritis-january-2026.pdf',
+      "S 11":'SMIs/S - Syndromic/UK SMI S11-Red-or-painful-eye-March-2026.pdf',
+      "S 12":'SMIs/S - Syndromic/UK SMI S12-Sepsis-and-systemic-or-disseminated-infection-April-2025.pdf',
+      "S 13":'SMIs/S - Syndromic/UK SMI S13-Painful-and-or-discharging-ear-March-2026.pdf'
+    },
+    ID: {
+      "ID 1":'SMIs/ID - Identification/UK-SMI-ID-1i4-Introduction-to-the-identification-of-medically-important-bacteria-and-fungi-from-culture-August-2025.pdf',
+      "ID 2":'SMIs/ID - Identification/UK-SMI-ID-2i51-Identification-of-Corynebacterium-species-July-2025.pdf',
+      "ID 3":'SMIs/ID - Identification/UK-SMI-ID-03i42-Identification-of-Listeria-species-and-other-non-sporing-Gram-positive-rods-except-Corynebacterium-july-2025.pdf',
+      "ID 4":'SMIs/ID - Identification/UK-SMI-ID-4i4-Identification-of-Streptococcus-species-Enterococcus-species-and-morphologically-similar-organisms-September-2021.pdf',
+      "ID 5":'SMIs/ID - Identification/uk-smi-id-5i4-identification-of-bordetella-species-august-2020-pdf.pdf',
+      "ID 6":'SMIs/ID - Identification/uk-smi-id-6i4-1-identification-of-neisseria-july-2025-pdf.pdf',
+      "ID 7":'SMIs/ID - Identification/uk-smi-id-7i4-identification-of-staphylococcus-species-micrococcus-species-and-rothia-species-may-2020-pdf.pdf',
+      "ID 8":'SMIs/ID - Identification/uk-smi-id-8i4-2-identification-of-clostridium-species-july-2025-pdf.pdf',
+      "ID 9":'SMIs/ID - Identification/uk-smi-id-9i3-2-identification-of-bacillus-species-1-july-2025-pdf.pdf',
+      "ID 10":'SMIs/ID - Identification/uk-smi-id-10i2-3-identification-of-aerobic-actinomycetes-july-2025-pdf.pdf',
+      "ID 11":'SMIs/ID - Identification/uk-smi-id-11i3-identification-of-moraxella-species-and-morphologically-similar-organisms-february-2015-pdf.pdf',
+      "ID 12":'SMIs/ID - Identification/UK-SMI-ID-12i5-1-Identification-of-Haemophilus-species-and-the-HACEK-group-of-organisms-July-2025.pdf',
+      "ID 13":'SMIs/ID - Identification/uk-smi-id-13i3-1-identification-of-pasteurella-species-and-morphologically-similar-bacteria-july-2025-pdf.pdf',
+      "ID 14":'SMIs/ID - Identification/uk-smi-id-14i3-1-identification-of-anaerobic-cocci-july-2025-pdf.pdf',
+      "ID 15":'SMIs/ID - Identification/uk-smi-id-15i3-2-identification-of-actinomyces-species-july-2025-pdf.pdf',
+      "ID 16":'SMIs/ID - Identification/uk-smi-id-16i4-identification-of-enterobacteriaceae-april-2015-pdf.pdf',
+      "ID 17":'SMIs/ID - Identification/UK-SMI-ID-17i4-1Identification-of-Pseudomonas-species-and-other-non-glucose-fermenters-july-2025.pdf',
+      "ID 18":'SMIs/ID - Identification/uk-smi-id-18i3-identification-of-legionella-species-april-2015-pdf.pdf',
+      "ID 19":'SMIs/ID - Identification/uk-smi-id-19i3-1-identification-of-vibrio-and-aeromonas-species-july-2025-pdf.pdf',
+      "ID 20":'SMIs/ID - Identification/uk-smi-id-20i4-1-identification-of-shigella-species-july-2025-pdf.pdf',
+      "ID 21":'SMIs/ID - Identification/uk-smi-id-21i3-1-identification-of-yersinia-species-july-2025-pdf.pdf',
+      "ID 22":'SMIs/ID - Identification/uk-smi-id-22i5-1-identification-of-shiga-toxin-producing-escherichia-coli-stec-august-2025.pdf',
+      "ID 23":'SMIs/ID - Identification/uk-smi-id-23i3-2-identification-of-campylobacter-species-july-2025-pdf.pdf',
+      "ID 24":'SMIs/ID - Identification/uk-smi-id-24i4-1-identification-of-salmonella-species-september-2025-pdf.pdf',
+      "ID 25":'SMIs/ID - Identification/uk-smi-id-25i2-1-identification-of-anaerobic-gram-negative-rods-september-2025-pdf.pdf',
+      "ID 26":'SMIs/ID - Identification/uk-smi-id-26i3-1-dentification-of-helicobacter-species-september-2025-pdf.pdf'
+    },
+    TP: {
+      "TP 1":'SMIs/TP - Test Procedures/uk-smi-tp-1i3-example-reference-strains-for-uk-smi-test-procedures-february-2025-pdf.pdf',
+      "TP 2":'SMIs/TP - Test Procedures/uk-smi-tp-2i41-aesculin-hydrolysis-test-february-2025-pdf.pdf',
+      "TP 3":'SMIs/TP - Test Procedures/uk-smi-tp-3i4-agglutination-test-for-salmonella-febraury-2025-pdf.pdf',
+      "TP 5":'SMIs/TP - Test Procedures/uk-smi-tp-5i4-bile-solubility-test-february-2025-pdf.pdf',
+      "TP 8":'SMIs/TP - Test Procedures/uk-smi-tp-8i41-catalase-test-february-2025-pdf.pdf',
+      "TP 10":'SMIs/TP - Test Procedures/uk-smi-tp-10i6-1-coagulase-test-feb-2025-pdf.pdf',
+      "TP 12":'SMIs/TP - Test Procedures/uk-smi-tp-12i4-1-deoxyribonuclease-test-feb-2025-pdf.pdf',
+      "TP 19":'SMIs/TP - Test Procedures/uk-smi-tp-19i4-1-indole-test-feb-2025-pdf.pdf',
+      "TP 21":'SMIs/TP - Test Procedures/uk-smi-tp-21i4-1-motility-test-feb-2025-pdf.pdf',
+      "TP 24":'SMIs/TP - Test Procedures/uk-smi-tp-24i4-1-onpg-beta-galactosidase-test-feb-2025-pdf.pdf',
+      "TP 25":'SMIs/TP - Test Procedures/uk-smi-tp-25i4-optochin-test-March-2025-pdf.pdf',
+      "TP 26":'SMIs/TP - Test Procedures/uk-smi-tp-26i4-oxidase-test-march-2025-pdf.pdf',
+      "TP 27":'SMIs/TP - Test Procedures/uk-smi-tp-27i4-oxidation-fermentation-of-glucose-test-march-2025-pdf.pdf',
+      "TP 29":'SMIs/TP - Test Procedures/uk-smi-tp-29i4-porphyrin-synthesis-ala-test-march-2025-pdf.pdf',
+      "TP 30":'SMIs/TP - Test Procedures/UK-SMI-TP-30i4-Potassium-hydroxide-test-March-2025.pdf',
+      "TP 32":'SMIs/TP - Test Procedures/uk-smi-tp-32i4-1-changing-the-phase-of-salmonella-march-2025.pdf',
+      "TP 34":'SMIs/TP - Test Procedures/uk-smi-tp-34i4-thermonuclease-test-march-2025-pdf.pdf',
+      "TP 36":'SMIs/TP - Test Procedures/uk-smi-tp-36i4-1-urease-test-march-2025-pdf.pdf',
+      "TP 38":'SMIs/TP - Test Procedures/UK-SMI-TP-38i42-X-and-V-factor-test-march-2025.pdf',
+      "TP 39":'SMIs/TP - Test Procedures/uk-smi-tp-39i3-staining-procedures-march-2025-pdf.pdf',
+      "TP 40":'SMIs/TP - Test Procedures/uk-smi-tp-40i11-maldi-tof-ms-march-2025-pdf.pdf'
+    }
+  },
   // Withdrawn / recalled documents and what replaced them (per UK SMI site).
   // Cite the replacement, not the withdrawn code.
   withdrawn: {
@@ -2843,14 +2943,31 @@ const ifuCitations = {
     aptima_ctng: { code:'Aptima CT/NG', name:'Hologic Aptima Combo 2 Assay (CT/NG) — Information Sheet', ver:'GBR EN (Panther TMA)', file:'IFUs/Hologic/Aptima Combo 2® Assay (for CT_NG) Information Sheet GBR EN.pdf' },
     xpert_resp:  { code:'Xpert Resp', name:'Cepheid Xpert Xpress CoV-2/Flu/RSV plus IFU', ver:'302-7085 Rev F (2025-08)', file:'IFUs/Cepheid/Xpert Xpress CoV-2 FLU RSV plus CE-IVD ENGLISH IFU 302-7085 Rev F.pdf' },
     xpert_tb:    { code:'Xpert MTB/RIF', name:'Cepheid Xpert MTB/RIF IFU', ver:'303-0942 Rev B (2024-05)', file:'IFUs/Cepheid/Xpert MTB-RIF ENGLISH IFU 303-0942 Rev B.pdf' },
-    xpert_noro:  { code:'Xpert Norovirus', name:'Cepheid Xpert Norovirus (GI/GII) IFU', ver:'303-0938 Rev A (2023-07)', file:'IFUs/Cepheid/Xpert Norovirus ENGLISH IFU 303-0938 Rev. A.pdf' }
+    xpert_noro:  { code:'Xpert Norovirus', name:'Cepheid Xpert Norovirus (GI/GII) IFU', ver:'303-0938 Rev A (2023-07)', file:'IFUs/Cepheid/Xpert Norovirus ENGLISH IFU 303-0938 Rev. A.pdf' },
+    // Broader Cepheid Xpert GI Panel (bacterial/viral/parasitic enteric multiplex).
+    // The viro_gi_* cards sit in the enteric/GI molecular stream, so they cite the
+    // GI-panel reference material alongside the standalone Norovirus IFU.
+    xpert_gi:    { code:'Xpert GI Panel', name:'Cepheid Xpert GI Panel — Cartridge Preparation Card', ver:'303-7272 (CE-IVDR, English)', file:'IFUs/Cepheid/cepheid-xpert-gi-panel-cartridge-preparation-card-ce-ivdr-303-7272-english.pdf' },
+    xpert_gi_training: { code:'Xpert GI Panel (training)', name:'Cepheid Xpert GI Panel — Technical Training Presentation', ver:'303-7273 (CE-IVDR, English)', file:'IFUs/Cepheid/cepheid-xpert-gi-panel-technical-training-presentation-ce-ivdr-303-7273-english.pdf' },
+    // MAST D-set discs drive the disc-layout / interpretation config (dconfigs
+    // d68/d69/d63/d73). Committed under IFUs/MAST/ and disk-verified here.
+    mast_d68:    { code:'MAST D68C', name:'MAST D68C combination disc set IFU', ver:'local', file:'IFUs/MAST/MAST D68c IFU.pdf' },
+    mast_d69:    { code:'MAST D69C', name:'MAST D69C combination disc set IFU', ver:'local', file:'IFUs/MAST/MAST D69c IFU.pdf' },
+    mast_d63:    { code:'MAST D63C', name:'MAST D63C combination disc set IFU', ver:'local', file:'IFUs/MAST/MAST D63c IFU.pdf' },
+    mast_d73:    { code:'MAST D73C', name:'MAST D73C combination disc set IFU', ver:'local', file:'IFUs/MAST/MAST D73c IFU.pdf' }
   },
   // Human-readable stream labels for each IFU document key.
   streamMap: {
     aptima_ctng: 'Panther Aptima CT/NG NAAT stream',
     xpert_resp:  'GeneXpert respiratory multiplex stream',
     xpert_tb:    'GeneXpert MTB/RIF (CL3 sputum) stream',
-    xpert_noro:  'GeneXpert Norovirus GI/GII enteric stream'
+    xpert_noro:  'GeneXpert Norovirus GI/GII enteric stream',
+    xpert_gi:    'GeneXpert GI Panel enteric multiplex stream',
+    xpert_gi_training: 'GeneXpert GI Panel enteric multiplex stream',
+    mast_d68:    'MAST D-set disc interpretation (AmpC/ESBL/carbapenemase)',
+    mast_d69:    'MAST D-set disc interpretation (AmpC/ESBL/carbapenemase)',
+    mast_d63:    'MAST D-set disc interpretation (AmpC/ESBL/carbapenemase)',
+    mast_d73:    'MAST D-set disc interpretation (carbapenemase)'
   }
 };
 

@@ -34,7 +34,8 @@ const data = vm.runInNewContext(`${source}
   GUIDELINE_VERSIONS,
   sirBreakpoints,
   eucastCitations,
-  ifuCitations
+  ifuCitations,
+  smiCitations
 })`, {}, { filename: dataPath });
 
 // Index every file committed under EUCAST/ by basename, so citation entries can
@@ -353,6 +354,105 @@ function validateIfuCitations() {
   });
 }
 
+function validateSmiCitations() {
+  const cites = data.smiCitations;
+  assert(isObject(cites), 'smiCitations must be an object');
+  if (!isObject(cites)) return;
+
+  const docs = cites.documents;
+  assert(isObject(docs), 'smiCitations.documents must be an object');
+  if (!isObject(docs)) return;
+
+  // documents.{B,S,ID} are code → string maps; documents.TP is code → {title}.
+  // Build the set of every valid (citable) document code across all series.
+  const validCodes = new Set();
+  ['B', 'S', 'ID'].forEach(series => {
+    assert(isObject(docs[series]), `smiCitations.documents.${series} must be an object of code → string`);
+    Object.entries(docs[series] || {}).forEach(([code, title]) => {
+      assert(hasText(title), `smiCitations.documents.${series}.${code} must be a non-empty string title`);
+      validCodes.add(code);
+    });
+  });
+  assert(isObject(docs.TP), 'smiCitations.documents.TP must be an object of code → {title}');
+  Object.entries(docs.TP || {}).forEach(([code, entry]) => {
+    assert(isObject(entry) && hasText(entry.title), `smiCitations.documents.TP.${code} must be an object with a non-empty title`);
+    validCodes.add(code);
+  });
+
+  // withdrawn: code → replacement string. Withdrawn codes are intentionally NOT
+  // in documents, but anything they point at should resolve (parse any
+  // "→ replaced by S 6" / "merged into B 5" style code out of the text).
+  const withdrawnCodes = new Set(Object.keys(cites.withdrawn || {}));
+  assert(isObject(cites.withdrawn), 'smiCitations.withdrawn must be an object');
+  Object.entries(cites.withdrawn || {}).forEach(([code, text]) => {
+    assert(hasText(text), `smiCitations.withdrawn.${code} must be a non-empty replacement note`);
+    assert(!validCodes.has(code), `smiCitations.withdrawn.${code} is also an active documents entry (withdrawn codes must not be catalogued)`);
+    (String(text).match(/\b(?:B|S|ID|TP)\s+\d+\b/g) || []).forEach(ref => {
+      assert(validCodes.has(ref) || withdrawnCodes.has(ref), `smiCitations.withdrawn.${code} points at ${ref} which is neither a live documents code nor a catalogued withdrawn code`);
+    });
+  });
+
+  // A reference resolves if it is a live documents code OR an intentional
+  // withdrawn entry (the latter is repointed to its replacement in-app).
+  const resolves = code => validCodes.has(code) || withdrawnCodes.has(code);
+
+  // verifiedIssues: every key must have a matching live documents entry.
+  assert(isObject(cites.verifiedIssues), 'smiCitations.verifiedIssues must be an object');
+  Object.entries(cites.verifiedIssues || {}).forEach(([code, issue]) => {
+    assert(hasText(issue), `smiCitations.verifiedIssues.${code} must be a non-empty issue/date string`);
+    assert(validCodes.has(code), `smiCitations.verifiedIssues.${code} has no matching documents entry`);
+  });
+
+  // Cross-reference maps: every cited code must resolve to a real documents code
+  // (or an intentional withdrawn entry). Fail loudly with the offending key.
+  [
+    ['specimenPathways', cites.specimenPathways],
+    ['mediaByKey', cites.mediaByKey],
+    ['tests', cites.tests],
+    ['organisms', cites.organisms]
+  ].forEach(([label, map]) => {
+    assert(isObject(map), `smiCitations.${label} must be an object`);
+    Object.entries(map || {}).forEach(([key, codes]) => {
+      assert(Array.isArray(codes) && codes.length > 0, `smiCitations.${label}.${key} must be a non-empty array of SMI codes`);
+      (codes || []).forEach(code => {
+        assert(resolves(code), `smiCitations.${label}.${key} references unknown SMI code ${code}`);
+      });
+    });
+  });
+
+  // Disk verification: index every PDF committed under SMIs/ by repo-relative
+  // path, then assert each catalogued code's file: entry exists on disk
+  // (ISO 15189 / UKAS traceability) — the same model used for EUCAST/ and IFUs/.
+  // Every live B/S/ID/TP code must carry a file: entry, and vice-versa.
+  const smiDir = path.join(root, 'SMIs');
+  const smiFiles = new Set();
+  (function indexDir(dir) {
+    if (!fs.existsSync(dir)) return;
+    fs.readdirSync(dir, { withFileTypes: true }).forEach(entry => {
+      const full = path.join(dir, entry.name);
+      if (entry.isDirectory()) indexDir(full);
+      else smiFiles.add(path.relative(root, full));
+    });
+  })(smiDir);
+
+  const files = cites.files;
+  assert(isObject(files), 'smiCitations.files must be an object keyed by series');
+  const filedCodes = new Set();
+  ['B', 'S', 'ID', 'TP'].forEach(series => {
+    assert(isObject(files && files[series]), `smiCitations.files.${series} must be an object of code → file path`);
+    Object.entries((files && files[series]) || {}).forEach(([code, file]) => {
+      assert(hasText(file), `smiCitations.files.${series}.${code} must be a non-empty file path`);
+      assert(validCodes.has(code), `smiCitations.files.${series}.${code} is not a real documents code`);
+      filedCodes.add(code);
+      if (hasText(file)) assert(smiFiles.has(file), `smiCitations references missing SMI on disk: ${file}`);
+    });
+  });
+  // Every catalogued code must have a disk file (no code without a verified PDF).
+  validCodes.forEach(code => {
+    assert(filedCodes.has(code), `smiCitations.documents has code ${code} with no smiCitations.files disk entry`);
+  });
+}
+
 function validateGuidelineVersions() {
   assert(isObject(data.GUIDELINE_VERSIONS), 'GUIDELINE_VERSIONS must be an object');
   Object.entries(data.GUIDELINE_VERSIONS || {}).forEach(([viewId, cfg]) => {
@@ -430,6 +530,7 @@ validateSirBreakpoints();
 validateExpectedPhenotypes();
 validateEucastCitations();
 validateIfuCitations();
+validateSmiCitations();
 validateGuidelineVersions();
 validateDiscContents();
 
