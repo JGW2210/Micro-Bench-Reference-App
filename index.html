@@ -13,7 +13,7 @@
 <!-- HUD/0S favicon: teal reticle + central plate on dark, inline so there is no extra file dependency -->
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='10' fill='%2305070a'/%3E%3Cg fill='none' stroke='%2338e8d0' stroke-width='2.4'%3E%3Ccircle cx='32' cy='32' r='17'/%3E%3Cpath d='M32 6v9M32 49v9M6 32h9M49 32h9' stroke-linecap='round'/%3E%3C/g%3E%3Ccircle cx='32' cy='32' r='6' fill='%2338e8d0'/%3E%3Cg stroke='%2338e8d0' stroke-width='2' opacity='.5'%3E%3Cpath d='M11 11h7v2M53 11h-7v2M11 53h7v-2M53 53h-7v-2' fill='none' stroke-linecap='round'/%3E%3C/g%3E%3C/svg%3E">
 <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' fill='%2305070a'/%3E%3Cg fill='none' stroke='%2338e8d0' stroke-width='2.4'%3E%3Ccircle cx='32' cy='32' r='17'/%3E%3Cpath d='M32 6v9M32 49v9M6 32h9M49 32h9' stroke-linecap='round'/%3E%3C/g%3E%3Ccircle cx='32' cy='32' r='6' fill='%2338e8d0'/%3E%3C/svg%3E">
-<link rel="stylesheet" href="styles.css?v=20260618f">
+<link rel="stylesheet" href="styles.css?v=20260618g">
 </head>
 <body>
 <div class="fx-particles" aria-hidden="true"></div>
@@ -1188,15 +1188,23 @@
           <div class="fc-row-center">
             <div class="fc-box fc-decide">OUTBREAK request?</div>
           </div>
-          <div class="fc-conn-v fc-conn-split"></div>
+          <div class="fc-conn-v"></div>
+
+          <!-- T-junction: trunk hits horizontal bar at 50%; stubs feed NO (left) and YES (right) -->
+          <div class="fc-fork" aria-hidden="false">
+            <div class="fc-fork-no">
+              <div class="fc-branch-tag fc-tag-no">↓ NO — standard pathway</div>
+            </div>
+            <div class="fc-fork-yes">
+              <div class="fc-branch-tag fc-tag-yes">YES → outbreak pathway</div>
+            </div>
+          </div>
 
           <!-- YES / NO branches -->
           <div class="fc-two-branch">
 
             <!-- NO → main pathway -->
             <div class="fc-branch fc-branch-main">
-              <div class="fc-branch-tag fc-tag-no">↓ NO — standard pathway</div>
-              <div class="fc-conn-v"></div>
               <div class="fc-box fc-decide">Patient setting?</div>
               <div class="fc-cols">
 
@@ -1265,8 +1273,6 @@
 
             <!-- YES → outbreak pathway -->
             <div class="fc-branch fc-branch-outbreak">
-              <div class="fc-branch-tag fc-tag-yes">YES → outbreak pathway</div>
-              <div class="fc-conn-v"></div>
               <div class="fc-box fc-decide fc-decide-ob">Outbreak type?</div>
               <div class="fc-cols">
 
@@ -1616,8 +1622,8 @@
 <div class="app-version" id="app-version" aria-label="App version"></div>
 
 <!-- Scripts: load order matters — data.js defines the datasets that app.js uses. -->
-<script src="data.js?v=20260618f"></script>
-<script src="app.js?v=20260618f"></script>
+<script src="data.js?v=20260618g"></script>
+<script src="app.js?v=20260618g"></script>
 
 <!-- HUD/0S chrome: background particle field, theme toggle, custom reticle cursor.
      Self-contained; app.js owns search + keyboard handlers, so nothing here duplicates them. -->
