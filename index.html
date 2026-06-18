@@ -13,7 +13,7 @@
 <!-- HUD/0S favicon: teal reticle + central plate on dark, inline so there is no extra file dependency -->
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='10' fill='%2305070a'/%3E%3Cg fill='none' stroke='%2338e8d0' stroke-width='2.4'%3E%3Ccircle cx='32' cy='32' r='17'/%3E%3Cpath d='M32 6v9M32 49v9M6 32h9M49 32h9' stroke-linecap='round'/%3E%3C/g%3E%3Ccircle cx='32' cy='32' r='6' fill='%2338e8d0'/%3E%3Cg stroke='%2338e8d0' stroke-width='2' opacity='.5'%3E%3Cpath d='M11 11h7v2M53 11h-7v2M11 53h7v-2M53 53h-7v-2' fill='none' stroke-linecap='round'/%3E%3C/g%3E%3C/svg%3E">
 <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' fill='%2305070a'/%3E%3Cg fill='none' stroke='%2338e8d0' stroke-width='2.4'%3E%3Ccircle cx='32' cy='32' r='17'/%3E%3Cpath d='M32 6v9M32 49v9M6 32h9M49 32h9' stroke-linecap='round'/%3E%3C/g%3E%3Ccircle cx='32' cy='32' r='6' fill='%2338e8d0'/%3E%3C/svg%3E">
-<link rel="stylesheet" href="styles.css?v=20260618b">
+<link rel="stylesheet" href="styles.css?v=20260618c">
 </head>
 <body>
 <div class="fx-particles" aria-hidden="true"></div>
@@ -51,7 +51,6 @@
         </div>
         <button class="sw-btn" id="sw-abx" onclick="switchView('abx')"><i class="ti ti-pill" aria-hidden="true"></i> Antibiotic classes</button>
         <button class="sw-btn" id="sw-plating" onclick="switchView('plating')"><i class="ti ti-layout-grid" aria-hidden="true"></i> Plating protocols</button>
-        <button class="sw-btn" id="sw-faeces" onclick="switchView('faeces')"><i class="ti ti-flask-2" aria-hidden="true"></i> Faeces</button>
         <div class="sens-menu" id="class-menu">
           <button class="sw-btn sens-trigger" id="sw-class" type="button" onclick="toggleNavMenu('class-menu', event)" aria-haspopup="true" aria-expanded="false">
             <i class="ti ti-microscope" aria-hidden="true"></i>
@@ -74,6 +73,7 @@
             <button class="sens-menu-item" id="sw-blood" type="button" role="menuitem" onclick="selectNavView('blood')"><i class="ti ti-droplet-half-2" aria-hidden="true"></i><span>Blood Science</span></button>
             <button class="sens-menu-item" id="sw-myco" type="button" role="menuitem" onclick="selectNavView('myco')"><i class="ti ti-mushroom" aria-hidden="true"></i><span>Mycology</span></button>
             <button class="sens-menu-item" id="sw-parasitology" type="button" role="menuitem" onclick="selectNavView('parasitology')"><i class="ti ti-bug" aria-hidden="true"></i><span>Parasitology</span></button>
+            <button class="sens-menu-item" id="sw-faeces" type="button" role="menuitem" onclick="selectNavView('faeces')"><i class="ti ti-flask-2" aria-hidden="true"></i><span>Faeces</span></button>
             <button class="sens-menu-item" id="sw-serology" type="button" role="menuitem" onclick="selectNavView('serology')"><i class="ti ti-test-pipe" aria-hidden="true"></i><span>Serology</span></button>
           </div>
         </div>
@@ -1456,8 +1456,8 @@
 <div class="app-version" id="app-version" aria-label="App version"></div>
 
 <!-- Scripts: load order matters — data.js defines the datasets that app.js uses. -->
-<script src="data.js?v=20260618b"></script>
-<script src="app.js?v=20260618b"></script>
+<script src="data.js?v=20260618c"></script>
+<script src="app.js?v=20260618c"></script>
 
 <!-- HUD/0S chrome: background particle field, theme toggle, custom reticle cursor.
      Self-contained; app.js owns search + keyboard handlers, so nothing here duplicates them. -->
