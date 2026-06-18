@@ -591,6 +591,21 @@ function setPlatingTab(tab){
   writeHash('plating',tab);
 }
 
+// Faeces view: four toggleable panes (overview, investigation guide, media
+// incubation, wet preparation), mirroring the Plating/Mycology tab behaviour.
+function setFaecesTab(tab){
+  const tabs = ['overview','guide','media','wetprep'];
+  if(tabs.indexOf(tab) === -1) tab = 'overview';
+  tabs.forEach(t=>{
+    const pane = document.getElementById('faeces-pane-'+t);
+    const btn  = document.getElementById('faeces-tab-'+t);
+    const on = (t === tab);
+    if(pane) pane.classList.toggle('is-hidden', !on);
+    if(btn){ btn.classList.toggle('active', on); btn.setAttribute('aria-selected', on ? 'true' : 'false'); }
+  });
+  writeHash('faeces',tab);
+}
+
 function showMycoFungus(key){
   const f=mycoFungi[key]; if(!f)return;
   if(typeof pushRecent === 'function') pushRecent('fungus', key, f.name);
@@ -907,7 +922,7 @@ function switchView(to,iTabId){
   const toEl=document.getElementById('view-'+to);
   // crude ordering for transition direction, matching the quick-nav numbering:
   // notes < sensitivities(flow,wound,interp) < abx < classification(plate,bactid) < disciplines(virology,blood,myco) < index
-  const order={notes:-1,flow:0,wound:1,csf:1.5,interp:2,rules:2.5,checker:2.7,abx:3,plating:3.5,plate:4,bactid:5,virology:6,blood:7,myco:8,parasitology:8.4,serology:8.5,index:9};
+  const order={notes:-1,flow:0,wound:1,csf:1.5,interp:2,rules:2.5,checker:2.7,abx:3,plating:3.5,faeces:4.5,plate:4,bactid:5,virology:6,blood:7,myco:8,parasitology:8.4,serology:8.5,index:9};
   const goingRight=order[to]>order[curView];
   fromEl.style.transition='opacity .3s cubic-bezier(.4,0,.2,1),transform .3s cubic-bezier(.4,0,.2,1)';
   fromEl.style.opacity='0';
@@ -3049,6 +3064,40 @@ function buildSearchIndex(){
     action:()=>{switchView('plating');setTimeout(()=>setPlatingTab('specimens'),340);}
   });
 
+  // ── Faeces (static reference view) ──
+  out.push({
+    kind:'faeces',
+    key:'faeces_overview',
+    name:'Faeces — culture & investigation overview',
+    snippet:'Routine culture, microscopy, crypto, C. diff, outbreak rules',
+    hay:'faeces faecal stool routine culture salmonella shigella campylobacter e coli o157 microscopy ova cysts parasites adenovirus rotavirus cryptosporidium c difficile clostridioides outbreak norovirus foreign travel vibrio aeromonas yersinia'.toLowerCase(),
+    action:()=>{switchView('faeces');setTimeout(()=>setFaecesTab('overview'),340);}
+  });
+  out.push({
+    kind:'faeces',
+    key:'faeces_guide',
+    name:'Faeces — investigation guide (decision matrix)',
+    snippet:'Patient type → tests by sample & age',
+    hay:'faeces faecal stool investigation guide decision matrix inpatient community outbreak basic culture noro c diff rota adeno crypto tcbs apw wet prep yersinia liquid semi-formed formed'.toLowerCase(),
+    action:()=>{switchView('faeces');setTimeout(()=>setFaecesTab('guide'),340);}
+  });
+  out.push({
+    kind:'faeces',
+    key:'faeces_media',
+    name:'Faeces — media incubation',
+    snippet:'XLD, SMAC, CAMP, Selenite, YERS, TCBS, APW conditions',
+    hay:'faeces faecal stool media incubation xld smac camp selenite broth yersinia yers tcbs apw atmosphere microaerophilic temperature incubation period cefsulodin irgasan novobiocin cin'.toLowerCase(),
+    action:()=>{switchView('faeces');setTimeout(()=>setFaecesTab('media'),340);}
+  });
+  out.push({
+    kind:'faeces',
+    key:'faeces_wetprep',
+    name:'Faeces — wet preparation & staining',
+    snippet:'Direct/stained wet prep, concentrate, auramine, ZN',
+    hay:'faeces faecal stool wet preparation parasitology direct stained lugol iodine saline trophozoites concentrate method formol ether auramine cryptosporidium oocysts field stain ziehl neelsen giemsa category 3 bsc salmonella typhi paratyphi shigella dysenteriae vibrio cholera'.toLowerCase(),
+    action:()=>{switchView('faeces');setTimeout(()=>setFaecesTab('wetprep'),340);}
+  });
+
   return out;
 }
 
@@ -3689,7 +3738,7 @@ function stampGuidelineVersions(){
 // Section slug ↔ internal view id.
 const viewSlugs = {
   flow:'urine', wound:'wound', csf:'csf', interp:'d-sets', rules:'intrinsic-resistance',
-  checker:'sir-checker', abx:'antibiotics', plating:'plating-protocols', plate:'colony-gram', bactid:'bacterial-id',
+  checker:'sir-checker', abx:'antibiotics', plating:'plating-protocols', faeces:'faeces', plate:'colony-gram', bactid:'bacterial-id',
   virology:'molecular', blood:'blood-science', myco:'mycology',
   parasitology:'parasitology', serology:'serology', index:'index', notes:'bench-notes'
 };
@@ -3702,7 +3751,8 @@ Object.keys(viewSlugs).forEach(v => { slugToView[viewSlugs[v]] = v; });
 const subSlugMaps = {
   myco:  { derm:'dermatophytes', flow:'flowchart', afst:'antifungals' },
   plate: { plate:'plates', gram:'gram' },
-  plating: { blood:'blood-cultures', specimens:'sample-types' }
+  plating: { blood:'blood-cultures', specimens:'sample-types' },
+  faeces: { overview:'overview', guide:'investigation-guide', media:'media-incubation', wetprep:'wet-preparation' }
 };
 function subKeyToSlug(view, key){ const m = subSlugMaps[view]; return m ? (m[key] || key) : key; }
 function subSlugToKey(view, slug){
@@ -3731,6 +3781,7 @@ function applySubRoute(view, subSlug){
   const key = subSlugToKey(view, subSlug);
   if(view === 'myco') setMycoTab(key);
   else if(view === 'plating') setPlatingTab(key);
+  else if(view === 'faeces') setFaecesTab(key);
   else if(view === 'plate') setPlateSection(key);
   else if(view === 'interp'){ if(document.getElementById('itab-' + key)) setITab(key); }
   else if(view === 'index'){ if(document.getElementById('idxtab-' + key)) setIdxTab(key); }

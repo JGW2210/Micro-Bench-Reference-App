@@ -13,7 +13,7 @@
 <!-- HUD/0S favicon: teal reticle + central plate on dark, inline so there is no extra file dependency -->
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='10' fill='%2305070a'/%3E%3Cg fill='none' stroke='%2338e8d0' stroke-width='2.4'%3E%3Ccircle cx='32' cy='32' r='17'/%3E%3Cpath d='M32 6v9M32 49v9M6 32h9M49 32h9' stroke-linecap='round'/%3E%3C/g%3E%3Ccircle cx='32' cy='32' r='6' fill='%2338e8d0'/%3E%3Cg stroke='%2338e8d0' stroke-width='2' opacity='.5'%3E%3Cpath d='M11 11h7v2M53 11h-7v2M11 53h7v-2M53 53h-7v-2' fill='none' stroke-linecap='round'/%3E%3C/g%3E%3C/svg%3E">
 <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' fill='%2305070a'/%3E%3Cg fill='none' stroke='%2338e8d0' stroke-width='2.4'%3E%3Ccircle cx='32' cy='32' r='17'/%3E%3Cpath d='M32 6v9M32 49v9M6 32h9M49 32h9' stroke-linecap='round'/%3E%3C/g%3E%3Ccircle cx='32' cy='32' r='6' fill='%2338e8d0'/%3E%3C/svg%3E">
-<link rel="stylesheet" href="styles.css?v=20260617c">
+<link rel="stylesheet" href="styles.css?v=20260618a">
 </head>
 <body>
 <div class="fx-particles" aria-hidden="true"></div>
@@ -51,6 +51,7 @@
         </div>
         <button class="sw-btn" id="sw-abx" onclick="switchView('abx')"><i class="ti ti-pill" aria-hidden="true"></i> Antibiotic classes</button>
         <button class="sw-btn" id="sw-plating" onclick="switchView('plating')"><i class="ti ti-layout-grid" aria-hidden="true"></i> Plating protocols</button>
+        <button class="sw-btn" id="sw-faeces" onclick="switchView('faeces')"><i class="ti ti-flask-2" aria-hidden="true"></i> Faeces</button>
         <div class="sens-menu" id="class-menu">
           <button class="sw-btn sens-trigger" id="sw-class" type="button" onclick="toggleNavMenu('class-menu', event)" aria-haspopup="true" aria-expanded="false">
             <i class="ti ti-microscope" aria-hidden="true"></i>
@@ -998,6 +999,247 @@
   </div><!-- end plating-pane-specimens -->
 </div><!-- end view-plating -->
 
+<!-- ═══ FAECES VIEW ═══ -->
+<div class="view hidden" id="view-faeces">
+  <div class="myco-hero">
+    <h2><i class="ti ti-flask-2" aria-hidden="true"></i> Faeces</h2>
+    <p>Culture, microscopy and investigation protocols for faecal specimens. <strong>Overview</strong> sets out what is performed and when; <strong>Investigation guide</strong> is the decision matrix by patient type; <strong>Media incubation</strong> gives plate set, atmosphere and conditions; <strong>Wet preparation</strong> covers parasitology and staining. A local SOP aid only &mdash; always confirm against your current laboratory protocol.</p>
+  </div>
+
+  <div class="myco-tabs" role="tablist" aria-label="Faeces section">
+    <button class="myco-tab active" id="faeces-tab-overview" role="tab" aria-selected="true" type="button" onclick="setFaecesTab('overview')"><i class="ti ti-list-details" aria-hidden="true"></i> Overview</button>
+    <button class="myco-tab" id="faeces-tab-guide" role="tab" aria-selected="false" type="button" onclick="setFaecesTab('guide')"><i class="ti ti-table" aria-hidden="true"></i> Investigation guide</button>
+    <button class="myco-tab" id="faeces-tab-media" role="tab" aria-selected="false" type="button" onclick="setFaecesTab('media')"><i class="ti ti-temperature" aria-hidden="true"></i> Media incubation</button>
+    <button class="myco-tab" id="faeces-tab-wetprep" role="tab" aria-selected="false" type="button" onclick="setFaecesTab('wetprep')"><i class="ti ti-microscope" aria-hidden="true"></i> Wet preparation</button>
+  </div>
+
+  <!-- ── Overview ── -->
+  <div class="myco-pane" id="faeces-pane-overview" role="tabpanel" aria-labelledby="faeces-tab-overview">
+    <div class="faeces-prose">
+      <section class="faeces-block">
+        <h3>Routine Culture</h3>
+        <ul>
+          <li>To be performed on samples from community.</li>
+          <li>Routine culture will <strong>NOT</strong> be performed on inpatients <strong>UNLESS</strong> admission was less than 3 days ago.</li>
+          <li>Culture to include <span class="plate p-xld">XLD</span> <em>Salmonella / Shigella</em>, <span class="plate p-camp">CAMP</span> <em>Campylobacter</em> and <span class="plate p-smac">SMAC</span> <em>E. coli O157</em>.</li>
+        </ul>
+      </section>
+      <section class="faeces-block">
+        <h3>Microscopy</h3>
+        <p>For white blood cells, red blood cells, ova, cysts and parasites. Performed if:</p>
+        <ul><li>Liquid samples</li><li>Suspected parasites</li><li>Foreign travel</li></ul>
+      </section>
+      <section class="faeces-block">
+        <h3>Adenovirus / Rotavirus</h3>
+        <p>Performed on children 5 years and less.</p>
+      </section>
+      <section class="faeces-block">
+        <h3>Cryptosporidium</h3>
+        <p>Performed on:</p>
+        <ul><li>Liquid samples</li><li>Immunosuppressed</li><li>Children 16 years old or less</li><li>Foreign travel</li></ul>
+      </section>
+      <section class="faeces-block">
+        <h3>C. difficile</h3>
+        <p>Refer to <strong>PTD-64 C. difficile</strong> for full details. Performed on:</p>
+        <ul>
+          <li>GP request</li>
+          <li>Community patients &gt;65 years with diarrhoeal stool</li>
+          <li>Inpatients &gt;2 years old</li>
+          <li>Antibiotic associated diarrhoea, pseudomembranous colitis</li>
+        </ul>
+        <p class="faeces-neg"><strong>NOT</strong> performed on formed stools.</p>
+      </section>
+      <section class="faeces-block">
+        <h3>Outbreak</h3>
+        <ul>
+          <li>Healthcare institution (hospital ward / nursing home) outbreak will be investigated for Norovirus &amp; C. difficile.</li>
+          <li>Community outbreak will be investigated for Salmonella, Shigella, Campylobacter and E. coli O157 plus additional pathogens as indicated.</li>
+        </ul>
+      </section>
+      <section class="faeces-block">
+        <h3>Foreign Travel</h3>
+        <p>Routine culture and Cryptosporidium plus investigation for Vibrio species and microscopy for parasites if travel to endemic area. Investigation for additional organisms on request.</p>
+      </section>
+      <section class="faeces-block">
+        <h3>Additional Investigations</h3>
+        <p>Culture specifically for pathogens such as <em>Aeromonas</em> sp, <em>Yersinia</em> sp. This will be dependent on clinical details provided such as mesenteric adenitis or upon specific request.</p>
+      </section>
+    </div>
+    <div class="page-footer">Faeces culture &amp; investigation overview &middot; local SOP aid &middot; guidance only</div>
+  </div><!-- end faeces-pane-overview -->
+
+  <!-- ── Investigation guide ── -->
+  <div class="myco-pane is-hidden" id="faeces-pane-guide" role="tabpanel" aria-labelledby="faeces-tab-guide">
+    <div class="myco-flow-note"><i class="ti ti-info-circle" aria-hidden="true"></i> Decision matrix by patient type, sample description and age. Always perform additional investigations when specifically requested.</div>
+    <div class="plating-table-wrap">
+      <table class="plating-table faeces-guide-table">
+        <thead><tr><th>Patient type</th><th>Description</th><th>Basic Culture</th><th>Noro</th><th>C. diff</th><th>Rota &amp; Adeno</th><th>Crypto</th><th>TCBS / APW<sup>2</sup></th><th>Wet Prep<sup>1</sup></th><th>Yersinia</th></tr></thead>
+        <tbody>
+          <tr>
+            <td>Inpatient &gt;3 days</td>
+            <td>Liquid<br>Semi-formed<br>Formed</td>
+            <td>No &ndash; only do culture if &gt;65 yrs with pre-existing disease (organ malfunction), HIV positive, neutropenic, enteric fever</td>
+            <td>No</td>
+            <td>YES if ≥2 years old<br><strong>NO</strong> if sample is formed</td>
+            <td>YES if &lt;5 yrs old</td>
+            <td>No</td>
+            <td>No</td>
+            <td>No</td>
+            <td></td>
+          </tr>
+          <tr>
+            <td>Inpatient ≤3 days</td>
+            <td>Liquid<br>Semi-formed<br>Formed</td>
+            <td>YES</td>
+            <td>No</td>
+            <td>YES if ≥2 years old<br><strong>NO</strong> if sample is formed</td>
+            <td>YES if &lt;5 yrs old</td>
+            <td>YES if &lt;16 yrs old, immunocomp, foreign travel</td>
+            <td>Suspected Vibrio infection, seafood consumption and/or recent travel to known cholera area<sup>2</sup></td>
+            <td>Suspected parasites, urticaria or eosinophilia <em>or</em> if sample is liquid</td>
+            <td>Appendicitis, mesenteric lymphadenitis, terminal ileitis, reactive arthritis</td>
+          </tr>
+          <tr>
+            <td>Community</td>
+            <td>Liquid<br>Semi-formed</td>
+            <td>YES</td>
+            <td>No</td>
+            <td>YES if &gt;65 years, AAD, or PMC</td>
+            <td>YES if &lt;5 yrs OR if clinically indicated in elderly patients</td>
+            <td>YES if &lt;5 yrs OR if &lt;16 yrs old, immunocomp, foreign travel</td>
+            <td>Suspected Vibrio infection, seafood consumption and/or recent travel to known cholera area<sup>2</sup></td>
+            <td>Suspected parasites, urticaria or eosinophilia <em>or</em> if sample is liquid</td>
+            <td>Appendicitis, mesenteric lymphadenitis, terminal ileitis, reactive arthritis</td>
+          </tr>
+          <tr>
+            <td>Community</td>
+            <td>Formed</td>
+            <td>YES</td>
+            <td>No</td>
+            <td>No</td>
+            <td>As age appropriate</td>
+            <td>As age appropriate</td>
+            <td>No</td>
+            <td>Suspected parasites</td>
+            <td></td>
+          </tr>
+          <tr class="faeces-outbreak-row">
+            <td>OUTBREAK &ndash; In Patient</td>
+            <td>Liquid<br>Semi-formed</td>
+            <td>No</td>
+            <td>YES</td>
+            <td>YES</td>
+            <td>No</td>
+            <td>No</td>
+            <td></td>
+            <td></td>
+            <td></td>
+          </tr>
+          <tr class="faeces-outbreak-row">
+            <td>OUTBREAK &ndash; Nursing home / care home</td>
+            <td>Liquid<br>Semi-formed</td>
+            <td>No</td>
+            <td>YES</td>
+            <td>YES</td>
+            <td>No</td>
+            <td>No</td>
+            <td></td>
+            <td></td>
+            <td></td>
+          </tr>
+          <tr class="faeces-outbreak-row">
+            <td>OUTBREAK &ndash; GP / Community</td>
+            <td>Liquid<br>Semi-formed</td>
+            <td>YES</td>
+            <td>No</td>
+            <td>No</td>
+            <td>No</td>
+            <td>YES if liquid</td>
+            <td></td>
+            <td></td>
+            <td></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="faeces-footnotes">
+      <p><sup>1</sup> Also do fields if stool is liquid with foreign travel. Perform concentrate method if stool is not liquid.</p>
+      <p><sup>2</sup> Suspected Vibrio infection, seafood consumption and/or recent travel to a known cholera area.</p>
+    </div>
+    <div class="page-footer">Faeces investigation decision matrix &middot; local SOP aid &middot; guidance only</div>
+  </div><!-- end faeces-pane-guide -->
+
+  <!-- ── Media incubation ── -->
+  <div class="myco-pane is-hidden" id="faeces-pane-media" role="tabpanel" aria-labelledby="faeces-tab-media">
+    <div class="myco-flow-note"><i class="ti ti-alert-triangle" aria-hidden="true"></i> Infection control should notify the lab of outbreaks and send a list of affected patients to the laboratory. Any requests that mention <strong>Outbreak</strong> require verification by a Team Manager with infection control before being treated as such. Details should be documented on Outbreak record sheet <strong>PF-LF-361</strong> and kept in the outbreak folder until the results become available.</div>
+    <div class="faeces-prose">
+      <ul>
+        <li>Process as per the investigation guide. Perform other investigations when specifically requested.</li>
+        <li>Do not process more than one sample per patient for each outbreak.</li>
+        <li>Only process the first six samples of an outbreak.</li>
+        <li>Once the aetiological agent from an outbreak has been identified, subsequent samples should just be treated as routine samples and reported with coded comment <strong>@XFLU</strong> (states that no further samples will be sent to the Ref lab from this outbreak).</li>
+        <li>If Norovirus has been identified as the aetiological agent from a particular source, further investigation for Noro should not be carried out until 1 month has elapsed. Do not process &ndash; report with coded comment <strong>@XNOR</strong>.</li>
+        <li>Norovirus samples are now tested in house on the Genexpert.</li>
+      </ul>
+    </div>
+    <div class="plating-table-wrap">
+      <table class="plating-table faeces-media-table">
+        <thead><tr><th>Clinical details</th><th><span class="plate p-xld">XLD</span></th><th><span class="plate p-smac">SMAC</span></th><th><span class="plate p-camp">CAMP</span></th><th><span class="plate p-sele">Selenite broth</span></th><th><span class="plate p-yers">YERS</span></th><th><span class="plate p-tcbs">TCBS</span></th><th><span class="plate p-apw">APW</span></th></tr></thead>
+        <tbody>
+          <tr><td>Basic Culture media set</td><td class="faeces-tick">✓</td><td class="faeces-tick">✓</td><td class="faeces-tick">✓</td><td class="faeces-tick">✓</td><td></td><td></td><td></td></tr>
+          <tr><td>Atmosphere</td><td>O₂</td><td>O₂</td><td>Microaerophilic (10% CO₂)</td><td>O₂</td><td>O₂</td><td>O₂</td><td>N/A</td></tr>
+          <tr><td>Incubation period</td><td>18&ndash;24 hr</td><td>18&ndash;24 hr</td><td>44&ndash;48 hr</td><td>18&ndash;24 hr then sub to <span class="plate p-xld">XLD</span></td><td>44&ndash;48 hr</td><td>18&ndash;24 hr</td><td>18 hr then sub to <span class="plate p-tcbs">TCBS</span></td></tr>
+          <tr><td>Temp</td><td>35&ndash;37°C</td><td>35&ndash;37°C</td><td>42°C</td><td>35&ndash;37°C</td><td>30°C</td><td>35&ndash;37°C</td><td>Room temp</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="faeces-prose">
+      <p class="faeces-note-box"><strong><span class="plate p-yers">YERS</span> &mdash; Yersinia selective agar (CIN):</strong> contains the selective agents <strong>C</strong>efsulodin, <strong>I</strong>rgasan and <strong>N</strong>ovobiocin, which suppress competing enteric flora and allow <em>Yersinia enterocolitica</em> to form characteristic &ldquo;bull's-eye&rdquo; colonies.</p>
+    </div>
+    <div class="page-footer">Faeces media incubation conditions &middot; local SOP aid &middot; guidance only</div>
+  </div><!-- end faeces-pane-media -->
+
+  <!-- ── Wet preparation ── -->
+  <div class="myco-pane is-hidden" id="faeces-pane-wetprep" role="tabpanel" aria-labelledby="faeces-tab-wetprep">
+    <div class="faeces-warning"><i class="ti ti-biohazard" aria-hidden="true"></i> <strong>Containment:</strong> All work on suspected <em>Salmonella typhi</em>, <em>Salmonella paratyphi</em> A, B or C, <em>Shigella dysenteriae</em>, <em>Vibrio cholerae</em> and <em>E. coli O157</em> must be carried out in the <strong>Category 3 room in the Biological Safety Cabinet (BSC)</strong>.</div>
+    <div class="faeces-prose">
+      <section class="faeces-block">
+        <h3>Wet Preparation <span class="faeces-subnote">(with reference to the Parasitology SOP)</span></h3>
+        <p>Perform on liquid, gassy, blood-stained or mucoid samples. Also perform if OCP performed and/or foreign travel outside Europe.</p>
+      </section>
+      <section class="faeces-block">
+        <h3>Direct Wet Prep</h3>
+        <ul>
+          <li>Prepare a wet preparation on a clean microscope slide by applying a small amount of patient sample using the swab that was used to inoculate the selenite F broth and covering with a coverslip.</li>
+          <li>The wet prep slide can be kept in a humid chamber for reading by the SBMS to prevent drying.</li>
+        </ul>
+      </section>
+      <section class="faeces-block">
+        <h3>Stained Wet Prep</h3>
+        <ul>
+          <li>Motile trophozoites can be examined in fresh samples by placing one drop of 0.85% saline on the left-hand side of a clean microscope slide and one drop of double-strength Lugol's iodine on the right-hand side (the distance between the drops should be sufficient to enable coverslips to be placed over each drop).</li>
+          <li>Using a different swab stick for each preparation, take a small amount of unfixed faeces and thoroughly emulsify in the saline and in the Lugol's iodine.</li>
+          <li>Place cover slips over each preparation on the slide. Examine entire slide using a low power objective.</li>
+          <li>Use a medium power objective to identify any suspicious morphological features.</li>
+        </ul>
+      </section>
+      <section class="faeces-block">
+        <h3>Faecal Concentrate Method</h3>
+        <p>Refer to Parasitology SOP <strong>PF-MIC-LP-76</strong> for details on the faecal concentrate method (the formol-ether* concentration technique).</p>
+      </section>
+      <section class="faeces-block">
+        <h3>Auramine Stain for Cryptosporidium Oocysts</h3>
+        <ul><li>To prepare a smear for Cryptosporidium staining, make a medium thick smear of faeces on a clean microscope slide using a swab. (Refer to Parasitology SOP PF-MIC-LP-76 and PF-MIC-LP-123 staining procedures for further details.)</li></ul>
+      </section>
+      <section class="faeces-block">
+        <h3>Field Stain or Ziehl Neelsen Stain</h3>
+        <ul><li>If required, prepare a medium thick smear on a clean microscope slide for Ziehl Neelsen or Giemsa staining (refer to Parasitology SOP PF-MIC-LP-76 and PF-MIC-LP-123 staining procedures for further details).</li></ul>
+      </section>
+    </div>
+    <div class="page-footer">Faeces wet preparation &amp; staining &middot; local SOP aid &middot; guidance only</div>
+  </div><!-- end faeces-pane-wetprep -->
+</div><!-- end view-faeces -->
+
 <!-- ═══ INDEX &amp; GLOSSARY VIEW ═══ -->
 <div class="view hidden" id="view-index">
   <div class="index-tabs">
@@ -1214,8 +1456,8 @@
 <div class="app-version" id="app-version" aria-label="App version"></div>
 
 <!-- Scripts: load order matters — data.js defines the datasets that app.js uses. -->
-<script src="data.js?v=20260617c"></script>
-<script src="app.js?v=20260617c"></script>
+<script src="data.js?v=20260618a"></script>
+<script src="app.js?v=20260618a"></script>
 
 <!-- HUD/0S chrome: background particle field, theme toggle, custom reticle cursor.
      Self-contained; app.js owns search + keyboard handlers, so nothing here duplicates them. -->
