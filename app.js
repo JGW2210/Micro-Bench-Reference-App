@@ -814,7 +814,7 @@ const navMenus = [
   { id:'class-menu', triggerId:'sw-class', labelId:'class-label', prefix:'Classification',
     views:{ plate:'Colony & Gram', bactid:'Bacterial ID' } },
   { id:'disc-menu',  triggerId:'sw-disc',  labelId:'disc-label',  prefix:'Disciplines',
-    views:{ virology:'Molecular', blood:'Blood Science', myco:'Mycology', parasitology:'Parasitology', serology:'Serology' } },
+    views:{ virology:'Molecular', blood:'Blood Science', myco:'Mycology', parasitology:'Parasitology', faeces:'Faeces', serology:'Serology' } },
 ];
 function navMenuById(id){ return navMenus.find(m => m.id === id); }
 function navMenuOwning(view){ return navMenus.find(m => Object.prototype.hasOwnProperty.call(m.views, view)); }
@@ -922,7 +922,7 @@ function switchView(to,iTabId){
   const toEl=document.getElementById('view-'+to);
   // crude ordering for transition direction, matching the quick-nav numbering:
   // notes < sensitivities(flow,wound,interp) < abx < classification(plate,bactid) < disciplines(virology,blood,myco) < index
-  const order={notes:-1,flow:0,wound:1,csf:1.5,interp:2,rules:2.5,checker:2.7,abx:3,plating:3.5,faeces:4.5,plate:4,bactid:5,virology:6,blood:7,myco:8,parasitology:8.4,serology:8.5,index:9};
+  const order={notes:-1,flow:0,wound:1,csf:1.5,interp:2,rules:2.5,checker:2.7,abx:3,plating:3.5,plate:4,bactid:5,virology:6,blood:7,myco:8,parasitology:8.4,faeces:8.45,serology:8.5,index:9};
   const goingRight=order[to]>order[curView];
   fromEl.style.transition='opacity .3s cubic-bezier(.4,0,.2,1),transform .3s cubic-bezier(.4,0,.2,1)';
   fromEl.style.opacity='0';
