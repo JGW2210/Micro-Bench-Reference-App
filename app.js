@@ -4047,6 +4047,64 @@ document.addEventListener('keydown', e=>{
   if(blood && blood.style.display === 'block' && typeof hideBloodTestDetail === 'function'){ hideBloodTestDetail(); return; }
 });
 
+/* ============================================================
+   TEXT-SIZE CONTROL  (A- / A+ / reset)  — self-contained module
+   ------------------------------------------------------------
+   The UI is almost entirely px-based, so scaling html{font-size} would not
+   touch px rules. Instead we drive a single `--font-scale` custom property
+   that styles.css multiplies into `body{ zoom: var(--font-scale) }`. CSS
+   `zoom` uniformly scales every px size, gap and font (like browser zoom)
+   without rewriting individual rules, and the dropdown positioning math
+   (which measures a fixed (0,0) origin in the same zoomed space) stays
+   correct under it.
+
+   Scale is clamped to [0.9, 1.4] and persisted to localStorage under
+   `mbr-font-scale` (try/catch so private mode / disabled storage is safe).
+   Buttons are native <button>s in index.html, so keyboard + a11y are inherent.
+   ============================================================ */
+(function(){
+  var FS_KEY = 'mbr-font-scale';
+  var FS_MIN = 0.9, FS_MAX = 1.4, FS_STEP = 0.1, FS_DEFAULT = 1;
+  var fontScale = FS_DEFAULT;
+
+  function clampScale(v){
+    if(typeof v !== 'number' || isNaN(v)) return FS_DEFAULT;
+    return Math.min(FS_MAX, Math.max(FS_MIN, Math.round(v * 100) / 100));
+  }
+  function applyFontScale(){
+    document.documentElement.style.setProperty('--font-scale', String(fontScale));
+    var dec = document.getElementById('fsc-dec');
+    var inc = document.getElementById('fsc-inc');
+    if(dec) dec.disabled = fontScale <= FS_MIN + 1e-9;
+    if(inc) inc.disabled = fontScale >= FS_MAX - 1e-9;
+  }
+  function saveFontScale(){
+    try { localStorage.setItem(FS_KEY, String(fontScale)); } catch(e){ /* private mode: ignore */ }
+  }
+  function setFontScale(v){
+    fontScale = clampScale(v);
+    applyFontScale();
+    saveFontScale();
+  }
+  // Exposed for the inline onclick handlers in index.html.
+  window.fontScaleInc = function(){ setFontScale(fontScale + FS_STEP); };
+  window.fontScaleDec = function(){ setFontScale(fontScale - FS_STEP); };
+  window.fontScaleReset = function(){ setFontScale(FS_DEFAULT); };
+
+  function initFontScale(){
+    var stored = null;
+    try { stored = localStorage.getItem(FS_KEY); } catch(e){ /* ignore */ }
+    fontScale = stored !== null ? clampScale(parseFloat(stored)) : FS_DEFAULT;
+    applyFontScale();
+  }
+
+  if(document.readyState === 'loading'){
+    document.addEventListener('DOMContentLoaded', initFontScale);
+  } else {
+    initFontScale();
+  }
+})();
+
 // ─── init (added v25) ───
 checkerInit();
 renderRecents();

@@ -114,6 +114,11 @@
   <div class="app-title-row">
     <div class="app-title">Microbiology bench reference<span class="app-sub">— culture · sensitivity · molecular workflows</span></div>
     <div class="app-title-row-right">
+      <div class="font-size-control" role="group" aria-label="Text size">
+        <button type="button" class="fsc-btn" id="fsc-dec" onclick="fontScaleDec()" aria-label="Decrease text size" title="Decrease text size">A−</button>
+        <button type="button" class="fsc-btn fsc-reset" id="fsc-reset" onclick="fontScaleReset()" aria-label="Reset text size" title="Reset text size">A</button>
+        <button type="button" class="fsc-btn" id="fsc-inc" onclick="fontScaleInc()" aria-label="Increase text size" title="Increase text size">A+</button>
+      </div>
       <label class="theme-toggle" title="Toggle light / dark">
         <input type="checkbox" id="themeToggle" aria-label="Toggle theme">
         <span class="tt-track" aria-hidden="true"></span>
