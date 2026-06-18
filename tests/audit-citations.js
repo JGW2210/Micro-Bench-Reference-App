@@ -65,7 +65,10 @@ function panelIfuKeys(key){
   if(/^viro_(accept_aptima|panther|ct_|ng_|ctng|ct_ng)/.test(key)) return ['aptima_ctng'];
   if(/^viro_(accept_resp|genexpert_resp|resp_)/.test(key)) return ['xpert_resp'];
   if(/^viro_(accept_tb|tb_)/.test(key)) return ['xpert_tb'];
-  if(/^viro_(accept_gi|gi_)/.test(key)) return ['xpert_noro'];
+  // Enteric/GI molecular stream: cite the broader Cepheid Xpert GI Panel reference
+  // material alongside the standalone Norovirus IFU (the cards describe the
+  // Norovirus assay but sit in the GI/enteric workflow).
+  if(/^viro_(accept_gi|gi_)/.test(key)) return ['xpert_gi','xpert_noro'];
   if(key==='viro_pcr_qc') return ['aptima_ctng','xpert_resp','xpert_tb','xpert_noro'];
   return [];
 }
