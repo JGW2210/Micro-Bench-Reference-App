@@ -3687,19 +3687,38 @@ function checkerInit(){
 }
 
 // ═══════════════════════════════════════════════════════════════════════
-// RECENTLY-VIEWED STRIP  (added v25) — session-only, no storage
+// RECENTLY-VIEWED STRIP  (added v25) — persisted to localStorage (key mbr-recents)
 // ═══════════════════════════════════════════════════════════════════════
 const RECENTS_MAX = 8;
+const RECENTS_KEY = 'mbr-recents';
 // Each entry is {kind, key, title}. kind selects which detail panel to reopen,
 // so the strip can hold cards from any section, not just the sensitivity
 // (fcPanels) flowcharts. key is the panel id (or array index for blood tests).
-let recentPanels = [];
+let recentPanels = loadRecents();
 const recentKindIcons = {fc:'ti-file-description', fungus:'ti-microscope', parasite:'ti-bug', rules:'ti-ban', blood:'ti-droplet', gram:'ti-flask'};
+function loadRecents(){
+  try{
+    const raw = localStorage.getItem(RECENTS_KEY);
+    if(!raw) return [];
+    const arr = JSON.parse(raw);
+    if(!Array.isArray(arr)) return [];
+    // Keep only well-formed entries and re-enforce the cap (defensive against
+    // older/corrupt payloads).
+    return arr
+      .filter(r => r && r.kind && r.key !== undefined && r.key !== null && r.title)
+      .map(r => ({kind:r.kind, key:r.key, title:r.title}))
+      .slice(0, RECENTS_MAX);
+  }catch(e){ return []; }
+}
+function saveRecents(){
+  try{ localStorage.setItem(RECENTS_KEY, JSON.stringify(recentPanels)); }catch(e){/* private mode: skip */}
+}
 function pushRecent(kind, key, title){
   if(!kind || key === undefined || key === null || !title) return;
   recentPanels = recentPanels.filter(r => !(r.kind === kind && r.key === key));
   recentPanels.unshift({kind, key, title});
   if(recentPanels.length > RECENTS_MAX) recentPanels.length = RECENTS_MAX;
+  saveRecents();
   renderRecents();
 }
 function openRecent(kind, key){
@@ -3715,7 +3734,7 @@ function openRecent(kind, key){
     case 'gram':     switchView('plate');         setTimeout(()=>{setPlateSection('gram');showGramPattern(key);}, 360); break;
   }
 }
-function clearRecents(){ recentPanels = []; renderRecents(); }
+function clearRecents(){ recentPanels = []; saveRecents(); renderRecents(); }
 function renderRecents(){
   const bar = document.getElementById('recents-bar');
   const chips = document.getElementById('recents-chips');
