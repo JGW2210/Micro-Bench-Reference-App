@@ -629,9 +629,7 @@ function showMycoFungus(key){
     : `${mycoSvg(f.shape)}<div class="myco-img-cap">Schematic cue — open Mycology Online for photographs</div>`;
   panel.innerHTML=`<div class="myco-panel-head"><div><h3>${f.name}</h3><div class="myco-panel-sub">${f.genus} dermatophyte · ${f.reservoir}</div></div><a class="myco-source-link" href="${f.source}" target="_blank" rel="noopener"><i class="ti ti-external-link" aria-hidden="true"></i> Mycology Online (Adelaide)</a></div><div class="myco-panel-grid"><div class="myco-micro-svg${f.img?'':' is-schematic'}">${visual}</div><div class="myco-facts"><div class="myco-fact"><div class="myco-fact-title">Macroscopic culture</div><p>${f.macro}</p></div><div class="myco-fact"><div class="myco-fact-title">Microscopy pointers</div><p>${f.micro}</p></div><div class="myco-fact"><div class="myco-fact-title">Bench clues</div><ul>${f.clues.map(c=>`<li>${c}</li>`).join('')}</ul></div><div class="myco-fact"><div class="myco-fact-title">Relevant presentations</div><p>${mycoDiseases.filter(d=>d.fungi.includes(key)).map(d=>d.name).join(' · ')||'Dermatophyte infection depending on exposure and site.'}</p></div></div></div>`;
   panel.style.display='block';
-  panel.style.animation='none';panel.offsetHeight;panel.style.animation='slideUp .28s cubic-bezier(.4,0,.2,1) forwards';
-  panel.scrollIntoView({behavior:'smooth',block:'nearest'});
-}
+  panel.style.animation='none';panel.offsetHeight;panel.style.animation='slideUp .28s cubic-bezier(.4,0,.2,1) forwards';}
 
 
 // ═══════════════════════════════════════════════
@@ -673,9 +671,7 @@ function showParasite(key){
   const dxTags=p.dx.map(d=>`<span class="myco-tag">${paraDxLabels[d]}</span>`).join('');
   panel.innerHTML=`<div class="myco-panel-head"><div><h3>${p.disease}</h3><div class="myco-panel-sub"><em>${p.name}</em> · ${paraClassLabels[p.cls]}</div></div><a class="myco-source-link" href="${p.url}" target="_blank" rel="noopener"><i class="ti ti-external-link" aria-hidden="true"></i> CDC DPDx</a></div><div class="myco-facts"><div class="myco-fact"><div class="myco-fact-title">Overview</div><p>${p.note}</p></div><div class="myco-fact"><div class="myco-fact-title">Specimen</div><p>${p.specimen}</p><div class="myco-tag-row">${siteTags}</div></div><div class="myco-fact"><div class="myco-fact-title">Diagnostic method</div><div class="myco-tag-row">${dxTags}</div></div><div class="myco-fact"><div class="myco-fact-title">Bench clues</div><ul>${p.clues.map(c=>`<li>${c}</li>`).join('')}</ul></div></div>`;
   panel.style.display='block';
-  panel.style.animation='none';panel.offsetHeight;panel.style.animation='slideUp .28s cubic-bezier(.4,0,.2,1) forwards';
-  panel.scrollIntoView({behavior:'smooth',block:'nearest'});
-}
+  panel.style.animation='none';panel.offsetHeight;panel.style.animation='slideUp .28s cubic-bezier(.4,0,.2,1) forwards';}
 
 
 // ═══════════════════════════════════════════════
@@ -711,9 +707,7 @@ function showRulesOrg(id){
     `<div class="rules-detail-title"><i class="ti ti-list-check" aria-hidden="true"></i> Expert / interpretive rules</div>`+
     `<ul class="rules-list">${o.rules.map(r=>`<li>${r}</li>`).join('')}</ul>`;
   panel.style.display='block';
-  panel.style.animation='none';panel.offsetHeight;panel.style.animation='slideUp .28s cubic-bezier(.4,0,.2,1) forwards';
-  panel.scrollIntoView({behavior:'smooth',block:'nearest'});
-}
+  panel.style.animation='none';panel.offsetHeight;panel.style.animation='slideUp .28s cubic-bezier(.4,0,.2,1) forwards';}
 function hideRulesOrg(){ const p=document.getElementById('rules-detail'); if(p)p.style.display='none'; }
 
 // ═══════════════════════════════════════════════
@@ -931,6 +925,7 @@ function updateSensitivityNav(view){ updateNavMenus(view); }
 
 function switchView(to,iTabId){
   if(to===curView&&!iTabId)return;
+  closeAllDetailPanels();
   const fromEl=document.getElementById('view-'+curView);
   const toEl=document.getElementById('view-'+to);
   // crude ordering for transition direction, matching the quick-nav numbering:
@@ -1072,7 +1067,6 @@ function showDetail(key){
   d.style.display='block';
   d.style.animation='none';d.offsetHeight;
   d.style.animation='slideUp .28s cubic-bezier(.4,0,.2,1) forwards';
-  d.scrollIntoView({behavior:'smooth',block:'nearest'});
 }
 
 // ═══════════════════════════════════════════════
@@ -1371,9 +1365,7 @@ function showGramPattern(id){
     `<div class="myco-fact"><div class="myco-fact-title">Typical organisms</div><p>${p.organisms.join(' · ')}</p></div>`+
     `<div class="myco-fact"><div class="myco-fact-title">Bench clues / next steps</div><ul>${p.clues.map(c=>`<li>${c}</li>`).join('')}</ul></div></div></div>`;
   panel.style.display='block';
-  panel.style.animation='none';panel.offsetHeight;panel.style.animation='slideUp .28s cubic-bezier(.4,0,.2,1) forwards';
-  panel.scrollIntoView({behavior:'smooth',block:'nearest'});
-}
+  panel.style.animation='none';panel.offsetHeight;panel.style.animation='slideUp .28s cubic-bezier(.4,0,.2,1) forwards';}
 
 function setPlateSection(sec){
   const secs=['plate','gram'];
@@ -2378,6 +2370,16 @@ function closeDetail(){
   const d = document.getElementById('detail-fc');
   d.style.display='none';
   currentDetailKey = null;
+}
+// Docked detail panels are fixed to the viewport bottom, so the panels nested
+// in a view stay hidden when that view is inactive (opacity:0) — but #detail-fc
+// is top-level and shared across the sensitivity views, so close every detail
+// panel on a view switch to stop one leaking over the next view.
+function closeAllDetailPanels(){
+  ['detail-fc','rules-detail','myco-fungus-panel','para-panel','gram-panel','blood-detail'].forEach(id=>{
+    const el = document.getElementById(id);
+    if(el) el.style.display='none';
+  });
 }
 function copyDetail(){
   if(!currentDetailKey)return;
@@ -3969,6 +3971,18 @@ let lastPanelTrigger = null;
 function focusPanelHeading(panelId){
   const panel = document.getElementById(panelId);
   if(!panel) return;
+  // Docked panels are position:fixed. When opened straight after a view switch
+  // (search results / recents open at ~340ms, before switchView clears its
+  // ~630ms slide transform), the owning view still carries an inline transform,
+  // which establishes a containing block and would anchor this fixed panel to
+  // the view instead of the viewport. If that transient transform is still set,
+  // settle the view now so the panel docks to the bottom of the screen. No-op
+  // for direct card clicks, where the view has long since settled.
+  const activeView = document.querySelector('.view:not(.hidden)');
+  if(activeView && activeView.style.transform){
+    activeView.style.transition = 'none';
+    activeView.style.transform = '';
+  }
   // Defer to the next frame so the panel is displayed/laid out and any
   // scrollIntoView has been kicked off before we move focus into it.
   requestAnimationFrame(()=>{

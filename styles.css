@@ -253,7 +253,12 @@ html.cursor-custom,html.cursor-custom *{cursor:none!important}
   border:1px solid var(--line);
   border-radius:var(--border-radius-lg);
   box-shadow:var(--shadow);
-  animation:wrapReveal .5s var(--ease) both;
+  /* No fill-mode: the reveal plays on load, then .wrap settles to its base
+     styles (transform:none). Keeping fill-mode `both` retained a resolved
+     identity-matrix transform, which establishes a containing block and would
+     make position:fixed descendants (the docked detail panels) anchor to .wrap
+     instead of the viewport. */
+  animation:wrapReveal .5s var(--ease);
 }
 /* L-bracket corners — signature HUD motif */
 .wrap::before,.wrap::after{
@@ -1856,6 +1861,32 @@ html[data-theme="light"] .barcode-date-input{color-scheme:light}
 .guideline-stamp.is-placeholder .gs-ver{color:var(--warn)}
 .gs-guidance{margin-left:auto;font-style:italic;opacity:.8}
 
+/* ── Docked detail panels ───────────────────────────────────────────────
+   On-click card reveals dock to the bottom of the viewport (anchored to the
+   UI view) instead of appearing at the end of the section's scrolling content.
+   z-index:150 keeps them BELOW the barcode-scan alert (100000), the nav menus
+   / search dropdown (>=1300) and the floating abx tooltip, while sitting ABOVE
+   page content so they never clip under it. Inactive views are opacity:0 so
+   their nested panels stay hidden; the shared top-level #detail-fc is closed on
+   view switch in switchView(). Centred via auto margins (not transform) so the
+   inline slideUp entrance animation, which uses transform, doesn't fight it. */
+#detail-fc,
+#view-rules .rules-detail,
+#view-myco .myco-fungus-panel,
+#view-parasitology .myco-fungus-panel,
+#view-plate .myco-fungus-panel,
+#view-plate .gram-panel,
+#view-blood .blood-detail{
+  position:fixed;left:0;right:0;bottom:0;top:auto;margin:0 auto;
+  max-width:1140px;max-height:min(52vh,640px);overflow-y:auto;-webkit-overflow-scrolling:touch;
+  z-index:150;
+  background:var(--solid-pop);
+  -webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);
+  border:1px solid var(--line-strong);border-bottom:none;border-top:1px solid var(--accent);
+  border-radius:var(--border-radius-lg) var(--border-radius-lg) 0 0;
+  box-shadow:0 -16px 40px -12px rgba(0,0,0,.55),0 0 30px -16px var(--accent-glow);
+}
+
 
 @media print{
   body{background:#fff;color:#000;padding:0;zoom:1}
@@ -1867,6 +1898,8 @@ html[data-theme="light"] .barcode-date-input{color-scheme:light}
   .view.hidden{display:none !important}
   .view{opacity:1 !important;transform:none !important;position:static !important}
   .abx-class-detail{position:static !important;max-height:none !important;box-shadow:none !important;border:1px solid #888 !important;background:#fff !important;margin-top:1rem !important}
+  /* Docked detail panels print in normal flow, not fixed/clipped */
+  #detail-fc,#view-rules .rules-detail,.myco-fungus-panel,#view-plate .gram-panel,#view-blood .blood-detail{position:static !important;max-width:none !important;max-height:none !important;overflow:visible !important;box-shadow:none !important;backdrop-filter:none !important;-webkit-backdrop-filter:none !important;border-radius:0 !important;border:1px solid #888 !important;background:#fff !important;margin:1rem 0 !important}
   .card,#detail-fc,.bactid-card{break-inside:avoid;border:1px solid #888 !important;background:#fff !important}
   .card .name,.card .desc,.card .abx{color:#000 !important}
   .interp-table th,.interp-table td{color:#000 !important;border-color:#888 !important}
