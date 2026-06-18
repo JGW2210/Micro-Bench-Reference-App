@@ -20,7 +20,7 @@
  * any cache no longer in the allowlist.
  */
 
-const SHELL_VERSION = 'v1';
+const SHELL_VERSION = 'v2';
 const SHELL_CACHE = `mbr-shell-${SHELL_VERSION}`;
 const RUNTIME_CACHE = `mbr-runtime-${SHELL_VERSION}`;
 const CACHE_ALLOWLIST = [SHELL_CACHE, RUNTIME_CACHE];
