@@ -1,0 +1,25 @@
+{
+  "name": "Microbiology Bench Reference",
+  "short_name": "Bench Ref",
+  "description": "Offline-capable microbiology bench reference: sensitivities, plating protocols, antibiotic classes, and lab ID flows.",
+  "start_url": ".",
+  "scope": ".",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#05070a",
+  "theme_color": "#05070a",
+  "icons": [
+    {
+      "src": "icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    },
+    {
+      "src": "icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "maskable"
+    }
+  ]
+}
