@@ -799,6 +799,30 @@ body.show-reporting .reporting-rule{display:block}
 }
 .abx-chip:hover,.abx-chip:focus,.abx-chip.stuck{background:var(--accent-dim);border-color:var(--accent);color:var(--accent);outline:none;transform:translateY(-1px)}
 
+/* ── Keyboard focus indicator for the clickable card-type / interactive
+   elements that are made keyboard-operable in app.js (see applyCardA11y).
+   These are non-native controls (divs/spans wired via onclick) that otherwise
+   show no focus ring. Native controls and text inputs keep their own styles. */
+.card:focus-visible,
+.myco-card:focus-visible,
+.rules-card:focus-visible,
+.viro-step:focus-visible,
+.viro-result-card:focus-visible,
+.viro-info-card:focus-visible,
+.dset-pill:focus-visible,
+.idx-panel-pill:focus-visible,
+.idx-row:focus-visible,
+.search-result:focus-visible,
+.abx-chip:focus-visible{
+  outline:2px solid var(--accent);outline-offset:2px;border-radius:var(--border-radius-md)
+}
+/* Detail-panel headings receive programmatic focus on open; suppress the
+   text-caret-style ring but keep a clear focus-visible outline for keyboard. */
+#detail-fc h3:focus,#rules-detail h3:focus,.myco-fungus-panel h3:focus,
+.blood-detail h3:focus,.gram-panel h3:focus{outline:none}
+#detail-fc h3:focus-visible,#rules-detail h3:focus-visible,.myco-fungus-panel h3:focus-visible,
+.blood-detail h3:focus-visible,.gram-panel h3:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+
 /* body-level floating tooltip */
 #abx-float-tip{
   position:fixed;left:0;top:0;visibility:hidden;opacity:0;min-width:220px;max-width:300px;padding:10px 12px;

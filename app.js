@@ -3291,6 +3291,7 @@ function runSearch(q){
       + '<div class="search-empty-hint">Searches panels, antibiotics, organisms, Gram films, blood tests, abbreviations &amp; intrinsic-resistance rules. Try a shorter term, an abbreviation (e.g. ESBL, MIC), or a drug/organism name.</div>'
       + '</div>';
     results.classList.add('show');
+    announceSearch('No matches for "' + q + '"');
     return;
   }
   results.innerHTML = matches.map((m,i)=>{
@@ -3300,6 +3301,18 @@ function runSearch(q){
     return `<div class="search-result" data-idx="${i}" onclick="selectResult(${i})"><div class="sr-kind">${kindLabel}</div><div class="sr-name">${name}</div>${snip}</div>`;
   }).join('');
   results.classList.add('show');
+  announceSearch(matches.length + ' result' + (matches.length===1?'':'s') + ' found');
+}
+
+// Polite, debounced announcement of search result counts for screen readers.
+let _searchAnnounceTimer = 0;
+function announceSearch(msg){
+  const live = document.getElementById('search-live');
+  if(!live) return;
+  if(_searchAnnounceTimer) clearTimeout(_searchAnnounceTimer);
+  // Debounce so each keystroke doesn't queue a separate utterance; only the
+  // settled count is read out.
+  _searchAnnounceTimer = setTimeout(()=>{ live.textContent = msg; }, 350);
 }
 
 function highlightMatch(text,q){
@@ -3322,6 +3335,8 @@ function closeSearchDropdown(){
   document.getElementById('search-results').classList.remove('show');
   lastResults = [];
   searchFocusIdx = -1;
+  const live = document.getElementById('search-live');
+  if(live) live.textContent = '';
 }
 
 function clearSearch(){
@@ -3605,9 +3620,18 @@ function setCheckerGroup(id){
 }
 function checkerCategory(a, zone){
   // zone ≥ S → S ; zone < R → R ; else I. (S===R ⇒ binary, no I band.)
-  if(zone >= a.S) return {cat:'s', label:'S'};
-  if(zone < a.R)  return {cat:'r', label:'R'};
-  return {cat:'i', label:'I'};
+  if(zone >= a.S) return {cat:'s', label:'S', full:'Susceptible'};
+  if(zone < a.R)  return {cat:'r', label:'R', full:'Resistant'};
+  return {cat:'i', label:'I', full:'Susceptible, increased exposure'};
+}
+// Build the inner HTML of a .sir-result cell. A bare "S"/"I"/"R" badge is
+// meaningless out of context for a screen reader, so we pair it with a visually
+// hidden, agent-qualified phrase that the polite live region announces.
+function sirResultHTML(agentName, c){
+  if(!c) return '<span class="sir-badge empty" aria-hidden="true">—</span>'
+    + `<span class="sr-only">${escapeAttr(agentName)}: no zone entered</span>`;
+  return `<span class="sir-badge ${c.cat}" aria-hidden="true">${c.label}</span>`
+    + `<span class="sr-only">${escapeAttr(agentName)}: ${c.full}</span>`;
 }
 function renderCheckerRows(){
   const host = document.getElementById('checker-rows');
@@ -3625,8 +3649,7 @@ function renderCheckerRows(){
     const key = g.id+':'+i;
     const val = checkerZones[key];
     const hasVal = val!==undefined && val!=='' && !isNaN(val);
-    let badge = '<span class="sir-badge empty">—</span>';
-    if(hasVal){ const c = checkerCategory(a, Number(val)); badge = `<span class="sir-badge ${c.cat}">${c.label}</span>`; }
+    let badge = sirResultHTML(a.agent, hasVal ? checkerCategory(a, Number(val)) : null);
     const bp = (a.S===a.R) ? `S/R at ${a.S} mm (binary)` : `S ≥ ${a.S} · R &lt; ${a.R} mm`;
     const tags = (a.screen?'<span class="sir-tag screen">screen</span>':'') + (a.ok?'<span class="sir-tag ok"><i class="ti ti-circle-check" aria-hidden="true"></i> verified</span>':'<span class="sir-tag unver" title="Unverified — correct S/R in data.js and set ok:true"><i class="ti ti-alert-circle" aria-hidden="true"></i> unverified</span>');
     const note = a.note ? `<div class="sir-note">${a.note}</div>` : '';
@@ -3636,7 +3659,7 @@ function renderCheckerRows(){
       <div class="sir-input">
         <div class="zone-input-wrap"><input type="number" inputmode="numeric" min="0" max="60" step="1" placeholder="--" value="${hasVal?val:''}" aria-label="Zone diameter for ${a.agent}" oninput="checkerInput('${g.id}',${i},this.value)"><span class="zone-unit">mm</span></div>
       </div>
-      <div class="sir-result">${badge}</div>
+      <div class="sir-result" aria-live="polite" aria-atomic="true">${badge}</div>
     </div>`;
   }).join('');
 }
@@ -3653,9 +3676,9 @@ function checkerInput(groupId, idx, raw){
   if(!row) return;
   const resultEl = row.querySelector('.sir-result');
   const v = checkerZones[key];
-  if(v===undefined || v==='' || isNaN(v)){ resultEl.innerHTML = '<span class="sir-badge empty">—</span>'; return; }
+  if(v===undefined || v==='' || isNaN(v)){ resultEl.innerHTML = sirResultHTML(a.agent, null); return; }
   const c = checkerCategory(a, Number(v));
-  resultEl.innerHTML = `<span class="sir-badge ${c.cat}">${c.label}</span>`;
+  resultEl.innerHTML = sirResultHTML(a.agent, c);
 }
 function checkerInit(){
   renderCheckerTabs();
@@ -3824,6 +3847,186 @@ function applyRoute(){
   });
 })();
 
+
+// ═══════════════════════════════════════════════════════════════════════
+// ACCESSIBILITY — keyboard operability + focus management for the clickable
+// card-type elements (added 2026-06-18 accessibility pass).
+//
+// The core interaction across the app is clicking a plain <div>/<span> wired
+// with onclick= to open a detail panel. These are not native controls, so they
+// were mouse-only. This block:
+//   1. Adds tabindex="0" + role="button" to those elements (static + the many
+//      that are re-rendered via innerHTML — covered by a MutationObserver).
+//   2. Adds a single delegated keydown handler so Enter / Space activate them,
+//      mirroring the proven .abx-chip pattern (which relies on focusin + a
+//      synthetic .click()). Space is preventDefault-ed so the page doesn't
+//      scroll. It bails inside text inputs and never interferes with the
+//      barcode trap (capture phase, runs first) or the number-key shortcuts.
+//   3. Moves focus into a detail panel on open and restores it to the trigger
+//      on close, and extends Escape to dismiss every detail panel.
+// ═══════════════════════════════════════════════════════════════════════
+(function cardA11y(){
+  // Selectors for the non-native, onclick-wired interactive elements. Native
+  // controls (<button>/<a>, e.g. .recents-chip, checker tabs) are already
+  // keyboard-operable and are deliberately excluded. .abx-chip already sets its
+  // own tabindex/role in markup, so it's skipped here too.
+  const SELECTOR = [
+    '.card[onclick]',
+    '.myco-card[onclick]',
+    '.rules-card[onclick]',
+    '.viro-step[onclick]',
+    '.viro-result-card[onclick]',
+    '.viro-info-card[onclick]',
+    '.dset-pill[onclick]',
+    '.idx-panel-pill[onclick]',
+    '.idx-row[onclick]',
+    '.search-result[onclick]'
+  ].join(',');
+
+  function decorate(root){
+    const scope = root && root.querySelectorAll ? root : document;
+    let list = [];
+    // Include the root itself if it matches (MutationObserver added-node case).
+    if(scope.matches && scope.matches(SELECTOR)) list.push(scope);
+    scope.querySelectorAll(SELECTOR).forEach(el=>list.push(el));
+    list.forEach(el=>{
+      if(!el.hasAttribute('tabindex')) el.setAttribute('tabindex','0');
+      if(!el.hasAttribute('role'))     el.setAttribute('role','button');
+    });
+  }
+
+  // Initial pass over the static + already-rendered markup.
+  decorate(document);
+
+  // Re-decorate on DOM mutations: most card grids are rebuilt via innerHTML, so
+  // newly inserted nodes need the attributes too. Debounced to coalesce bursts.
+  if(typeof MutationObserver !== 'undefined'){
+    let pending = false;
+    const mo = new MutationObserver(muts=>{
+      if(pending) return;
+      const hasAdds = muts.some(m=>m.addedNodes && m.addedNodes.length);
+      if(!hasAdds) return;
+      pending = true;
+      // microtask-ish defer so a single render's many mutations are one pass
+      Promise.resolve().then(()=>{ pending = false; decorate(document); });
+    });
+    mo.observe(document.body, {childList:true, subtree:true});
+  }
+
+  // Track the element that triggered a panel open, so focus can be restored to
+  // it on close. Captured on both pointer and keyboard activation.
+  function rememberTrigger(el){
+    if(el && el.closest){ const c = el.closest(SELECTOR); if(c) lastPanelTrigger = c; }
+  }
+  document.addEventListener('click', e=>{ rememberTrigger(e.target); }, true);
+
+  // Delegated keyboard activation (bubble phase — the barcode trap runs in the
+  // capture phase and will have already stopped propagation for real scans).
+  document.addEventListener('keydown', e=>{
+    if(e.key !== 'Enter' && e.key !== ' ' && e.key !== 'Spacebar') return;
+    const ae = document.activeElement;
+    if(!ae) return;
+    const tag = ae.tagName;
+    // Never hijack typing in form fields or activation of real controls.
+    if(tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT' ||
+       tag === 'BUTTON' || tag === 'A' || ae.isContentEditable) return;
+    const card = ae.closest && ae.closest(SELECTOR);
+    if(!card) return;
+    e.preventDefault();          // stop Space scrolling / Enter side-effects
+    rememberTrigger(card);
+    card.click();
+  });
+})();
+
+// ─── Detail-panel focus management ──────────────────────────────────────────
+// On open we move focus to the panel's heading (made programmatically
+// focusable); on close we restore focus to the element that opened it. The
+// detail panels are: #detail-fc (sensitivity flowcharts, virology),
+// #rules-detail (intrinsic resistance), #myco-fungus-panel (dermatophytes),
+// #para-panel (parasitology), #gram-panel (Gram films) and #blood-detail
+// (blood science).
+let lastPanelTrigger = null;
+
+function focusPanelHeading(panelId){
+  const panel = document.getElementById(panelId);
+  if(!panel) return;
+  // Defer to the next frame so the panel is displayed/laid out and any
+  // scrollIntoView has been kicked off before we move focus into it.
+  requestAnimationFrame(()=>{
+    const target = panel.querySelector('h3') || panel.querySelector('.detail-close') || panel;
+    if(!target) return;
+    if(!target.hasAttribute('tabindex')) target.setAttribute('tabindex','-1');
+    try{ target.focus({preventScroll:true}); }catch(_){ target.focus(); }
+  });
+}
+
+function restorePanelTrigger(){
+  const t = lastPanelTrigger;
+  lastPanelTrigger = null;
+  if(t && document.contains(t) && typeof t.focus === 'function'){
+    try{ t.focus({preventScroll:true}); }catch(_){ t.focus(); }
+  }
+}
+
+// Wrap the panel show/close functions to add focus handling without altering
+// their existing rendering logic. (showDetail is already wrapped above for the
+// recents strip; we wrap that wrapped version once more here.)
+(function wirePanelFocus(){
+  const wrapShow = (name, panelId) => {
+    const orig = window[name];
+    if(typeof orig !== 'function') return;
+    window[name] = function(){
+      const r = orig.apply(this, arguments);
+      focusPanelHeading(panelId);
+      return r;
+    };
+  };
+  wrapShow('showDetail',     'detail-fc');
+  wrapShow('showRulesOrg',   'rules-detail');
+  wrapShow('showMycoFungus', 'myco-fungus-panel');
+  wrapShow('showParasite',   'para-panel');
+  wrapShow('showGramPattern','gram-panel');
+  wrapShow('showBloodTest',  'blood-detail');
+
+  // Restore focus to the trigger when a panel is closed via its close function.
+  const wrapClose = (name) => {
+    const orig = window[name];
+    if(typeof orig !== 'function') return;
+    window[name] = function(){
+      const r = orig.apply(this, arguments);
+      restorePanelTrigger();
+      return r;
+    };
+  };
+  wrapClose('closeDetail');
+  wrapClose('hideRulesOrg');
+  wrapClose('hideBloodTestDetail');
+})();
+
+// Escape now dismisses ALL detail panels consistently (the original global
+// handler only closed #detail-fc and #rules-detail). This listener runs in
+// addition to the existing keydown handlers; it only acts on the remaining
+// panels so it never double-handles or conflicts with the established flows.
+document.addEventListener('keydown', e=>{
+  if(e.key !== 'Escape') return;
+  // Don't fight the barcode alert, open nav menus, or the two panels already
+  // handled by the primary keydown handler — let those win first.
+  if(typeof isBarcodeAlertOpen === 'function' && isBarcodeAlertOpen()) return;
+  if(typeof anyNavMenuOpen === 'function' && anyNavMenuOpen()) return;
+  const dfc = document.getElementById('detail-fc');
+  if(dfc && dfc.style.display === 'block') return;        // handled upstream
+  const rd = document.getElementById('rules-detail');
+  if(rd && rd.style.display === 'block') return;          // handled upstream
+  // Remaining panels: close the first visible one and restore focus.
+  const myco = document.getElementById('myco-fungus-panel');
+  if(myco && myco.style.display === 'block'){ myco.style.display='none'; restorePanelTrigger(); return; }
+  const para = document.getElementById('para-panel');
+  if(para && para.style.display === 'block'){ para.style.display='none'; restorePanelTrigger(); return; }
+  const gram = document.getElementById('gram-panel');
+  if(gram && gram.style.display === 'block'){ gram.style.display='none'; restorePanelTrigger(); return; }
+  const blood = document.getElementById('blood-detail');
+  if(blood && blood.style.display === 'block' && typeof hideBloodTestDetail === 'function'){ hideBloodTestDetail(); return; }
+});
 
 // ─── init (added v25) ───
 checkerInit();
