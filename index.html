@@ -13,7 +13,7 @@
 <!-- HUD/0S favicon: teal reticle + central plate on dark, inline so there is no extra file dependency -->
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='10' fill='%2305070a'/%3E%3Cg fill='none' stroke='%2338e8d0' stroke-width='2.4'%3E%3Ccircle cx='32' cy='32' r='17'/%3E%3Cpath d='M32 6v9M32 49v9M6 32h9M49 32h9' stroke-linecap='round'/%3E%3C/g%3E%3Ccircle cx='32' cy='32' r='6' fill='%2338e8d0'/%3E%3Cg stroke='%2338e8d0' stroke-width='2' opacity='.5'%3E%3Cpath d='M11 11h7v2M53 11h-7v2M11 53h7v-2M53 53h-7v-2' fill='none' stroke-linecap='round'/%3E%3C/g%3E%3C/svg%3E">
 <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' fill='%2305070a'/%3E%3Cg fill='none' stroke='%2338e8d0' stroke-width='2.4'%3E%3Ccircle cx='32' cy='32' r='17'/%3E%3Cpath d='M32 6v9M32 49v9M6 32h9M49 32h9' stroke-linecap='round'/%3E%3C/g%3E%3Ccircle cx='32' cy='32' r='6' fill='%2338e8d0'/%3E%3C/svg%3E">
-<link rel="stylesheet" href="styles.css?v=20260618c">
+<link rel="stylesheet" href="styles.css?v=20260618d">
 </head>
 <body>
 <div class="fx-particles" aria-hidden="true"></div>
@@ -1070,98 +1070,257 @@
 
   <!-- ── Investigation guide ── -->
   <div class="myco-pane is-hidden" id="faeces-pane-guide" role="tabpanel" aria-labelledby="faeces-tab-guide">
-    <div class="myco-flow-note"><i class="ti ti-info-circle" aria-hidden="true"></i> Decision matrix by patient type, sample description and age. Always perform additional investigations when specifically requested.</div>
-    <div class="plating-table-wrap">
-      <table class="plating-table faeces-guide-table">
-        <thead><tr><th>Patient type</th><th>Description</th><th>Basic Culture</th><th>Noro</th><th>C. diff</th><th>Rota &amp; Adeno</th><th>Crypto</th><th>TCBS / APW<sup>2</sup></th><th>Wet Prep<sup>1</sup></th><th>Yersinia</th></tr></thead>
-        <tbody>
-          <tr>
-            <td>Inpatient &gt;3 days</td>
-            <td>Liquid<br>Semi-formed<br>Formed</td>
-            <td>No &ndash; only do culture if &gt;65 yrs with pre-existing disease (organ malfunction), HIV positive, neutropenic, enteric fever</td>
-            <td>No</td>
-            <td>YES if ≥2 years old<br><strong>NO</strong> if sample is formed</td>
-            <td>YES if &lt;5 yrs old</td>
-            <td>No</td>
-            <td>No</td>
-            <td>No</td>
-            <td></td>
-          </tr>
-          <tr>
-            <td>Inpatient ≤3 days</td>
-            <td>Liquid<br>Semi-formed<br>Formed</td>
-            <td>YES</td>
-            <td>No</td>
-            <td>YES if ≥2 years old<br><strong>NO</strong> if sample is formed</td>
-            <td>YES if &lt;5 yrs old</td>
-            <td>YES if &lt;16 yrs old, immunocomp, foreign travel</td>
-            <td>Suspected Vibrio infection, seafood consumption and/or recent travel to known cholera area<sup>2</sup></td>
-            <td>Suspected parasites, urticaria or eosinophilia <em>or</em> if sample is liquid</td>
-            <td>Appendicitis, mesenteric lymphadenitis, terminal ileitis, reactive arthritis</td>
-          </tr>
-          <tr>
-            <td>Community</td>
-            <td>Liquid<br>Semi-formed</td>
-            <td>YES</td>
-            <td>No</td>
-            <td>YES if &gt;65 years, AAD, or PMC</td>
-            <td>YES if &lt;5 yrs OR if clinically indicated in elderly patients</td>
-            <td>YES if &lt;5 yrs OR if &lt;16 yrs old, immunocomp, foreign travel</td>
-            <td>Suspected Vibrio infection, seafood consumption and/or recent travel to known cholera area<sup>2</sup></td>
-            <td>Suspected parasites, urticaria or eosinophilia <em>or</em> if sample is liquid</td>
-            <td>Appendicitis, mesenteric lymphadenitis, terminal ileitis, reactive arthritis</td>
-          </tr>
-          <tr>
-            <td>Community</td>
-            <td>Formed</td>
-            <td>YES</td>
-            <td>No</td>
-            <td>No</td>
-            <td>As age appropriate</td>
-            <td>As age appropriate</td>
-            <td>No</td>
-            <td>Suspected parasites</td>
-            <td></td>
-          </tr>
-          <tr class="faeces-outbreak-row">
-            <td>OUTBREAK &ndash; In Patient</td>
-            <td>Liquid<br>Semi-formed</td>
-            <td>No</td>
-            <td>YES</td>
-            <td>YES</td>
-            <td>No</td>
-            <td>No</td>
-            <td></td>
-            <td></td>
-            <td></td>
-          </tr>
-          <tr class="faeces-outbreak-row">
-            <td>OUTBREAK &ndash; Nursing home / care home</td>
-            <td>Liquid<br>Semi-formed</td>
-            <td>No</td>
-            <td>YES</td>
-            <td>YES</td>
-            <td>No</td>
-            <td>No</td>
-            <td></td>
-            <td></td>
-            <td></td>
-          </tr>
-          <tr class="faeces-outbreak-row">
-            <td>OUTBREAK &ndash; GP / Community</td>
-            <td>Liquid<br>Semi-formed</td>
-            <td>YES</td>
-            <td>No</td>
-            <td>No</td>
-            <td>No</td>
-            <td>YES if liquid</td>
-            <td></td>
-            <td></td>
-            <td></td>
-          </tr>
-        </tbody>
-      </table>
+
+    <!-- View toggle -->
+    <div class="guide-view-toggle">
+      <button class="guide-toggle-btn active" id="guide-view-table" onclick="setGuideView('table')"><i class="ti ti-table" aria-hidden="true"></i> Table</button>
+      <button class="guide-toggle-btn" id="guide-view-fc" onclick="setGuideView('flowchart')"><i class="ti ti-sitemap" aria-hidden="true"></i> Flowchart</button>
     </div>
+
+    <!-- ── Table view (default) ── -->
+    <div id="faeces-guide-table-view">
+      <div class="myco-flow-note"><i class="ti ti-info-circle" aria-hidden="true"></i> Decision matrix by patient type, sample description and age. Always perform additional investigations when specifically requested.</div>
+      <div class="plating-table-wrap">
+        <table class="plating-table faeces-guide-table">
+          <thead><tr><th>Patient type</th><th>Description</th><th>Basic Culture</th><th>Noro</th><th>C. diff</th><th>Rota &amp; Adeno</th><th>Crypto</th><th>TCBS / APW<sup>2</sup></th><th>Wet Prep<sup>1</sup></th><th>Yersinia</th></tr></thead>
+          <tbody>
+            <tr>
+              <td>Inpatient &gt;3 days</td>
+              <td>Liquid<br>Semi-formed<br>Formed</td>
+              <td>No &ndash; only do culture if &gt;65 yrs with pre-existing disease (organ malfunction), HIV positive, neutropenic, enteric fever</td>
+              <td>No</td>
+              <td>YES if ≥2 years old<br><strong>NO</strong> if sample is formed</td>
+              <td>YES if &lt;5 yrs old</td>
+              <td>No</td>
+              <td>No</td>
+              <td>No</td>
+              <td></td>
+            </tr>
+            <tr>
+              <td>Inpatient ≤3 days</td>
+              <td>Liquid<br>Semi-formed<br>Formed</td>
+              <td>YES</td>
+              <td>No</td>
+              <td>YES if ≥2 years old<br><strong>NO</strong> if sample is formed</td>
+              <td>YES if &lt;5 yrs old</td>
+              <td>YES if &lt;16 yrs old, immunocomp, foreign travel</td>
+              <td>Suspected Vibrio infection, seafood consumption and/or recent travel to known cholera area<sup>2</sup></td>
+              <td>Suspected parasites, urticaria or eosinophilia <em>or</em> if sample is liquid</td>
+              <td>Appendicitis, mesenteric lymphadenitis, terminal ileitis, reactive arthritis</td>
+            </tr>
+            <tr>
+              <td>Community</td>
+              <td>Liquid<br>Semi-formed</td>
+              <td>YES</td>
+              <td>No</td>
+              <td>YES if &gt;65 years, AAD, or PMC</td>
+              <td>YES if &lt;5 yrs OR if clinically indicated in elderly patients</td>
+              <td>YES if &lt;5 yrs OR if &lt;16 yrs old, immunocomp, foreign travel</td>
+              <td>Suspected Vibrio infection, seafood consumption and/or recent travel to known cholera area<sup>2</sup></td>
+              <td>Suspected parasites, urticaria or eosinophilia <em>or</em> if sample is liquid</td>
+              <td>Appendicitis, mesenteric lymphadenitis, terminal ileitis, reactive arthritis</td>
+            </tr>
+            <tr>
+              <td>Community</td>
+              <td>Formed</td>
+              <td>YES</td>
+              <td>No</td>
+              <td>No</td>
+              <td>As age appropriate</td>
+              <td>As age appropriate</td>
+              <td>No</td>
+              <td>Suspected parasites</td>
+              <td></td>
+            </tr>
+            <tr class="faeces-outbreak-row">
+              <td>OUTBREAK &ndash; In Patient</td>
+              <td>Liquid<br>Semi-formed</td>
+              <td>No</td>
+              <td>YES</td>
+              <td>YES</td>
+              <td>No</td>
+              <td>No</td>
+              <td></td>
+              <td></td>
+              <td></td>
+            </tr>
+            <tr class="faeces-outbreak-row">
+              <td>OUTBREAK &ndash; Nursing home / care home</td>
+              <td>Liquid<br>Semi-formed</td>
+              <td>No</td>
+              <td>YES</td>
+              <td>YES</td>
+              <td>No</td>
+              <td>No</td>
+              <td></td>
+              <td></td>
+              <td></td>
+            </tr>
+            <tr class="faeces-outbreak-row">
+              <td>OUTBREAK &ndash; GP / Community</td>
+              <td>Liquid<br>Semi-formed</td>
+              <td>YES</td>
+              <td>No</td>
+              <td>No</td>
+              <td>No</td>
+              <td>YES if liquid</td>
+              <td></td>
+              <td></td>
+              <td></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div><!-- end table view -->
+
+    <!-- ── Flowchart view (hidden by default) ── -->
+    <div id="faeces-guide-fc-view" class="is-hidden">
+      <div class="fc-wrap">
+        <div class="fc-diagram">
+
+          <!-- Start -->
+          <div class="fc-row-center">
+            <div class="fc-box fc-start"><i class="ti ti-flask-2" aria-hidden="true"></i> Faecal specimen received</div>
+          </div>
+          <div class="fc-conn-v"></div>
+
+          <!-- OUTBREAK? -->
+          <div class="fc-row-center">
+            <div class="fc-box fc-decide">OUTBREAK request?</div>
+          </div>
+
+          <!-- YES / NO branches -->
+          <div class="fc-two-branch">
+
+            <!-- NO → main pathway -->
+            <div class="fc-branch fc-branch-main">
+              <div class="fc-branch-tag fc-tag-no">↓ NO — standard pathway</div>
+              <div class="fc-conn-v"></div>
+              <div class="fc-box fc-decide">Patient setting?</div>
+              <div class="fc-cols">
+
+                <!-- IP >3d -->
+                <div class="fc-outcome-col">
+                  <div class="fc-outcome-head">Inpatient<br><strong>&gt;3 days</strong></div>
+                  <div class="fc-tests">
+                    <span class="fc-test fc-t-cond">Culture: only if &gt;65yr + pre-existing disease, HIV+, neutropenic, or enteric fever</span>
+                    <span class="fc-test fc-t-no">Noro: No</span>
+                    <span class="fc-test fc-t-cond">C. diff: if ≥2yr &amp; not formed</span>
+                    <span class="fc-test fc-t-cond">Rota / Adeno: if &lt;5yr</span>
+                    <span class="fc-test fc-t-no">Crypto: No</span>
+                    <span class="fc-test fc-t-no">TCBS / APW: No</span>
+                    <span class="fc-test fc-t-no">Wet prep: No</span>
+                    <span class="fc-test fc-t-no">Yersinia: —</span>
+                  </div>
+                </div>
+
+                <!-- IP ≤3d -->
+                <div class="fc-outcome-col">
+                  <div class="fc-outcome-head">Inpatient<br><strong>≤3 days</strong></div>
+                  <div class="fc-tests">
+                    <span class="fc-test fc-t-yes">Culture: YES</span>
+                    <span class="fc-test fc-t-no">Noro: No</span>
+                    <span class="fc-test fc-t-cond">C. diff: if ≥2yr &amp; not formed</span>
+                    <span class="fc-test fc-t-cond">Rota / Adeno: if &lt;5yr</span>
+                    <span class="fc-test fc-t-cond">Crypto: if &lt;16yr / immunocomp / travel</span>
+                    <span class="fc-test fc-t-cond">TCBS / APW: if Vibrio suspected or cholera area<sup>2</sup></span>
+                    <span class="fc-test fc-t-cond">Wet prep: if parasites / urticaria / eosinophilia or if liquid</span>
+                    <span class="fc-test fc-t-cond">Yersinia: if appendicitis / mesenteric lymphadenitis / terminal ileitis / reactive arthritis</span>
+                  </div>
+                </div>
+
+                <!-- Community L/S -->
+                <div class="fc-outcome-col">
+                  <div class="fc-outcome-head">Community<br><strong>Liquid / Semi-formed</strong></div>
+                  <div class="fc-tests">
+                    <span class="fc-test fc-t-yes">Culture: YES</span>
+                    <span class="fc-test fc-t-no">Noro: No</span>
+                    <span class="fc-test fc-t-cond">C. diff: if &gt;65yr / AAD / PMC</span>
+                    <span class="fc-test fc-t-cond">Rota / Adeno: if &lt;5yr or clinically indicated in elderly</span>
+                    <span class="fc-test fc-t-cond">Crypto: if &lt;5yr or &lt;16yr / immunocomp / travel</span>
+                    <span class="fc-test fc-t-cond">TCBS / APW: if Vibrio suspected or cholera area<sup>2</sup></span>
+                    <span class="fc-test fc-t-cond">Wet prep: if parasites / urticaria or if liquid</span>
+                    <span class="fc-test fc-t-cond">Yersinia: if appendicitis / mesenteric lymphadenitis / terminal ileitis / reactive arthritis</span>
+                  </div>
+                </div>
+
+                <!-- Community Formed -->
+                <div class="fc-outcome-col">
+                  <div class="fc-outcome-head">Community<br><strong>Formed</strong></div>
+                  <div class="fc-tests">
+                    <span class="fc-test fc-t-yes">Culture: YES</span>
+                    <span class="fc-test fc-t-no">Noro: No</span>
+                    <span class="fc-test fc-t-no">C. diff: No</span>
+                    <span class="fc-test fc-t-cond">Rota / Adeno: age appropriate</span>
+                    <span class="fc-test fc-t-cond">Crypto: age appropriate</span>
+                    <span class="fc-test fc-t-no">TCBS / APW: No</span>
+                    <span class="fc-test fc-t-cond">Wet prep: if suspected parasites</span>
+                    <span class="fc-test fc-t-no">Yersinia: —</span>
+                  </div>
+                </div>
+
+              </div><!-- end fc-cols main -->
+            </div><!-- end NO branch -->
+
+            <!-- YES → outbreak pathway -->
+            <div class="fc-branch fc-branch-outbreak">
+              <div class="fc-branch-tag fc-tag-yes">YES → outbreak pathway</div>
+              <div class="fc-conn-v"></div>
+              <div class="fc-box fc-decide fc-decide-ob">Outbreak type?</div>
+              <div class="fc-cols">
+
+                <!-- Outbreak IP -->
+                <div class="fc-outcome-col fc-col-ob">
+                  <div class="fc-outcome-head">In Patient</div>
+                  <div class="fc-tests">
+                    <span class="fc-test fc-t-no">Culture: No</span>
+                    <span class="fc-test fc-t-yes">Noro: YES</span>
+                    <span class="fc-test fc-t-yes">C. diff: YES</span>
+                    <span class="fc-test fc-t-no">Rota / Adeno: No</span>
+                    <span class="fc-test fc-t-no">Crypto: No</span>
+                  </div>
+                </div>
+
+                <!-- Outbreak NH -->
+                <div class="fc-outcome-col fc-col-ob">
+                  <div class="fc-outcome-head">Nursing home / care home</div>
+                  <div class="fc-tests">
+                    <span class="fc-test fc-t-no">Culture: No</span>
+                    <span class="fc-test fc-t-yes">Noro: YES</span>
+                    <span class="fc-test fc-t-yes">C. diff: YES</span>
+                    <span class="fc-test fc-t-no">Rota / Adeno: No</span>
+                    <span class="fc-test fc-t-no">Crypto: No</span>
+                  </div>
+                </div>
+
+                <!-- Outbreak GP -->
+                <div class="fc-outcome-col fc-col-ob">
+                  <div class="fc-outcome-head">GP / Community</div>
+                  <div class="fc-tests">
+                    <span class="fc-test fc-t-yes">Culture: YES</span>
+                    <span class="fc-test fc-t-no">Noro: No</span>
+                    <span class="fc-test fc-t-no">C. diff: No</span>
+                    <span class="fc-test fc-t-no">Rota / Adeno: No</span>
+                    <span class="fc-test fc-t-cond">Crypto: YES if liquid</span>
+                  </div>
+                </div>
+
+              </div><!-- end fc-cols outbreak -->
+            </div><!-- end YES branch -->
+
+          </div><!-- end fc-two-branch -->
+
+          <div class="fc-fc-key">
+            <span class="fc-key-item fc-t-yes">YES / Always performed</span>
+            <span class="fc-key-item fc-t-cond">Conditional / criteria-based</span>
+            <span class="fc-key-item fc-t-no">Not performed</span>
+          </div>
+
+        </div><!-- end fc-diagram -->
+      </div><!-- end fc-wrap -->
+    </div><!-- end flowchart view -->
+
+    <!-- Shared footnotes -->
     <div class="faeces-footnotes">
       <p><sup>1</sup> Also do fields if stool is liquid with foreign travel. Perform concentrate method if stool is not liquid.</p>
       <p><sup>2</sup> Suspected Vibrio infection, seafood consumption and/or recent travel to a known cholera area. WHO cholera endemic &amp; epidemic countries include: Afghanistan, Angola, Bangladesh, Benin, Brazil, Burma, Burundi, Cameroon, Comoros, Congo (Democratic Republic of), Congo (Republic of), Cuba, Dominican Republic, Ethiopia, Ghana, Haiti, India, Iraq, Kenya, Malawi, Mozambique, Myanmar, Namibia, Nepal, Niger, Nigeria, Pakistan, Philippines, Rwanda, Somalia, South Africa, Sudan, Tanzania (United Republic of), Thailand, Togo, Uganda, Yemen, Zambia, Zimbabwe. <a class="faeces-footnote-link" href="https://www.ecdc.europa.eu/en/all-topics-z/cholera/surveillance-and-disease-data/cholera-monthly" target="_blank" rel="noopener">ECDC cholera surveillance data &rarr;</a></p>
@@ -1456,8 +1615,8 @@
 <div class="app-version" id="app-version" aria-label="App version"></div>
 
 <!-- Scripts: load order matters — data.js defines the datasets that app.js uses. -->
-<script src="data.js?v=20260618c"></script>
-<script src="app.js?v=20260618c"></script>
+<script src="data.js?v=20260618d"></script>
+<script src="app.js?v=20260618d"></script>
 
 <!-- HUD/0S chrome: background particle field, theme toggle, custom reticle cursor.
      Self-contained; app.js owns search + keyboard handlers, so nothing here duplicates them. -->

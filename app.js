@@ -606,6 +606,19 @@ function setFaecesTab(tab){
   writeHash('faeces',tab);
 }
 
+// Faeces investigation guide: toggle between table and flowchart views.
+function setGuideView(v){
+  const tblView = document.getElementById('faeces-guide-table-view');
+  const fcView  = document.getElementById('faeces-guide-fc-view');
+  const btnT    = document.getElementById('guide-view-table');
+  const btnF    = document.getElementById('guide-view-fc');
+  if(!tblView || !fcView) return;
+  tblView.classList.toggle('is-hidden', v !== 'table');
+  fcView.classList.toggle('is-hidden',  v !== 'flowchart');
+  if(btnT) btnT.classList.toggle('active', v === 'table');
+  if(btnF) btnF.classList.toggle('active', v === 'flowchart');
+}
+
 function showMycoFungus(key){
   const f=mycoFungi[key]; if(!f)return;
   if(typeof pushRecent === 'function') pushRecent('fungus', key, f.name);
