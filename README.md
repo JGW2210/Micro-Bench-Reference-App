@@ -62,10 +62,17 @@ These run automatically on every push and pull request via GitHub Actions
 ## Release / deploy ritual
 
 Assets are versioned with a manual cache-bust query string in `index.html`
-(currently `?v=20260618i` on the `styles.css`, `data.js`, and `app.js`
+(currently `?v=20260618k` on the `styles.css`, `data.js`, and `app.js`
 references). **When you change any of those assets, bump that version string**
-so clients pick up the new files instead of a stale cache. Run
-`npm run check && npm test` before pushing.
+so clients pick up the new files instead of a stale cache.
+
+The app is also a PWA with an offline service worker (`sw.js`). Because the
+service worker serves the shell cache-first, **bump `SHELL_VERSION` in `sw.js`
+in the same commit as the `?v=` bump** — that's what triggers installed
+clients to update and re-cache the new assets (otherwise returning users keep
+the previously cached shell).
+
+Run `npm run check && npm test` before pushing.
 
 ## License
 

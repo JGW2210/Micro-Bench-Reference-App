@@ -6,6 +6,21 @@
 <title>Microbiology bench reference — HUD/0S</title>
 <meta name="theme-color" content="#f3f6f8" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#05070a" media="(prefers-color-scheme: dark)">
+<!-- Resolve theme before first paint to avoid a flash: saved value → OS preference → light.
+     Mirrors the THEME TOGGLE storage key (mbr-theme) used near the bottom of this file. -->
+<script>
+(function(){
+  var theme='light';
+  try{
+    var saved=localStorage.getItem('mbr-theme');
+    if(saved==='light'||saved==='dark'){theme=saved;}
+    else if(window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches){theme='dark';}
+  }catch(e){
+    if(window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches){theme='dark';}
+  }
+  document.documentElement.setAttribute('data-theme',theme);
+})();
+</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap">
@@ -13,7 +28,19 @@
 <!-- HUD/0S favicon: teal reticle + central plate on dark, inline so there is no extra file dependency -->
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='10' fill='%2305070a'/%3E%3Cg fill='none' stroke='%2338e8d0' stroke-width='2.4'%3E%3Ccircle cx='32' cy='32' r='17'/%3E%3Cpath d='M32 6v9M32 49v9M6 32h9M49 32h9' stroke-linecap='round'/%3E%3C/g%3E%3Ccircle cx='32' cy='32' r='6' fill='%2338e8d0'/%3E%3Cg stroke='%2338e8d0' stroke-width='2' opacity='.5'%3E%3Cpath d='M11 11h7v2M53 11h-7v2M11 53h7v-2M53 53h-7v-2' fill='none' stroke-linecap='round'/%3E%3C/g%3E%3C/svg%3E">
 <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' fill='%2305070a'/%3E%3Cg fill='none' stroke='%2338e8d0' stroke-width='2.4'%3E%3Ccircle cx='32' cy='32' r='17'/%3E%3Cpath d='M32 6v9M32 49v9M6 32h9M49 32h9' stroke-linecap='round'/%3E%3C/g%3E%3Ccircle cx='32' cy='32' r='6' fill='%2338e8d0'/%3E%3C/svg%3E">
-<link rel="stylesheet" href="styles.css?v=20260618j">
+<link rel="stylesheet" href="styles.css?v=20260618k">
+<!-- PWA: installable + offline app shell (see manifest.webmanifest and sw.js) -->
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/svg+xml" href="icon.svg">
+<script>
+  // Register the service worker after load so it never blocks first paint.
+  // Guarded for browsers without SW support; failures are non-fatal.
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', function () {
+      navigator.serviceWorker.register('sw.js').catch(function () {});
+    });
+  }
+</script>
 </head>
 <body>
 <div class="fx-particles" aria-hidden="true"></div>
@@ -99,6 +126,11 @@
   <div class="app-title-row">
     <div class="app-title">Microbiology bench reference<span class="app-sub">— culture · sensitivity · molecular workflows</span></div>
     <div class="app-title-row-right">
+      <div class="font-size-control" role="group" aria-label="Text size">
+        <button type="button" class="fsc-btn" id="fsc-dec" onclick="fontScaleDec()" aria-label="Decrease text size" title="Decrease text size">A−</button>
+        <button type="button" class="fsc-btn fsc-reset" id="fsc-reset" onclick="fontScaleReset()" aria-label="Reset text size" title="Reset text size">A</button>
+        <button type="button" class="fsc-btn" id="fsc-inc" onclick="fontScaleInc()" aria-label="Increase text size" title="Increase text size">A+</button>
+      </div>
       <label class="theme-toggle" title="Toggle light / dark">
         <input type="checkbox" id="themeToggle" aria-label="Toggle theme">
         <span class="tt-track" aria-hidden="true"></span>
@@ -1622,8 +1654,8 @@
 <div class="app-version" id="app-version" aria-label="App version"></div>
 
 <!-- Scripts: load order matters — data.js defines the datasets that app.js uses. -->
-<script src="data.js?v=20260618j"></script>
-<script src="app.js?v=20260618j"></script>
+<script src="data.js?v=20260618k"></script>
+<script src="app.js?v=20260618k"></script>
 
 <!-- HUD/0S chrome: background particle field, theme toggle, custom reticle cursor.
      Self-contained; app.js owns search + keyboard handlers, so nothing here duplicates them. -->
@@ -1637,19 +1669,29 @@
   el.textContent='v'+(m?m[1]:'dev');
 })();
 
-/* ---- THEME TOGGLE (in-memory, no storage) ---- */
+/* ---- THEME TOGGLE (persisted to localStorage, key mbr-theme) ----
+   The early <head> script already resolved the theme (saved → OS → light)
+   and applied it to <html data-theme>. Here we sync the control to that
+   resolved value, persist on change, and reflect state via aria-pressed. */
 (function(){
   const root=document.documentElement,
         tg=document.getElementById('themeToggle'),
         lbl=document.getElementById('themeLabel');
   if(!tg||!lbl)return;
-  function setTheme(dark){
-    root.setAttribute('data-theme',dark?'dark':'light');
+  function save(theme){
+    try{localStorage.setItem('mbr-theme',theme);}catch(e){/* private mode: skip */}
+  }
+  function setTheme(dark,persist){
+    const theme=dark?'dark':'light';
+    root.setAttribute('data-theme',theme);
     lbl.textContent=dark?'DARK':'LIGHT';
     tg.checked=!dark;
+    tg.setAttribute('aria-pressed',dark?'true':'false');
+    if(persist)save(theme);
   }
-  setTheme(false);
-  tg.addEventListener('change',()=>setTheme(!tg.checked));
+  // Initialise from the already-applied theme (set before first paint).
+  setTheme(root.getAttribute('data-theme')==='dark',false);
+  tg.addEventListener('change',()=>setTheme(!tg.checked,true));
 })();
 
 /* ---- PARTICLE FIELD: scatter squares, count scaled to viewport ---- */
