@@ -231,6 +231,22 @@ html.cursor-custom,html.cursor-custom *{cursor:none!important}
 @keyframes trace{0%{opacity:.6;transform:scale(1)}100%{opacity:0;transform:scale(.25)}}
 @media (pointer:coarse){.cursor,.trace{display:none}}
 
+/* ---- FONT-SCALE COORDINATE FIX ----
+   The A-/A+ text-size control sets `body{ zoom: var(--font-scale) }`, which
+   rescales the coordinate space of every descendant. Elements that JS positions
+   from *true viewport* coordinates — pointer clientX/Y, or getBoundingClientRect()
+   written back as style.left/top/transform — would otherwise land at
+   coordinate x scale, because the px we write are re-multiplied by the body
+   zoom (the custom cursor drifted off the pointer; the nav dropdowns/tooltip
+   detached from their triggers as the size increased). These overlays live in
+   <body> and are positioned exactly that way, so counter-zoom them back to a
+   1:1 space (net zoom = scale x 1/scale = 1). At the default scale of 1 this is
+   zoom:1 (a no-op). Their content renders at base size, which is fine for a
+   pointer reticle and transient menus/tooltips; the primary UI still scales. */
+.cursor,.trace,.sens-menu-list,#abx-float-tip{
+  zoom:calc(1 / var(--font-scale, 1));
+}
+
 /* ---- VERSION BADGE: faint fixed build stamp, shown on every view ---- */
 .app-version{position:fixed;right:10px;bottom:8px;z-index:140;pointer-events:none;
   font-family:var(--font-mono);font-size:12px;letter-spacing:.08em;line-height:1;
