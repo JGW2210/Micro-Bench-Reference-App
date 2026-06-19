@@ -926,6 +926,9 @@ function updateSensitivityNav(view){ updateNavMenus(view); }
 function switchView(to,iTabId){
   if(to===curView&&!iTabId)return;
   closeAllDetailPanels();
+  // Each view starts with the rail collapsed (full-width content) unless we're
+  // mid-reopen of a previous card from the rail handle.
+  if(!_openingRecent) setRailOpen(false);
   const fromEl=document.getElementById('view-'+curView);
   const toEl=document.getElementById('view-'+to);
   // crude ordering for transition direction, matching the quick-nav numbering:
@@ -2381,6 +2384,32 @@ function closeAllDetailPanels(){
     if(el) el.style.display='none';
   });
 }
+// ── Collapsible detail rail (wide monitors; CSS gates the visual layout) ──────
+// body.rail-open expands the right rail; absent = collapsed (handle bar only).
+let _openingRecent = false;   // suppresses the view-switch collapse during openRecent
+function setRailOpen(open){
+  document.body.classList.toggle('rail-open', !!open);
+  const h = document.getElementById('rail-handle');
+  if(h){
+    h.setAttribute('aria-expanded', open ? 'true' : 'false');
+    h.setAttribute('aria-label', open ? 'Collapse detail panel' : 'Open detail panel');
+    h.title = open ? 'Collapse detail panel' : 'Open detail panel';
+  }
+}
+function railHasOpenPanel(){
+  return ['detail-fc','rules-detail','myco-fungus-panel','para-panel','gram-panel','blood-detail']
+    .some(id=>{ const e = document.getElementById(id); return e && e.style.display === 'block'; });
+}
+// Handle click: collapse if open; otherwise expand, reopening the previously
+// viewed card (most recent) when nothing is currently docked.
+function toggleRail(){
+  if(document.body.classList.contains('rail-open')){ setRailOpen(false); return; }
+  setRailOpen(true);
+  if(!railHasOpenPanel() && Array.isArray(recentPanels) && recentPanels.length){
+    const r = recentPanels[0];
+    openRecent(r.kind, r.key);
+  }
+}
 function copyDetail(){
   if(!currentDetailKey)return;
   const p = fcPanels[currentDetailKey];
@@ -3727,6 +3756,11 @@ function openRecent(kind, key){
   // #detail-fc is global so fc panels open from any view; the discipline
   // panels live inside their view, so switch first and open after the
   // transition settles (mirrors the global-search result actions).
+  // Keep the rail open across the view switch (switchView would otherwise
+  // collapse it) so reopening the previous card doesn't flicker.
+  _openingRecent = true;
+  setRailOpen(true);
+  setTimeout(()=>{ _openingRecent = false; }, 420);
   switch(kind){
     case 'fc':       showDetail(key); break;
     case 'fungus':   switchView('myco');          setTimeout(()=>showMycoFungus(key), 340); break;
@@ -3971,6 +4005,8 @@ let lastPanelTrigger = null;
 function focusPanelHeading(panelId){
   const panel = document.getElementById(panelId);
   if(!panel) return;
+  // Opening a card expands the detail rail (wide screens; no-op when narrow).
+  setRailOpen(true);
   // Docked panels are position:fixed. When opened straight after a view switch
   // (search results / recents open at ~340ms, before switchView clears its
   // ~630ms slide transform), the owning view still carries an inline transform,

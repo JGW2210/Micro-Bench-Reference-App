@@ -28,7 +28,7 @@
 <!-- HUD/0S favicon: teal reticle + central plate on dark, inline so there is no extra file dependency -->
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='10' fill='%2305070a'/%3E%3Cg fill='none' stroke='%2338e8d0' stroke-width='2.4'%3E%3Ccircle cx='32' cy='32' r='17'/%3E%3Cpath d='M32 6v9M32 49v9M6 32h9M49 32h9' stroke-linecap='round'/%3E%3C/g%3E%3Ccircle cx='32' cy='32' r='6' fill='%2338e8d0'/%3E%3Cg stroke='%2338e8d0' stroke-width='2' opacity='.5'%3E%3Cpath d='M11 11h7v2M53 11h-7v2M11 53h7v-2M53 53h-7v-2' fill='none' stroke-linecap='round'/%3E%3C/g%3E%3C/svg%3E">
 <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' fill='%2305070a'/%3E%3Cg fill='none' stroke='%2338e8d0' stroke-width='2.4'%3E%3Ccircle cx='32' cy='32' r='17'/%3E%3Cpath d='M32 6v9M32 49v9M6 32h9M49 32h9' stroke-linecap='round'/%3E%3C/g%3E%3Ccircle cx='32' cy='32' r='6' fill='%2338e8d0'/%3E%3C/svg%3E">
-<link rel="stylesheet" href="styles.css?v=20260618m">
+<link rel="stylesheet" href="styles.css?v=20260618n">
 <!-- PWA: installable + offline app shell (see manifest.webmanifest and sw.js) -->
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" type="image/svg+xml" href="icon.svg">
@@ -111,14 +111,6 @@
     </div>
 </nav>
 
-<!-- Bench notes on its own row beneath the nav so it never overlaps it -->
-<div class="bench-notes-bar">
-  <button class="bench-notes-btn" id="bench-notes-btn" type="button" onclick="toggleNotesView()" aria-label="Bench notes — rare antibiotic sets and QC organisms" title="Bench notes (press N)">
-    <i class="ti ti-notes" aria-hidden="true"></i>
-    <span class="bn-label">Bench notes</span>
-  </button>
-</div>
-
 <div class="wrap">
 <h2 class="sr-only">EUCAST sensitivity flowcharts (urine + wound) with organism dropdown and D-set disc interpreter</h2>
 
@@ -126,6 +118,10 @@
   <div class="app-title-row">
     <div class="app-title">Microbiology bench reference<span class="app-sub">— culture · sensitivity · molecular workflows</span></div>
     <div class="app-title-row-right">
+      <button class="bench-notes-btn" id="bench-notes-btn" type="button" onclick="toggleNotesView()" aria-label="Bench notes — rare antibiotic sets and QC organisms" title="Bench notes (press N)">
+        <i class="ti ti-notes" aria-hidden="true"></i>
+        <span class="bn-label">Bench notes</span>
+      </button>
       <div class="font-size-control" role="group" aria-label="Text size">
         <button type="button" class="fsc-btn" id="fsc-dec" onclick="fontScaleDec()" aria-label="Decrease text size" title="Decrease text size">A−</button>
         <button type="button" class="fsc-btn fsc-reset" id="fsc-reset" onclick="fontScaleReset()" aria-label="Reset text size" title="Reset text size">A</button>
@@ -1635,6 +1631,22 @@
   <button class="detail-copy" id="d-copy" onclick="copyDetail()"><i class="ti ti-copy" aria-hidden="true"></i> Copy panel summary</button>
 </div>
 
+<!-- Wide-monitor detail rail placeholder. Only shown >=1280px (CSS). The fixed
+     detail panels dock over this area on wide screens; when none is open this
+     quiet prompt fills the reserved right third. Decorative, so aria-hidden. -->
+<aside id="detail-rail" aria-hidden="true">
+  <div class="detail-rail-inner">
+    <i class="ti ti-click" aria-hidden="true"></i>
+    <p>Select a card, or use the tab on the right to reopen the last one.</p>
+  </div>
+</aside>
+<!-- Collapsed-rail handle: a vertical bar on the right edge. Wide screens only.
+     Collapsed -> arrow points in (open / reopen previous card); expanded ->
+     arrow points out (collapse). -->
+<button id="rail-handle" type="button" onclick="toggleRail()" aria-label="Open detail panel" aria-expanded="false" title="Open detail panel">
+  <i class="ti ti-chevron-left" aria-hidden="true"></i>
+</button>
+
 </div>
 
 <!-- Barcode failsafe: shown when an agar-plate barcode (C + 11 digits) is
@@ -1654,8 +1666,8 @@
 <div class="app-version" id="app-version" aria-label="App version"></div>
 
 <!-- Scripts: load order matters — data.js defines the datasets that app.js uses. -->
-<script src="data.js?v=20260618m"></script>
-<script src="app.js?v=20260618m"></script>
+<script src="data.js?v=20260618n"></script>
+<script src="app.js?v=20260618n"></script>
 
 <!-- HUD/0S chrome: background particle field, theme toggle, custom reticle cursor.
      Self-contained; app.js owns search + keyboard handlers, so nothing here duplicates them. -->
