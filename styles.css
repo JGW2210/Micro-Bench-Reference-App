@@ -1903,12 +1903,115 @@ html[data-theme="light"] .barcode-date-input{color-scheme:light}
   box-shadow:0 -16px 40px -12px rgba(0,0,0,.55),0 0 30px -16px var(--accent-glow);
 }
 
+/* Wide-monitor rail placeholder + collapsed handle are hidden by default; only
+   the >=1280px master-detail layout below reveals them. */
+#detail-rail{display:none}
+#rail-handle{display:none}
+
+/* ── Collapsible master–detail layout for wide monitors (>=1280px) ──────────
+   The main content is left-anchored to ~2/3 of a widened (max 1640px) stage.
+   A detail RAIL occupies the right ~1/3 ONLY when open (body.rail-open): opening
+   a card expands it; a vertical handle bar on the right edge collapses/reopens
+   it (the arrow reopens the previously-viewed card via recents). Collapsed, the
+   content uses the full width. Below 1280px the bottom-dock rule above applies
+   unchanged. Panels keep their DOM home inside their view (so view-scoped
+   styling is intact) and are re-anchored here via CSS. The rail clears the
+   sticky nav + full-width header via --sticky-top (synced by updateStickyOffsets). */
+@media (min-width:1280px){
+  :root{
+    --stage:min(1640px, calc(100vw - 32px));   /* 16px body x-padding each side */
+    --rail-w:clamp(360px, 32vw, 540px);
+    --rail-gap:28px;
+    /* Right-edge offset shared by the rail and the handle. Zoom-robust 16px
+       gutter up to ~1672px; tracks the 1640px stage's right edge beyond that. */
+    --rail-right:max(16px, calc(100vw - 1656px));
+    /* Rail starts below the nav AND the (full-width) header row. */
+    --rail-top:calc(var(--sticky-top, 96px) + 72px);
+  }
+  /* Default: content uses the full stage width, left-anchored. */
+  .wrap{max-width:var(--stage);margin-left:0;margin-right:auto}
+
+  /* Expanded: reserve the right third; the header spans full width above it. */
+  body.rail-open .wrap{padding-right:calc(var(--rail-w) + var(--rail-gap))}
+  body.rail-open .app-header{margin-right:calc(-1 * (var(--rail-w) + var(--rail-gap)))}
+
+  /* Re-anchor the detail panels (and the placeholder) into the right rail when open. */
+  body.rail-open #detail-fc,
+  body.rail-open #view-rules .rules-detail,
+  body.rail-open #view-myco .myco-fungus-panel,
+  body.rail-open #view-parasitology .myco-fungus-panel,
+  body.rail-open #view-plate .myco-fungus-panel,
+  body.rail-open #view-plate .gram-panel,
+  body.rail-open #view-blood .blood-detail,
+  body.rail-open #detail-rail{
+    position:fixed;top:var(--rail-top);bottom:22px;
+    right:var(--rail-right);left:auto;
+    width:var(--rail-w);max-width:none;max-height:none;margin:0;
+    overflow-y:auto;-webkit-overflow-scrolling:touch;
+  }
+  /* Card look for the docked panels in the rail (override the bottom-sheet edges). */
+  body.rail-open #detail-fc,
+  body.rail-open #view-rules .rules-detail,
+  body.rail-open #view-myco .myco-fungus-panel,
+  body.rail-open #view-parasitology .myco-fungus-panel,
+  body.rail-open #view-plate .myco-fungus-panel,
+  body.rail-open #view-plate .gram-panel,
+  body.rail-open #view-blood .blood-detail{
+    border:1px solid var(--line-strong);border-left:2px solid var(--accent);
+    border-radius:var(--border-radius-lg);
+    box-shadow:-14px 0 40px -18px rgba(0,0,0,.55),0 0 30px -16px var(--accent-glow);
+  }
+  /* When collapsed, a still-open (conserved) panel must not bottom-dock — hide it.
+     Its inline display:block is retained, so re-expanding reveals it again. */
+  body:not(.rail-open) #detail-fc,
+  body:not(.rail-open) #view-rules .rules-detail,
+  body:not(.rail-open) #view-myco .myco-fungus-panel,
+  body:not(.rail-open) #view-parasitology .myco-fungus-panel,
+  body:not(.rail-open) #view-plate .myco-fungus-panel,
+  body:not(.rail-open) #view-plate .gram-panel,
+  body:not(.rail-open) #view-blood .blood-detail{display:none !important}
+
+  /* Quiet placeholder shown when the rail is open but no panel is (panels are
+     opaque + z:150, so they cover this when open; it sits behind at z:148). */
+  body.rail-open #detail-rail{
+    display:flex;align-items:center;justify-content:center;z-index:148;
+    background:color-mix(in srgb,var(--bg-elev-2) 70%,transparent);
+    -webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px);
+    border:1px dashed var(--line-strong);border-radius:var(--border-radius-lg);
+    pointer-events:none;
+  }
+  #detail-rail .detail-rail-inner{text-align:center;color:var(--text-faint);max-width:240px;padding:20px}
+  #detail-rail .detail-rail-inner i{font-size:26px;display:block;margin-bottom:10px;opacity:.7}
+  #detail-rail .detail-rail-inner p{font-size:12px;line-height:1.5;letter-spacing:.02em}
+
+  /* Collapsed-rail handle: vertical bar on the right edge. Collapsed -> arrow
+     points in (open/reopen previous card); open -> docks to the rail's left
+     edge and the arrow flips (collapse). */
+  #rail-handle{
+    display:flex;align-items:center;justify-content:center;
+    position:fixed;top:50%;transform:translateY(-50%);
+    right:0;width:24px;height:132px;z-index:149;
+    background:var(--solid-pop);color:var(--accent);cursor:pointer;
+    border:1px solid var(--line-strong);border-right:none;
+    border-radius:var(--border-radius-md) 0 0 var(--border-radius-md);
+    box-shadow:-8px 0 24px -14px rgba(0,0,0,.5);
+    transition:right .22s var(--ease),background .2s,color .2s;
+  }
+  #rail-handle:hover{color:var(--text);background:var(--accent-dim)}
+  #rail-handle:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+  #rail-handle i{font-size:18px;transition:transform .22s var(--ease)}
+  body.rail-open #rail-handle{right:calc(var(--rail-right) + var(--rail-w) - 1px)}
+  body.rail-open #rail-handle i{transform:rotate(180deg)}
+}
+
 
 @media print{
   body{background:#fff;color:#000;padding:0;zoom:1}
   .font-size-control{display:none !important}
   .fx-grid,.fx-particles,.cursor,.trace,.bench-notes-btn,.top-nav,.bench-notes-bar,.recents-bar{display:none !important}
-  .wrap{border:none;box-shadow:none;max-width:none}
+  .wrap{border:none;box-shadow:none;max-width:none;padding-right:1.75rem}
+  .app-header{margin-right:0 !important}
+  #detail-rail,#rail-handle{display:none !important}
   .wrap::before,.wrap::after,#detail-fc::before,#detail-fc::after,.organism-info::before,.organism-info::after{display:none}
   .switcher,.app-hint,.detail-close,.detail-copy,.reset-btn,.search-wrap,.org-btn,.dset-pill,.sw-btn,.abx-hint,#abx-float-tip,.abx-end-spacer,.theme-toggle,.sens-menu-list{display:none !important}
   .view.hidden{display:none !important}
