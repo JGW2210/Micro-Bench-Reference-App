@@ -759,12 +759,29 @@ body.show-reporting .reporting-rule{display:block}
 #view-interp .dset-disc:hover{cursor:grab}
 #view-interp .dset-disc.dragging{cursor:grabbing}
 #view-interp .dset-slot-ring{transition:stroke .12s}
-/* Wide screens: put the zone inputs + result beside the plate preview instead
-   of stacking the plate (capped at 300px) under a near-empty full-width row.
-   Below 900px .ipanel-cols is a plain block, so the parts stack as before. */
+/* D-set layout: zone inputs (left) · plate preview (centre) · criteria table
+   (right), with the interpretation result spanning full width beneath. Grid
+   areas let the four regions regroup per breakpoint with no markup change:
+   mobile-first single column; 2-up from 900px; full 3-up from 1280px. */
+#view-interp .dset-layout{display:grid;grid-template-columns:1fr;gap:16px 22px;align-items:start;
+  grid-template-areas:"inputs" "result" "plate" "table"}
+#view-interp .dset-inputs{grid-area:inputs}
+#view-interp .dset-plate-col{grid-area:plate}
+#view-interp .dset-table-col{grid-area:table}
+#view-interp .dset-layout>.result-box{grid-area:result}
+#view-interp .dset-col .section-title{margin-top:0}
 @media(min-width:900px){
-  #view-interp .ipanel-cols{display:grid;grid-template-columns:minmax(0,1fr) minmax(260px,340px);gap:22px;align-items:start}
-  #view-interp .ipanel-col-side .section-title{margin-top:0}
+  #view-interp .dset-layout{grid-template-columns:minmax(0,1fr) minmax(260px,340px);
+    grid-template-areas:"inputs plate" "result plate" "table table"}
+}
+@media(min-width:1280px){
+  #view-interp .dset-layout{grid-template-columns:minmax(150px,180px) minmax(260px,300px) minmax(0,1fr);
+    grid-template-areas:"inputs plate table" "result result result"}
+  /* zone entry boxes stacked vertically down the slim left column */
+  #view-interp .dset-inputs .zone-input-grid{flex-direction:column;flex-wrap:nowrap;align-items:center;gap:12px;margin-bottom:0}
+  #view-interp .dset-inputs .zone-input{flex:0 0 auto;width:100%}
+  /* D73's 5-column criteria table gets a wider share (slimmer inputs + plate). */
+  #ipanel-d73 .dset-layout{grid-template-columns:minmax(130px,150px) minmax(230px,260px) minmax(0,1.15fr)}
 }
 
 /* ============================================================
