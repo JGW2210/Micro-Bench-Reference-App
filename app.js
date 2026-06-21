@@ -3597,7 +3597,10 @@ function updateStickyOffsets(){
     const cs = getComputedStyle(qnav);
     if(cs.display !== 'none') qnavH = qnav.getBoundingClientRect().height;
   }
-  root.style.setProperty('--sticky-top', Math.round(navH) + 'px');
+  // Floor (not round) the nav height so the sticky quick-nav tucks flush
+  // beneath it: any sub-pixel remainder becomes a tiny overlap (hidden behind
+  // the higher-z nav) instead of a 1px background seam between the two bars.
+  root.style.setProperty('--sticky-top', Math.floor(navH) + 'px');
   root.style.setProperty('--notes-scroll-offset', Math.round(navH + qnavH + 12) + 'px');
 }
 updateStickyOffsets();
