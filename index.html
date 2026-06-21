@@ -28,7 +28,7 @@
 <!-- HUD/0S favicon: teal reticle + central plate on dark, inline so there is no extra file dependency -->
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='10' fill='%2305070a'/%3E%3Cg fill='none' stroke='%2338e8d0' stroke-width='2.4'%3E%3Ccircle cx='32' cy='32' r='17'/%3E%3Cpath d='M32 6v9M32 49v9M6 32h9M49 32h9' stroke-linecap='round'/%3E%3C/g%3E%3Ccircle cx='32' cy='32' r='6' fill='%2338e8d0'/%3E%3Cg stroke='%2338e8d0' stroke-width='2' opacity='.5'%3E%3Cpath d='M11 11h7v2M53 11h-7v2M11 53h7v-2M53 53h-7v-2' fill='none' stroke-linecap='round'/%3E%3C/g%3E%3C/svg%3E">
 <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' fill='%2305070a'/%3E%3Cg fill='none' stroke='%2338e8d0' stroke-width='2.4'%3E%3Ccircle cx='32' cy='32' r='17'/%3E%3Cpath d='M32 6v9M32 49v9M6 32h9M49 32h9' stroke-linecap='round'/%3E%3C/g%3E%3Ccircle cx='32' cy='32' r='6' fill='%2338e8d0'/%3E%3C/svg%3E">
-<link rel="stylesheet" href="styles.css?v=20260621i">
+<link rel="stylesheet" href="styles.css?v=20260621j">
 <!-- PWA: installable + offline app shell (see manifest.webmanifest and sw.js) -->
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" type="image/svg+xml" href="icon.svg">
@@ -782,24 +782,31 @@
   </div>
 
   <div class="plate-pane" id="plate-pane-plate" role="tabpanel" aria-labelledby="plate-sect-plate">
-    <div class="plate-medium-tabs">
-      <button class="plate-tab uri active" id="ptab-uri" onclick="setPlateMedium('uri')"><i class="ti ti-droplet" aria-hidden="true"></i> Uriselect 4</button>
-      <button class="plate-tab blood" id="ptab-blood" onclick="setPlateMedium('blood')"><i class="ti ti-bandage" aria-hidden="true"></i> CBA</button>
-      <button class="plate-tab mrsa" id="ptab-mrsa" onclick="setPlateMedium('mrsa')"><i class="ti ti-shield-check" aria-hidden="true"></i> MRSA plate</button>
-      <button class="plate-tab xld" id="ptab-xld" onclick="setPlateMedium('xld')"><i class="ti ti-biohazard" aria-hidden="true"></i> XLD</button>
-      <button class="plate-tab tcbs" id="ptab-tcbs" onclick="setPlateMedium('tcbs')"><i class="ti ti-wave-sine" aria-hidden="true"></i> TCBS</button>
-      <button class="plate-tab smac" id="ptab-smac" onclick="setPlateMedium('smac')"><i class="ti ti-circle-letter-s" aria-hidden="true"></i> SMAC</button>
-      <button class="plate-tab choc" id="ptab-choc" onclick="setPlateMedium('choc')"><i class="ti ti-cookie" aria-hidden="true"></i> CHOC</button>
-    </div>
+    <div class="plate-layout">
+      <div class="plate-media-col">
+        <div class="plate-medium-tabs">
+          <button class="plate-tab uri active" id="ptab-uri" onclick="setPlateMedium('uri')"><i class="ti ti-droplet" aria-hidden="true"></i> Uriselect 4</button>
+          <button class="plate-tab blood" id="ptab-blood" onclick="setPlateMedium('blood')"><i class="ti ti-bandage" aria-hidden="true"></i> CBA</button>
+          <button class="plate-tab mrsa" id="ptab-mrsa" onclick="setPlateMedium('mrsa')"><i class="ti ti-shield-check" aria-hidden="true"></i> MRSA plate</button>
+          <button class="plate-tab xld" id="ptab-xld" onclick="setPlateMedium('xld')"><i class="ti ti-biohazard" aria-hidden="true"></i> XLD</button>
+          <button class="plate-tab tcbs" id="ptab-tcbs" onclick="setPlateMedium('tcbs')"><i class="ti ti-wave-sine" aria-hidden="true"></i> TCBS</button>
+          <button class="plate-tab smac" id="ptab-smac" onclick="setPlateMedium('smac')"><i class="ti ti-circle-letter-s" aria-hidden="true"></i> SMAC</button>
+          <button class="plate-tab choc" id="ptab-choc" onclick="setPlateMedium('choc')"><i class="ti ti-cookie" aria-hidden="true"></i> CHOC</button>
+        </div>
+      </div>
 
-    <div class="plate-stage">
-      <div class="plate-svg-wrap" id="plate-svg-wrap"></div>
-      <div class="organism-info" id="organism-info"></div>
-    </div>
+      <div class="plate-stage">
+        <div class="plate-svg-wrap" id="plate-svg-wrap"></div>
+        <div class="organism-info" id="organism-info"></div>
+      </div>
 
-    <div class="section-title" style="margin-top:0">Switch organism</div>
-    <div class="organism-toggle-row" id="organism-toggle-row"></div>
-    <div class="plate-note" id="plate-note"></div>
+      <div class="plate-organism-col">
+        <div class="section-title" style="margin-top:0">Switch organism</div>
+        <div class="organism-toggle-row" id="organism-toggle-row"></div>
+      </div>
+
+      <div class="plate-note" id="plate-note"></div>
+    </div>
   </div><!-- end plate-pane-plate -->
 
   <div class="plate-pane is-hidden" id="plate-pane-gram" role="tabpanel" aria-labelledby="plate-sect-gram">
@@ -1698,8 +1705,8 @@
 <div class="app-version" id="app-version" aria-label="App version"></div>
 
 <!-- Scripts: load order matters — data.js defines the datasets that app.js uses. -->
-<script src="data.js?v=20260621i"></script>
-<script src="app.js?v=20260621i"></script>
+<script src="data.js?v=20260621j"></script>
+<script src="app.js?v=20260621j"></script>
 
 <!-- HUD/0S chrome: background particle field, theme toggle, custom reticle cursor.
      Self-contained; app.js owns search + keyboard handlers, so nothing here duplicates them. -->

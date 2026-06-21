@@ -832,6 +832,27 @@ body.show-reporting .reporting-rule{display:block}
 .org-pill .pill-swatch{width:8px;height:8px;border-radius:50%;flex-shrink:0;border:1px solid var(--line-strong)}
 .org-pill.active{background:var(--accent-dim);color:var(--accent);border-color:var(--accent)}
 .plate-note{font-size:11px;color:var(--text-faint);font-style:italic;margin-top:6px;text-align:center}
+/* Plate-appearance layout: medium buttons (left) · plate depiction + description
+   (centre) · organism selector (right), with the medium note full-width below.
+   .plate-layout is a plain block (stacked) until the 3-up grid engages >=1024px,
+   so phones/tablets keep the original top-to-bottom order. */
+@media(min-width:1024px){
+  #view-plate .plate-layout{
+    display:grid;align-items:start;gap:18px 26px;
+    grid-template-columns:minmax(150px,190px) minmax(0,1fr) minmax(230px,290px);
+    grid-template-areas:"media center organism" "note note note";
+  }
+  #view-plate .plate-media-col{grid-area:media}
+  #view-plate .plate-stage{grid-area:center;padding:0}
+  #view-plate .plate-organism-col{grid-area:organism}
+  #view-plate .plate-layout>.plate-note{grid-area:note;margin-top:4px}
+  /* medium selector stacked vertically down the left column */
+  #view-plate .plate-media-col .plate-medium-tabs{flex-direction:column;flex-wrap:nowrap;align-items:stretch;gap:6px;margin-bottom:0}
+  #view-plate .plate-media-col .plate-tab{justify-content:flex-start}
+  /* organism selector as a vertical list in the right column */
+  #view-plate .plate-organism-col .organism-toggle-row{flex-direction:column;flex-wrap:nowrap;align-items:stretch}
+  #view-plate .plate-organism-col .org-pill{white-space:normal;justify-content:flex-start}
+}
 
 /* ============================================================
    ANTIBIOTIC CLASSES
