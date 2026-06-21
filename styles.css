@@ -763,20 +763,21 @@ body.show-reporting .reporting-rule{display:block}
    (right), with the interpretation result spanning full width beneath. Grid
    areas let the four regions regroup per breakpoint with no markup change:
    mobile-first single column; 2-up from 900px; full 3-up from 1280px. */
-#view-interp .dset-layout{display:grid;grid-template-columns:1fr;gap:16px 22px;align-items:start;
-  grid-template-areas:"inputs" "result" "plate" "table"}
+#view-interp .dset-layout{display:grid;grid-template-columns:1fr;gap:16px 22px;align-items:start}
 #view-interp .dset-inputs{grid-area:inputs}
 #view-interp .dset-plate-col{grid-area:plate}
 #view-interp .dset-table-col{grid-area:table}
-#view-interp .dset-layout>.result-box{grid-area:result}
 #view-interp .dset-col .section-title{margin-top:0}
+/* result lives in the table (right) column so it flows directly beneath the
+   criteria table, regardless of the taller plate/inputs columns. */
+#view-interp .dset-table-col>.result-box{margin-top:14px}
 @media(min-width:900px){
   #view-interp .dset-layout{grid-template-columns:minmax(0,1fr) minmax(260px,340px);
-    grid-template-areas:"inputs plate" "result plate" "table table"}
+    grid-template-areas:"inputs plate" "table table"}
 }
 @media(min-width:1280px){
   #view-interp .dset-layout{grid-template-columns:minmax(150px,180px) minmax(260px,300px) minmax(0,1fr);
-    grid-template-areas:"inputs plate table" ".      .     result"}
+    grid-template-areas:"inputs plate table"}
   /* zone entry boxes stacked vertically down the slim left column */
   #view-interp .dset-inputs .zone-input-grid{flex-direction:column;flex-wrap:nowrap;align-items:center;gap:12px;margin-bottom:0}
   #view-interp .dset-inputs .zone-input{flex:0 0 auto;width:100%}
