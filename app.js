@@ -1066,7 +1066,7 @@ function showDetail(key){
   document.getElementById('d-sub').textContent=p.sub;
   const cls=p.reagents?'reagent-pill':'abx-pill';
   document.getElementById('d-abx').innerHTML=p.abx.map(a=>`<span class="${cls}">${a}</span>`).join('');
-  document.getElementById('d-notes').innerHTML='<strong style="font-size:11px;color:var(--color-text-secondary)">Notes: </strong>'+p.notes;
+  document.getElementById('d-notes').innerHTML='<strong style="font-size:13px;color:var(--color-text-secondary)">Notes: </strong>'+p.notes;
   d.style.display='block';
   d.style.animation='none';d.offsetHeight;
   d.style.animation='slideUp .28s cubic-bezier(.4,0,.2,1) forwards';
