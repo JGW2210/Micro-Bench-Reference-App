@@ -776,7 +776,7 @@ body.show-reporting .reporting-rule{display:block}
 }
 @media(min-width:1280px){
   #view-interp .dset-layout{grid-template-columns:minmax(150px,180px) minmax(260px,300px) minmax(0,1fr);
-    grid-template-areas:"inputs plate table" "result result result"}
+    grid-template-areas:"inputs plate table" ".      .     result"}
   /* zone entry boxes stacked vertically down the slim left column */
   #view-interp .dset-inputs .zone-input-grid{flex-direction:column;flex-wrap:nowrap;align-items:center;gap:12px;margin-bottom:0}
   #view-interp .dset-inputs .zone-input{flex:0 0 auto;width:100%}
