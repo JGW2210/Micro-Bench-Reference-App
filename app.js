@@ -3607,6 +3607,15 @@ updateStickyOffsets();
 window.addEventListener('resize', updateStickyOffsets, {passive:true});
 window.addEventListener('load', updateStickyOffsets);
 if(document.fonts && document.fonts.ready){ document.fonts.ready.then(updateStickyOffsets); }
+// Observe the nav directly: its height changes when the keyboard-hint line
+// re-wraps (web-font swap, width changes, scrollbar appearing) and those
+// reflows don't reliably fire resize/load. A stale, taller measurement parks
+// the sticky quick-nav below the nav, leaving a visible gap — this keeps
+// --sticky-top exact whenever the nav's rendered height actually changes.
+if(window.ResizeObserver){
+  const navEl = document.querySelector('.top-nav');
+  if(navEl) new ResizeObserver(updateStickyOffsets).observe(navEl);
+}
 
 // Sync the grouped nav triggers (labels + active states) to the initial view.
 updateNavMenus(curView);
