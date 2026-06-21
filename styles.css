@@ -260,7 +260,7 @@ html.cursor-custom,html.cursor-custom *{cursor:none!important}
    MAIN CONTAINER  (.wrap) — primary HUD panel
    ============================================================ */
 .wrap{
-  max-width:1140px;
+  max-width:1340px;
   margin:0 auto;
   padding:1.75rem 1.75rem 2.5rem;
   position:relative;
@@ -759,6 +759,13 @@ body.show-reporting .reporting-rule{display:block}
 #view-interp .dset-disc:hover{cursor:grab}
 #view-interp .dset-disc.dragging{cursor:grabbing}
 #view-interp .dset-slot-ring{transition:stroke .12s}
+/* Wide screens: put the zone inputs + result beside the plate preview instead
+   of stacking the plate (capped at 300px) under a near-empty full-width row.
+   Below 900px .ipanel-cols is a plain block, so the parts stack as before. */
+@media(min-width:900px){
+  #view-interp .ipanel-cols{display:grid;grid-template-columns:minmax(0,1fr) minmax(260px,340px);gap:22px;align-items:start}
+  #view-interp .ipanel-col-side .section-title{margin-top:0}
+}
 
 /* ============================================================
    PLATE APPEARANCE
@@ -815,6 +822,9 @@ body.show-reporting .reporting-rule{display:block}
 .abx-class-intro strong{color:var(--text);font-weight:600}
 .abx-hint{font-family:var(--font-mono);font-size:12px;letter-spacing:.04em;color:var(--text-faint);margin:6px 0 12px;display:flex;align-items:center;gap:6px;flex-wrap:wrap}
 .abx-class-table{display:flex;flex-direction:column;gap:6px;margin-top:8px}
+/* Wide screens: lay the (independent) class rows out two-up to use the width
+   and cut vertical scroll. align-items:start so an expanded row grows alone. */
+@media(min-width:1024px){.abx-class-table{display:grid;grid-template-columns:1fr 1fr;align-items:start;gap:8px}}
 .abx-class-row{
   border:1px solid var(--line);border-radius:var(--border-radius-md);background:var(--bg-elev);overflow:hidden;
   transition:border-color .2s,box-shadow .2s
@@ -982,7 +992,7 @@ body.show-reporting .reporting-rule{display:block}
 .idx-section-title{font-family:var(--font-mono);font-size:12px;font-weight:500;color:var(--accent);margin:16px 0 8px;letter-spacing:.12em;text-transform:uppercase}
 .idx-section-title:first-child{margin-top:0}
 .idx-empty,.bactid-empty,.myco-empty,.blood-empty{padding:26px 12px;font-size:12px;color:var(--text-faint);text-align:center;border:1px dashed var(--line-strong);border-radius:var(--border-radius-md)}
-.gloss-row{border:1px solid var(--line);border-radius:var(--border-radius-md);padding:11px 13px;background:var(--bg-elev);margin-bottom:6px;transition:border-color .25s,box-shadow .25s}
+.gloss-row{border:1px solid var(--line);border-radius:var(--border-radius-md);padding:11px 13px;background:var(--bg-elev);margin-bottom:6px;max-width:980px;transition:border-color .25s,box-shadow .25s}
 .gloss-row .gloss-term{font-family:var(--font-mono);font-size:12px;font-weight:600;margin-bottom:3px;color:var(--text)}
 .gloss-row .gloss-def{font-size:11px;color:var(--text-dim);line-height:1.6}
 .gloss-row.has-search-match{border-color:var(--accent);box-shadow:inset 3px 0 0 var(--accent)}
@@ -1006,7 +1016,7 @@ body.show-reporting .reporting-rule{display:block}
    BACTERIAL ID FINDER
    ============================================================ */
 .bactid-intro{border:1px solid var(--line);border-radius:var(--border-radius-lg);padding:13px 15px;background:var(--bg-elev-2);font-size:12px;color:var(--text-dim);line-height:1.6;margin-bottom:1rem}
-.bactid-controls{display:grid;grid-template-columns:repeat(auto-fit,minmax(145px,1fr));gap:8px;margin-bottom:10px}
+.bactid-controls{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:8px;margin-bottom:10px}
 .bactid-field{display:flex;flex-direction:column;gap:5px}
 .bactid-field label{font-family:var(--font-mono);font-size:12px;color:var(--text-faint);letter-spacing:.1em;text-transform:uppercase}
 .bactid-field select,.bactid-search{font-family:var(--font-sans);font-size:12px;padding:8px 9px;border-radius:var(--border-radius-md);border:1px solid var(--line);background:var(--bg-elev);color:var(--text)}
@@ -1019,7 +1029,7 @@ body.show-reporting .reporting-rule{display:block}
   cursor:pointer;display:inline-flex;align-items:center;gap:6px;transition:border-color .15s,color .15s
 }
 .bactid-reset:hover,.blood-reset:hover{border-color:var(--accent);color:var(--accent)}
-.bactid-results{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:8px}
+.bactid-results{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:8px}
 .bactid-card{border:1px solid var(--line);border-radius:var(--border-radius-md);padding:11px 13px;background:var(--bg-elev);transition:border-color .15s,background .15s,transform .15s}
 .bactid-card:hover{border-color:var(--line-strong);background:var(--bg-elev-2);transform:translateY(-1px)}
 .bactid-card h3{font-size:13px;font-weight:600;margin-bottom:4px;color:var(--text)}
@@ -1417,7 +1427,7 @@ body.show-reporting .reporting-rule{display:block}
 #view-plate .myco-search:focus,#view-plate .myco-filter:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 1px var(--accent)}
 
 /* ---- Gram stain / microscopy gallery ---- */
-#view-plate .gram-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px;margin-bottom:14px}
+#view-plate .gram-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px;margin-bottom:14px}
 #view-plate .gram-card{border:1px solid var(--line);border-radius:var(--border-radius-md);background:var(--bg-elev);cursor:pointer;overflow:hidden;display:flex;flex-direction:column;transition:border-color .15s,background .15s,transform .15s}
 #view-plate .gram-card:hover{border-color:var(--line-strong);background:var(--bg-elev-2);transform:translateY(-1px)}
 #view-plate .gram-card-film{background:#e7dee8;border-bottom:1px solid var(--line)}
@@ -1825,6 +1835,8 @@ html[data-theme="light"] .barcode-date-input{color-scheme:light}
 .checker-tab-count{font-family:var(--font-mono);font-size:12px;font-weight:700;letter-spacing:.04em;opacity:.75}
 .sir-placeholder{padding:18px;font-size:12px;color:var(--text-faint);text-align:center;border:1px dashed var(--line);border-radius:var(--border-radius-md)}
 .sir-grid{display:flex;flex-direction:column;gap:8px}
+/* Wide screens: two agents per row to roughly halve the scroll of long lists. */
+@media(min-width:1024px){.sir-grid{display:grid;grid-template-columns:1fr 1fr;align-items:start}}
 .sir-row{
   display:grid;grid-template-columns:1fr auto 104px 52px;gap:12px;align-items:center;
   padding:10px 12px;border:1px solid var(--line);border-radius:var(--border-radius-md);background:var(--bg-elev);
@@ -1894,7 +1906,7 @@ html[data-theme="light"] .barcode-date-input{color-scheme:light}
 #view-plate .gram-panel,
 #view-blood .blood-detail{
   position:fixed;left:0;right:0;bottom:0;top:auto;margin:0 auto;
-  max-width:1140px;max-height:min(52vh,640px);overflow-y:auto;-webkit-overflow-scrolling:touch;
+  max-width:1340px;max-height:min(52vh,640px);overflow-y:auto;-webkit-overflow-scrolling:touch;
   z-index:150;
   background:var(--solid-pop);
   -webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);
@@ -2002,6 +2014,15 @@ html[data-theme="light"] .barcode-date-input{color-scheme:light}
   #rail-handle i{font-size:18px;transition:transform .22s var(--ease)}
   body.rail-open #rail-handle{right:calc(var(--rail-right) + var(--rail-w) - 1px)}
   body.rail-open #rail-handle i{transform:rotate(180deg)}
+}
+
+/* Wide-screen card density: tighten the discipline card grids so the extra
+   stage width yields more columns rather than oversized cards. auto-fit keeps
+   smaller screens on their existing column counts (these only apply >=1280px). */
+@media (min-width:1280px){
+  #view-myco .myco-grid,#view-parasitology .myco-grid{grid-template-columns:repeat(auto-fit,minmax(210px,1fr))}
+  #view-blood .blood-results{grid-template-columns:repeat(auto-fit,minmax(230px,1fr))}
+  #view-virology .viro-result-grid{grid-template-columns:repeat(auto-fit,minmax(165px,1fr))}
 }
 
 
