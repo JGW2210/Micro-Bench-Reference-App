@@ -3591,17 +3591,21 @@ function updateStickyOffsets(){
   const root = document.documentElement;
   const nav = document.querySelector('.top-nav');
   const qnav = document.querySelector('#view-notes .notes-quick-nav');
-  const navH = nav ? nav.getBoundingClientRect().height : 0;
+  // Measure with offsetHeight (layout px), NOT getBoundingClientRect().height.
+  // The A-/A+ control zooms <body> (zoom:var(--font-scale)); on modern engines
+  // getBoundingClientRect returns VISUAL (zoom-scaled) px, but --sticky-top /
+  // --notes-scroll-offset are consumed by `top`/`scroll-margin` INSIDE the
+  // zoomed body, so a zoomed measurement double-applies the scale and parks the
+  // sticky quick-nav a row below the nav. offsetHeight is in the same layout
+  // space the offsets are used in, so the bar stays flush at any text size.
+  const navH = nav ? nav.offsetHeight : 0;
   let qnavH = 0;
   if(qnav){
     const cs = getComputedStyle(qnav);
-    if(cs.display !== 'none') qnavH = qnav.getBoundingClientRect().height;
+    if(cs.display !== 'none') qnavH = qnav.offsetHeight;
   }
-  // Floor (not round) the nav height so the sticky quick-nav tucks flush
-  // beneath it: any sub-pixel remainder becomes a tiny overlap (hidden behind
-  // the higher-z nav) instead of a 1px background seam between the two bars.
-  root.style.setProperty('--sticky-top', Math.floor(navH) + 'px');
-  root.style.setProperty('--notes-scroll-offset', Math.round(navH + qnavH + 12) + 'px');
+  root.style.setProperty('--sticky-top', navH + 'px');
+  root.style.setProperty('--notes-scroll-offset', (navH + qnavH + 12) + 'px');
 }
 updateStickyOffsets();
 window.addEventListener('resize', updateStickyOffsets, {passive:true});
