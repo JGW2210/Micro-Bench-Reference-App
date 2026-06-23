@@ -763,7 +763,7 @@ body.show-reporting .reporting-rule{display:block}
    (right), with the interpretation result spanning full width beneath. Grid
    areas let the four regions regroup per breakpoint with no markup change:
    mobile-first single column; 2-up from 900px; full 3-up from 1280px. */
-#view-interp .dset-layout{display:grid;grid-template-columns:1fr;gap:16px 22px;align-items:start}
+#view-interp .dset-layout{display:grid;grid-template-columns:1fr;grid-template-areas:"inputs" "plate" "table";gap:16px 22px;align-items:start}
 #view-interp .dset-inputs{grid-area:inputs}
 #view-interp .dset-plate-col{grid-area:plate}
 #view-interp .dset-table-col{grid-area:table}
@@ -776,13 +776,18 @@ body.show-reporting .reporting-rule{display:block}
     grid-template-areas:"inputs plate" "table table"}
 }
 @media(min-width:1280px){
-  #view-interp .dset-layout{grid-template-columns:minmax(150px,180px) minmax(260px,300px) minmax(0,1fr);
+  /* Plate column takes the free width (1fr) so the depiction can grow; the
+     table column is bounded to a content-appropriate width so it no longer
+     stretches with short cells and leaves dead space at its right edge. */
+  #view-interp .dset-layout{grid-template-columns:minmax(150px,180px) minmax(260px,1fr) minmax(320px,440px);
     grid-template-areas:"inputs plate table"}
+  /* Enlarge the depiction into the freed space (capped, centred in its column). */
+  #view-interp .dset-plate{max-width:520px}
   /* zone entry boxes stacked vertically down the slim left column */
   #view-interp .dset-inputs .zone-input-grid{flex-direction:column;flex-wrap:nowrap;align-items:center;gap:12px;margin-bottom:0}
   #view-interp .dset-inputs .zone-input{flex:0 0 auto;width:100%}
-  /* D73's 5-column criteria table gets a wider share (slimmer inputs + plate). */
-  #ipanel-d73 .dset-layout{grid-template-columns:minmax(130px,150px) minmax(230px,260px) minmax(0,1.15fr)}
+  /* D73's 5-column criteria table needs a wider (still bounded) table column. */
+  #ipanel-d73 .dset-layout{grid-template-columns:minmax(130px,150px) minmax(260px,1fr) minmax(420px,520px)}
 }
 
 /* ============================================================
