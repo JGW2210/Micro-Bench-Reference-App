@@ -768,24 +768,26 @@ body.show-reporting .reporting-rule{display:block}
 #view-interp .dset-plate-col{grid-area:plate}
 #view-interp .dset-table-col{grid-area:table}
 #view-interp .dset-col .section-title{margin-top:0}
-/* result lives in the table (right) column so it flows directly beneath the
-   criteria table, regardless of the taller plate/inputs columns. */
-#view-interp .dset-table-col>.result-box{margin-top:14px}
-/* Narrow / 2-up: all zone-entry boxes sit on ONE row directly above the plate
-   (grid-auto-flow:column), so they never wrap and leave a gap before the
-   depiction. At >=1280px they restack vertically down the slim left column. */
+/* In the table column the interpretation result box sits ABOVE the criteria
+   table (title -> result -> table) via flex ordering, no markup change. */
+#view-interp .dset-table-col{display:flex;flex-direction:column}
+#view-interp .dset-table-col>*{order:2}
+#view-interp .dset-table-col>.section-title{order:0}
+#view-interp .dset-table-col>.result-box{order:1;margin:0 0 14px}
+#view-interp .dset-table-col .interp-table{margin-top:0}
+/* Below 1280px (narrow AND mid-size) the layout is a single vertical stack:
+   all zone-entry boxes on ONE row (grid-auto-flow:column) directly above the
+   plate, then the table column full-width beneath. The mid-size 2-up layout
+   was removed because it left large white gaps. */
 #view-interp .dset-inputs .zone-input-grid{display:grid;grid-auto-flow:column;grid-auto-columns:1fr;gap:8px;margin-bottom:0}
 #view-interp .dset-inputs .zone-input{min-width:0}
-@media(min-width:900px){
-  #view-interp .dset-layout{grid-template-columns:minmax(0,1fr) minmax(260px,340px);
-    grid-template-areas:"inputs plate" "table table"}
-}
 @media(min-width:1280px){
-  /* 3-up: slim vertical inputs · medium plate · the criteria table and the
-     interpretation box take the generous remaining width (1fr) so they reclaim
-     the wide-stage padding rather than leaving it empty to the right. */
-  #view-interp .dset-layout{grid-template-columns:minmax(140px,165px) minmax(300px,380px) minmax(0,1fr);
-    grid-template-areas:"inputs plate table"}
+  /* 3-up: slim vertical inputs · medium plate · the criteria table + result
+     box take the remaining width (1fr). The whole layout is capped and centred
+     so the table can't stretch absurdly wide on ultra-wide monitors — the 1fr
+     fills up to the cap, then symmetric margins absorb any extra. */
+  #view-interp .dset-layout{grid-template-columns:minmax(140px,165px) minmax(300px,380px) minmax(440px,1fr);
+    grid-template-areas:"inputs plate table";max-width:1400px;margin-inline:auto}
   /* Medium depiction (down from the earlier 520) so the table/result box win
      the reclaimed width; centred in its column. */
   #view-interp .dset-plate{max-width:380px}
