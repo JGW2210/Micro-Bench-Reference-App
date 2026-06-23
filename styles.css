@@ -763,26 +763,37 @@ body.show-reporting .reporting-rule{display:block}
    (right), with the interpretation result spanning full width beneath. Grid
    areas let the four regions regroup per breakpoint with no markup change:
    mobile-first single column; 2-up from 900px; full 3-up from 1280px. */
-#view-interp .dset-layout{display:grid;grid-template-columns:1fr;gap:16px 22px;align-items:start}
+#view-interp .dset-layout{display:grid;grid-template-columns:1fr;grid-template-areas:"inputs" "plate" "table";gap:16px 22px;align-items:start}
 #view-interp .dset-inputs{grid-area:inputs}
 #view-interp .dset-plate-col{grid-area:plate}
 #view-interp .dset-table-col{grid-area:table}
 #view-interp .dset-col .section-title{margin-top:0}
-/* result lives in the table (right) column so it flows directly beneath the
-   criteria table, regardless of the taller plate/inputs columns. */
-#view-interp .dset-table-col>.result-box{margin-top:14px}
-@media(min-width:900px){
-  #view-interp .dset-layout{grid-template-columns:minmax(0,1fr) minmax(260px,340px);
-    grid-template-areas:"inputs plate" "table table"}
-}
+/* In the table column the interpretation result box sits ABOVE the criteria
+   table (title -> result -> table) via flex ordering, no markup change. */
+#view-interp .dset-table-col{display:flex;flex-direction:column}
+#view-interp .dset-table-col>*{order:2}
+#view-interp .dset-table-col>.section-title{order:0}
+#view-interp .dset-table-col>.result-box{order:1;margin:0 0 14px}
+#view-interp .dset-table-col .interp-table{margin-top:0}
+/* Below 1280px (narrow AND mid-size) the layout is a single vertical stack:
+   all zone-entry boxes on ONE row (grid-auto-flow:column) directly above the
+   plate, then the table column full-width beneath. The mid-size 2-up layout
+   was removed because it left large white gaps. */
+#view-interp .dset-inputs .zone-input-grid{display:grid;grid-auto-flow:column;grid-auto-columns:1fr;gap:8px;margin-bottom:0}
+#view-interp .dset-inputs .zone-input{min-width:0}
 @media(min-width:1280px){
-  #view-interp .dset-layout{grid-template-columns:minmax(150px,180px) minmax(260px,300px) minmax(0,1fr);
-    grid-template-areas:"inputs plate table"}
-  /* zone entry boxes stacked vertically down the slim left column */
-  #view-interp .dset-inputs .zone-input-grid{flex-direction:column;flex-wrap:nowrap;align-items:center;gap:12px;margin-bottom:0}
-  #view-interp .dset-inputs .zone-input{flex:0 0 auto;width:100%}
-  /* D73's 5-column criteria table gets a wider share (slimmer inputs + plate). */
-  #ipanel-d73 .dset-layout{grid-template-columns:minmax(130px,150px) minmax(230px,260px) minmax(0,1.15fr)}
+  /* 3-up: slim vertical inputs · medium plate · the criteria table + result
+     box take the remaining width (1fr). The whole layout is capped and centred
+     so the table can't stretch absurdly wide on ultra-wide monitors — the 1fr
+     fills up to the cap, then symmetric margins absorb any extra. */
+  #view-interp .dset-layout{grid-template-columns:minmax(140px,165px) minmax(300px,380px) minmax(440px,1fr);
+    grid-template-areas:"inputs plate table";max-width:1400px;margin-inline:auto}
+  /* Medium depiction (down from the earlier 520) so the table/result box win
+     the reclaimed width; centred in its column. */
+  #view-interp .dset-plate{max-width:380px}
+  /* zone entry boxes restack vertically down the slim left column */
+  #view-interp .dset-inputs .zone-input-grid{grid-auto-flow:row;grid-template-columns:1fr;align-items:center;gap:12px}
+  #view-interp .dset-inputs .zone-input{width:100%}
 }
 
 /* ============================================================
