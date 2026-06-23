@@ -380,6 +380,26 @@ html.cursor-custom,html.cursor-custom *{cursor:none!important}
   background:var(--accent);box-shadow:0 0 10px var(--accent-glow);
 }
 
+/* ── Desktop auto-hide top nav ───────────────────────────────────────────
+   On a desktop (fine pointer, >=1024px) the sticky bar slides out of view once
+   the page is scrolled past it (body.nav-hidden) and slides back when the
+   pointer is in the top-edge band, a nav control is focused, or a nav menu is
+   open (body.nav-peek) — or when the page is scrolled back to the top. Driven
+   by body classes (set in app.js), so there is no layout shift. Touch / small
+   screens are untouched: they keep the always-visible sticky bar. */
+@media (min-width:1024px) and (hover:hover) and (pointer:fine){
+  .top-nav{transition:transform .28s var(--ease)}
+  body.nav-hidden .top-nav{transform:translateY(-100%)}
+  body.nav-hidden.nav-peek .top-nav{transform:none}
+  /* the notes quick-nav rides to the very top while the bar is gone, then drops
+     back flush beneath it whenever the bar is on screen (shown or peeking) */
+  #view-notes .notes-quick-nav{transition:top .28s var(--ease)}
+  body.nav-hidden:not(.nav-peek) #view-notes .notes-quick-nav{top:0}
+}
+@media (prefers-reduced-motion:reduce){
+  .top-nav,#view-notes .notes-quick-nav{transition:none}
+}
+
 /* ============================================================
    SWITCHER / VIEW PILLS
    ============================================================ */
