@@ -978,6 +978,9 @@ function switchView(to,iTabId){
     document.querySelectorAll('.abx-chip.stuck').forEach(c => c.classList.remove('stuck'));
     hideFloatTip();
   }
+  // Re-evaluate the auto-hide nav: the pointer-band reveal is suppressed on the
+  // notes view, so switching in/out of it (incl. via keyboard) must recompute.
+  if(typeof window.__navAutoHideEval === 'function') window.__navAutoHideEval();
 }
 
 // Shared org-flow renderer used by both urine and wound dropdowns.
@@ -1591,6 +1594,13 @@ function scrollNotesTo(targetId){
   const target = document.getElementById(targetId);
   if(!target) return;
   target.scrollIntoView({behavior:'smooth',block:'start'});
+}
+
+// Quick-nav "To top": smooth-scroll back to the very top. On desktop this also
+// brings the auto-hidden top nav back (scroll-to-top reveals it), giving notes
+// a deliberate way to reach the bar without the pointer-band hover reveal.
+function scrollNotesToTop(){
+  window.scrollTo({top:0, behavior:'smooth'});
 }
 
 const routineNavIds = ['notes-routine-urine','notes-routine-wound','notes-routine-ear-eye'];
@@ -3641,7 +3651,12 @@ if(window.ResizeObserver){
     if(!mq.matches){ document.body.classList.remove('nav-hidden','nav-peek'); return; }
     const h = nav.offsetHeight || 72;
     const scrolled = window.scrollY > h;
-    const peek = (lastY >= 0 && lastY <= h)                       // pointer in top band
+    // On the bench-notes page the pointer-band reveal is disabled: the notes
+    // quick-nav sits at the top while the bar is hidden, and revealing the bar
+    // would shove it down mid-click. Notes is self-contained (the quick-nav is
+    // its own in-page navigation), so the bar is reached by scrolling to the
+    // top. Focus / open-menu reveals still apply everywhere.
+    const peek = (curView !== 'notes' && lastY >= 0 && lastY <= h)  // pointer in top band
               || nav.contains(document.activeElement)             // focus inside the bar
               || (typeof anyNavMenuOpen === 'function' && anyNavMenuOpen()); // a menu is open
     document.body.classList.toggle('nav-hidden', scrolled);

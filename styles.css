@@ -1609,6 +1609,8 @@ body.show-reporting .reporting-rule{display:block}
 #view-notes .notes-nav-btn{display:inline-flex;align-items:center;gap:5px;font-family:var(--font-mono);font-size:12px;letter-spacing:.04em;text-transform:uppercase;padding:8px 12px;border:1px solid var(--line);border-radius:var(--border-radius-md);background:var(--bg-elev);color:var(--text-dim);cursor:pointer;transition:color .15s,border-color .15s,background .15s,transform .12s}
 #view-notes .notes-nav-btn:hover{background:var(--accent-dim);color:var(--accent);border-color:var(--accent);transform:translateY(-1px)}
 #view-notes .notes-nav-btn i{font-size:13px}
+/* "To top" sits apart at the right end of the quick-nav row */
+#view-notes .notes-nav-btn-top{margin-left:auto;border-color:var(--line-strong);color:var(--text)}
 .notes-section{margin:18px 0 0;scroll-margin-top:var(--notes-scroll-offset,150px)}
 .notes-section-title{font-family:var(--font-sans);font-size:14px;font-weight:600;color:var(--text);display:flex;align-items:center;gap:8px;margin-bottom:5px}
 .notes-section-title i{color:var(--accent)}
