@@ -3621,6 +3621,44 @@ if(window.ResizeObserver){
   if(navEl) new ResizeObserver(updateStickyOffsets).observe(navEl);
 }
 
+/* ── Desktop auto-hide top nav ───────────────────────────────────────────
+   On a desktop (fine pointer, >=1024px) the sticky top bar slides out of view
+   once the page is scrolled past its own height, and slides back when the
+   pointer is in the top-edge band (height = the bar's height), a nav control is
+   focused, a nav menu is open, or the page is scrolled back to the top. We
+   track the pointer's clientY (rather than mouseenter/leave on a hot-zone, which
+   flickers as the revealed bar covers the zone) and toggle two body classes the
+   gated CSS consumes: .nav-hidden (scrolled past) and .nav-peek (revealed).
+   matchMedia gates the whole thing so touch / small screens are untouched. */
+(function(){
+  const nav = document.querySelector('.top-nav');
+  if(!nav) return;
+  const mq = window.matchMedia('(min-width:1024px) and (hover:hover) and (pointer:fine)');
+  let lastY = -1;            // last known pointer clientY (-1 = unknown)
+  let ticking = false;
+  function evaluate(){
+    ticking = false;
+    if(!mq.matches){ document.body.classList.remove('nav-hidden','nav-peek'); return; }
+    const h = nav.offsetHeight || 72;
+    const scrolled = window.scrollY > h;
+    const peek = (lastY >= 0 && lastY <= h)                       // pointer in top band
+              || nav.contains(document.activeElement)             // focus inside the bar
+              || (typeof anyNavMenuOpen === 'function' && anyNavMenuOpen()); // a menu is open
+    document.body.classList.toggle('nav-hidden', scrolled);
+    document.body.classList.toggle('nav-peek', scrolled && peek);
+  }
+  function schedule(){ if(!ticking){ ticking = true; requestAnimationFrame(evaluate); } }
+  window.addEventListener('scroll', schedule, {passive:true});
+  window.addEventListener('mousemove', (e)=>{ lastY = e.clientY; schedule(); }, {passive:true});
+  window.addEventListener('resize', schedule, {passive:true});
+  document.addEventListener('focusin', schedule);
+  document.addEventListener('focusout', schedule);
+  document.addEventListener('click', schedule);   // menu open/close may not move the mouse
+  if(mq.addEventListener) mq.addEventListener('change', schedule);
+  window.__navAutoHideEval = schedule;            // let other code re-evaluate on demand
+  evaluate();
+})();
+
 // Sync the grouped nav triggers (labels + active states) to the initial view.
 updateNavMenus(curView);
 
