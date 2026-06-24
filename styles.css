@@ -1821,7 +1821,7 @@ html[data-theme="light"] .barcode-date-input{color-scheme:light}
   .switcher{display:block}
   .switcher-pills{overflow-x:auto;max-width:100%;flex-wrap:nowrap;justify-content:flex-start;-webkit-overflow-scrolling:touch}
   .sw-btn{flex:0 0 auto}
-  .app-hint{margin-top:8px}
+  .app-hint{display:none}
   .top-nav{margin:-10px -6px 0;padding:10px 12px}
   .bench-notes-bar{padding:0 12px}
   .sens-menu-list{max-width:calc(100vw - 20px)}
