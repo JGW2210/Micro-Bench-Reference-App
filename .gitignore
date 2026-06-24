@@ -14,4 +14,7 @@ Thumbs.db
 *.swp
 
 # Claude Code agent worktrees / local state
-.claude/
+.claude/*
+# ...but track shared, committed skills
+!.claude/skills/
+.claude/skills/**/__pycache__/
